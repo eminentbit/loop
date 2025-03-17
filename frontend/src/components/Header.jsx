@@ -3,14 +3,15 @@ import { Bell, ChevronDown, Search, Sun, Moon } from "lucide-react";
 import { Link } from "react-router-dom";
 import ProfilePic from "../assets/profile-pic.png";
 import { DarkModeContext } from "./DarkModeContext";
+import PropTypes from "prop-types";
 
-const Header = () => {
+const Header = ({ className }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { isDarkMode, toggleDarkMode } = useContext(DarkModeContext);
 
   return (
     <header
-      className={`p-4 flex mb-4 justify-between items-center top-0 w-full z-10 shadow-md ${
+      className={`${className} p-4 flex mb-4 justify-between items-center top-0 w-full z-10 shadow-md ${
         isDarkMode ? "bg-gray-900 text-white" : "bg-white"
       }`}
     >
@@ -136,6 +137,10 @@ const Header = () => {
       </div>
     </header>
   );
+};
+
+Header.propTypes = {
+  className: PropTypes.string,
 };
 
 export default Header;

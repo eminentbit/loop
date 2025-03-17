@@ -1,18 +1,22 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { IoMdClose } from "react-icons/io";
+import TagInput from "./TagInput";
 
 const CreateCommunityModal = ({ isOpen, onClose, onCreate }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [tags, setTags] = useState([]);
   const [bannerImage, setBannerImage] = useState("");
 
   const handleSubmit = () => {
     if (!name.trim() || !description.trim()) return;
+    const id = 1;
 
-    onCreate({ name, description, bannerImage });
+    onCreate({ id, name, description, tags, bannerImage });
     setName("");
     setDescription("");
+    setTags([]);
     setBannerImage("");
     onClose(); // Close modal after creation
   };
@@ -50,6 +54,9 @@ const CreateCommunityModal = ({ isOpen, onClose, onCreate }) => {
           className="w-full p-2 mb-3 border rounded bg-gray-100 dark:bg-gray-700"
           rows="3"
         />
+
+        {/* Community Tags Input */}
+        <TagInput tags={tags} setTags={setTags} />
 
         {/* Community Banner Image Input */}
         <input

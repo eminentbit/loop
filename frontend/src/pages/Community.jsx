@@ -56,6 +56,7 @@ const CommunityPage = ({ userRole }) => {
 
   // Handle Community Creation
   const handleCreateCommunity = (newCommunity) => {
+    setJoinedCommunities([newCommunity, ...allCommunities]);
     setAllCommunities([newCommunity, ...allCommunities]);
   };
 
@@ -199,9 +200,9 @@ const CommunityPage = ({ userRole }) => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Create Community Card appears first */}
-            {communitiesToDisplay.map((community) => (
+            {communitiesToDisplay.map((community, index) => (
               <CommunityCard
-                key={community.id}
+                key={index}
                 community={community}
                 onJoin={() => handleJoinCommunity(community.id)}
                 isJoined={joinedCommunities.some((c) => c.id === community.id)}

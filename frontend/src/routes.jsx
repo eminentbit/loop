@@ -7,6 +7,10 @@ import ProfilePage from "./pages/UserProfile";
 import TestDashboard from "./pages/TestDashboard";
 import Feed from "./pages/Feed";
 import CommunityPage from "./pages/Community";
+import NetworkPage from "./pages/Network";
+import SkillsPage from "./pages/Skills";
+import NotificationPage from "./pages/Notifications";
+import MyApplications from "./pages/MyApplications";
 
 const AppRoutes = () => {
   return (
@@ -17,10 +21,17 @@ const AppRoutes = () => {
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/test" element={<TestDashboard />} />
       <Route path="/feed" element={<Feed />} />
+      <Route path="/network" element={<NetworkPage />} />
       <Route
         path="/community"
         element={<CommunityPage userRole={"jobseeker"} />}
       />
+      <Route
+        path="/assessments"
+        element={<SkillsPage userRole={"jobseeker"} />}
+      />
+      <Route path="/applications" element={<MyApplications />} />
+      <Route path="/notifications" element={<NotificationPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
