@@ -23,6 +23,14 @@ const jobs = [
     salary: "$60k - $80k",
     type: "Contract",
   },
+{
+  id: 4,
+  title: "Full Stack Developer",
+  company: "Design Hub",
+  location: "On-site",
+  salary: "$100k - $150k",
+  type: "Contract",
+},
   // Add more jobs as needed
 ];
 
