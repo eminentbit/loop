@@ -11,6 +11,7 @@ import NetworkPage from "./pages/Network";
 import SkillsPage from "./pages/Skills";
 import NotificationPage from "./pages/Notifications";
 import MyApplications from "./pages/MyApplications";
+import LearningPage from "./pages/Learning";
 
 const AppRoutes = () => {
   return (
@@ -32,6 +33,7 @@ const AppRoutes = () => {
       />
       <Route path="/applications" element={<MyApplications />} />
       <Route path="/notifications" element={<NotificationPage />} />
+      <Route path="/learning" element={<LearningPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

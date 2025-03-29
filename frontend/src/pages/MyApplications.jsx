@@ -1,27 +1,29 @@
+import { useContext, useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import kApplications from "@/data/applications";
-import { useState } from "react";
 import { FaSearch, FaEnvelope, FaTimesCircle } from "react-icons/fa";
+import { DarkModeContext } from "@/components/DarkModeContext";
 
 const MyApplications = () => {
   const [search, setSearch] = useState("");
   const [isOpen, setIsOpen] = useState(true);
+  const { isDarkMode } = useContext(DarkModeContext);
   // eslint-disable-next-line no-unused-vars
   const [applications, setApplications] = useState(kApplications);
 
   const getStatusStyle = (status) => {
     switch (status) {
       case "Pending":
-        return "text-yellow-500 bg-yellow-100";
+        return "text-yellow-500 bg-yellow-100 dark:text-yellow-300 dark:bg-yellow-900";
       case "Interview":
-        return "text-blue-500 bg-blue-100";
+        return "text-blue-500 bg-blue-100 dark:text-blue-300 dark:bg-blue-900";
       case "Accepted":
-        return "text-green-500 bg-green-100";
+        return "text-green-500 bg-green-100 dark:text-green-300 dark:bg-green-900";
       case "Rejected":
-        return "text-red-500 bg-red-100";
+        return "text-red-500 bg-red-100 dark:text-red-300 dark:bg-red-900";
       default:
-        return "text-gray-500 bg-gray-100";
+        return "text-gray-500 bg-gray-100 dark:text-gray-300 dark:bg-gray-700";
     }
   };
 
@@ -31,36 +33,23 @@ const MyApplications = () => {
       app.company.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Calculate summary counts
-  const totalApplications = applications.length;
-  const pendingCount = applications.filter(
-    (app) => app.status === "Pending"
-  ).length;
-  const interviewCount = applications.filter(
-    (app) => app.status === "Interview"
-  ).length;
-  const acceptedCount = applications.filter(
-    (app) => app.status === "Accepted"
-  ).length;
-  const rejectedCount = applications.filter(
-    (app) => app.status === "Rejected"
-  ).length;
-
   return (
-    <div className="flex">
+    <div className={`flex ${isDarkMode ? "dark" : ""}`}>
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
-      {/* When sidebar is closed, use full width (w-full) with a smaller left margin */}
       <div
-        className={`p-6 w-full transition-all duration-300 ${
+        className={`w-full transition-all duration-300 ${
           !isOpen ? "ml-16" : "ml-64 max-w-6xl"
         }`}
       >
         <Header />
-        {/* Container Card with two columns */}
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6">
-          <h1 className="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-100">
-            My Applications
-          </h1>
+
+        {/* Container Card */}
+        <div
+          className={`rounded-lg shadow-lg p-6 ${
+            isDarkMode ? "bg-gray-900 text-gray-100" : "bg-white text-gray-800"
+          }`}
+        >
+          <h1 className="text-3xl font-bold mb-6">My Applications</h1>
           <div
             className={`grid grid-cols-1 lg:grid-cols-2 ${
               !isOpen ? "gap-[10em]" : "gap-10"
@@ -79,8 +68,9 @@ const MyApplications = () => {
                   className="w-full p-3 pl-10 border rounded-lg focus:ring-2 focus:ring-blue-400 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                 />
               </div>
+
               {/* Applications List */}
-              <div className="space-y-4 max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-700">
+              <div className="space-y-4 max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600">
                 {filteredApplications.length > 0 ? (
                   filteredApplications.map((app) => (
                     <div
@@ -88,9 +78,7 @@ const MyApplications = () => {
                       className="p-4 rounded-lg shadow-md bg-gray-100 dark:bg-gray-800 flex justify-between items-center"
                     >
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                          {app.title}
-                        </h3>
+                        <h3 className="text-lg font-semibold">{app.title}</h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
                           {app.company} - Applied on {app.date}
                         </p>
@@ -119,30 +107,42 @@ const MyApplications = () => {
                 )}
               </div>
             </div>
+
             {/* Right Column: Applications Summary */}
-            <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-md h-full">
-              <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">
-                Applications Summary
-              </h2>
-              <ul className="space-y-3 text-gray-700 dark:text-gray-300">
+            <div className="p-6 rounded-lg shadow-md bg-gray-50 dark:bg-gray-800">
+              <h2 className="text-2xl font-bold mb-4">Applications Summary</h2>
+              <ul className="space-y-3">
                 <li>
                   <span className="font-semibold">Total Applications:</span>{" "}
-                  {totalApplications}
+                  {applications.length}
                 </li>
                 <li>
-                  <span className="font-semibold">Pending:</span> {pendingCount}
+                  <span className="font-semibold">Pending:</span>{" "}
+                  {
+                    applications.filter((app) => app.status === "Pending")
+                      .length
+                  }
                 </li>
                 <li>
                   <span className="font-semibold">Interview:</span>{" "}
-                  {interviewCount}
+                  {
+                    applications.filter((app) => app.status === "Interview")
+                      .length
+                  }
                 </li>
                 <li>
                   <span className="font-semibold">Accepted:</span>{" "}
-                  {acceptedCount}
+                  {
+                    applications.filter((app) => app.status === "Accepted")
+                      .length
+                  }
                 </li>
                 <li>
                   <span className="font-semibold">Rejected:</span>{" "}
-                  {rejectedCount}
+                  {
+                    applications.filter((app) => app.status === "Rejected")
+                      .length
+                  }
                 </li>
               </ul>
             </div>
