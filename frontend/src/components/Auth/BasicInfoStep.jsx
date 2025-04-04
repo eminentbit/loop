@@ -1,7 +1,7 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 
-const BasicInfoStep = ({ prevStep, nextStep, updateFormData, formData }) => {
+const BasicInfoStep = ({ nextStep, updateFormData, formData }) => {
   const [fullName, setFullName] = useState(formData.fullName || "");
   const [email, setEmail] = useState(formData.email || "");
   const [password, setPassword] = useState("");
@@ -77,12 +77,12 @@ const BasicInfoStep = ({ prevStep, nextStep, updateFormData, formData }) => {
       </div>
 
       <div className="flex justify-between">
-        <button
+        {/* <button
           onClick={prevStep}
           className="px-4 py-2 bg-gray-300 rounded cursor-pointer"
         >
           Back
-        </button>
+        </button> */}
         <button
           onClick={handleNext}
           className="px-4 py-2 bg-blue-500 text-white rounded cursor-pointer"
@@ -95,7 +95,7 @@ const BasicInfoStep = ({ prevStep, nextStep, updateFormData, formData }) => {
 };
 
 BasicInfoStep.propTypes = {
-  prevStep: PropTypes.func.isRequired,
+  prevStep: PropTypes.func,
   nextStep: PropTypes.func.isRequired,
   updateFormData: PropTypes.func.isRequired,
   formData: PropTypes.object.isRequired,

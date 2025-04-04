@@ -14,11 +14,14 @@ import MyApplications from "@/pages/MyApplications";
 import LearningPage from "./pages/Learning";
 import RecommendedPage from "@/pages/Recommended";
 import DetailPage from "@/pages/DetailPage";
+import LandingPage from "./pages/LandingPage";
 
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<SignupWizard />} />
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/login" element={<SignupWizard />} />
+      <Route path="/signup" element={<SignupWizard />} />
       <Route path="/dashboard" element={<Dashboard userRole={"jobSeeker"} />} />
       <Route path="/jobs" element={<JobsPage />} />
       <Route path="/profile" element={<ProfilePage />} />

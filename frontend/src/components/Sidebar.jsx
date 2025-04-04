@@ -18,6 +18,7 @@ import {
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { DarkModeContext } from "./DarkModeContext";
+import Logo from "./Logo";
 
 const Sidebar = ({ userRole, isOpen, setIsOpen }) => {
   const [isSubSectionOpen, setIsSubSectionOpen] = useState(false);
@@ -115,7 +116,7 @@ const Sidebar = ({ userRole, isOpen, setIsOpen }) => {
               isOpen ? "block" : "hidden"
             }`}
           >
-            LOOP-OS
+            <Logo className={"h-10 w-10"} />
           </h2>
           <nav>
             <ul

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import WelcomeStep from "../components/Auth/WelcomeSetup"; // Welcome screen
+// import WelcomeStep from "../components/Auth/WelcomeSetup"; // Welcome screen
 import BasicInfoStep from "../components/Auth/BasicInfoStep";
 import UserTypeStep from "../components/Auth/UserTypeStep";
 import JobSeekerProfileStep from "../components/Auth/JobSeekerProfileStep";
@@ -43,12 +43,11 @@ const SignupWizard = () => {
     <div className="w-full max-w-lg mx-auto p-6 bg-white shadow-lg rounded-lg">
       <ProgressBar step={step} totalSteps={5} />
       {/* Step 1: Welcome screen */}
-      {step === 1 && <WelcomeStep nextStep={nextStep} />}
+      {/* {step === 1 && <WelcomeStep nextStep={nextStep} />} */}
 
       {/* Step 2: Basic information */}
-      {step === 2 && (
+      {step === 1 && (
         <BasicInfoStep
-          prevStep={prevStep}
           nextStep={nextStep}
           updateFormData={updateFormData}
           formData={formData}
@@ -56,7 +55,7 @@ const SignupWizard = () => {
       )}
 
       {/* Step 3: Choose account type */}
-      {step === 3 && (
+      {step === 2 && (
         <UserTypeStep
           nextStep={nextStep}
           prevStep={prevStep}
@@ -66,7 +65,7 @@ const SignupWizard = () => {
       )}
 
       {/* Step 4: Profile details (Job Seeker or Recruiter) */}
-      {step === 4 &&
+      {step === 3 &&
         (formData.userType === "job_seeker" ? (
           <JobSeekerProfileStep
             nextStep={nextStep}
@@ -84,7 +83,7 @@ const SignupWizard = () => {
         ))}
 
       {/* Step 5: Profile picture upload  */}
-      {step === 5 && (
+      {step === 4 && (
         <ProfilePictureStep
           nextStep={nextStep}
           prevStep={prevStep}
@@ -94,7 +93,7 @@ const SignupWizard = () => {
       )}
 
       {/* Step 6 (Final Step): agreement to T&C */}
-      {step === 6 && (
+      {step === 5 && (
         <FinalStep prevStep={prevStep} onSubmit={handleOnSubmit} />
       )}
     </div>
