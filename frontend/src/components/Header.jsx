@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import ProfilePic from "../assets/profile-pic.png";
 import { DarkModeContext } from "./DarkModeContext";
 import PropTypes from "prop-types";
+import Logo from "./Logo";
 
 const Header = ({ className }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -21,7 +22,7 @@ const Header = ({ className }) => {
           to="/dashboard"
           className="text-2xl max-md:pt-4 font-bold text-blue-600"
         >
-          Loop
+          <Logo className="w-15 h-15" />
         </Link>
         <nav className="ml-10 space-x-6 hidden md:flex">
           <Link

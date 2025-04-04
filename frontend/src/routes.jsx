@@ -10,8 +10,9 @@ import CommunityPage from "./pages/Community";
 import NetworkPage from "./pages/Network";
 import SkillsPage from "./pages/Skills";
 import NotificationPage from "./pages/Notifications";
-import MyApplications from "./pages/MyApplications";
-import RecommendedPage from "./pages/Recommended";
+import MyApplications from "@/pages/MyApplications";
+import RecommendedPage from "@/pages/Recommended";
+import DetailPage from "@/pages/DetailPage";
 
 const AppRoutes = () => {
   return (
@@ -32,10 +33,13 @@ const AppRoutes = () => {
         path="/assessments"
         element={<SkillsPage userRole={"jobseeker"} />}
       />
-      <Route
-        path="/jobs/recommended"
-        element={<RecommendedPage userRole={"jobseeker"} />}
-      />
+      <Route path="/jobs">
+        <Route
+          path="/jobs/recommended"
+          element={<RecommendedPage userRole={"jobseeker"} />}
+        />
+        <Route path="/jobs/:jobId" element={<DetailPage />} />
+      </Route>
       <Route path="/applications" element={<MyApplications />} />
       <Route path="/notifications" element={<NotificationPage />} />
       <Route path="*" element={<NotFoundPage />} />

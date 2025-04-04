@@ -1,10 +1,10 @@
 // JobsPage.jsx
-import { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import JobCard from "../components/JobsCard";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import jobs from "../data/recommended";
-import { ChevronDownIcon } from "lucide-react";
+
 import PropTypes from "prop-types";
 import { DarkModeContext } from "../components/DarkModeContext";
 
@@ -17,16 +17,16 @@ const RecomendedPage = ({ className = "" }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/auth");
+        const response = await fetch("http://localhost:8000/api/recommended");
         const data = await response.json();
-        console.log("API response:", data);
+        console.log("API response", data);
       } catch (error) {
-        console.error("Error in useEffect:", error);
+        console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
-  });
+  }, []);
 
   return (
     <div className="flex">
@@ -60,3 +60,4 @@ RecomendedPage.propTypes = {
 };
 
 export default RecomendedPage;
+//https://www.linkedin.com/help/linkedin/answer/a508610
