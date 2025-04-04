@@ -15,7 +15,7 @@ const Dashboard = ({ userRole }) => {
     <div className="min-h-screen flex w-full">
       <Sidebar userRole={userRole} isOpen={isOpen} setIsOpen={setIsOpen} />
       <div
-        className={`flex-1 pl-10 ${isOpen ? "ml-64" : "ml-16"}  ${
+        className={`flex-1 ${isOpen ? "ml-64" : "ml-16"}  ${
           isDarkMode ? "dark:bg-gray-800" : "bg-white"
         }`}
       >

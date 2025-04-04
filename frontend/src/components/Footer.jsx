@@ -1,5 +1,4 @@
 // Footer.jsx
-import React from "react";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
@@ -28,7 +27,7 @@ const Footer = () => {
         </nav>
       </div>
       <div className="mt-4 text-center text-xs">
-        &copy; {new Date().getFullYear()} Loop. All rights reserved.
+        &copy; {new Date().getFullYear() - 1} Loop. All rights reserved.
       </div>
     </footer>
   );
