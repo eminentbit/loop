@@ -12,6 +12,7 @@ import SkillsPage from "./pages/Skills";
 import NotificationPage from "./pages/Notifications";
 import MyApplications from "./pages/MyApplications";
 import LearningPage from "./pages/Learning";
+import RecommendedPage from "./pages/Recommended";
 
 const AppRoutes = () => {
   return (
@@ -23,6 +24,7 @@ const AppRoutes = () => {
       <Route path="/test" element={<TestDashboard />} />
       <Route path="/feed" element={<Feed />} />
       <Route path="/network" element={<NetworkPage />} />
+      <Route path="/recommended" element={<RecommendedPage />} />
       <Route
         path="/community"
         element={<CommunityPage userRole={"jobseeker"} />}
@@ -30,6 +32,10 @@ const AppRoutes = () => {
       <Route
         path="/assessments"
         element={<SkillsPage userRole={"jobseeker"} />}
+      />
+      <Route
+        path="/jobs/recommended"
+        element={<RecommendedPage userRole={"jobseeker"} />}
       />
       <Route path="/applications" element={<MyApplications />} />
       <Route path="/notifications" element={<NotificationPage />} />
