@@ -38,6 +38,11 @@ const Sidebar = ({ userRole, isOpen, setIsOpen }) => {
       icon: <Folder className="w-5 h-5" />,
     },
     {
+      name: "Startups",
+      path: "/startup",
+      icon: <Folder className="w-5 h-5" />,
+    },
+    {
       name: "Skills",
       path: "/assessments",
       icon: <BookOpen className="w-5 h-5" />,
@@ -116,7 +121,7 @@ const Sidebar = ({ userRole, isOpen, setIsOpen }) => {
               isOpen ? "block" : "hidden"
             }`}
           >
-            <Logo className={"h-10 w-10"} />
+            <Logo className={"h-20 w-20"} />
           </h2>
           <nav>
             <ul

@@ -1,6 +1,6 @@
 from django.db import models
 
-class Job(models.Model):
+class Recommended (models.Model):
     title = models.CharField(max_length=200)
     company = models.CharField(max_length=200)
     locatiom = models.CharField(max_length=200, blank=True, null=True)

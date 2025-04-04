@@ -14,7 +14,8 @@ import MyApplications from "@/pages/MyApplications";
 import LearningPage from "./pages/Learning";
 import RecommendedPage from "@/pages/Recommended";
 import DetailPage from "@/pages/DetailPage";
-import LandingPage from "./pages/LandingPage";
+import LandingPage from "@/pages/LandingPage";
+import StartupPage from "@/pages/StartupPage";
 
 const AppRoutes = () => {
   return (
@@ -29,6 +30,7 @@ const AppRoutes = () => {
       <Route path="/feed" element={<Feed />} />
       <Route path="/network" element={<NetworkPage />} />
       <Route path="/recommended" element={<RecommendedPage />} />
+      <Route path="/startup" element={<StartupPage />} />
       <Route
         path="/community"
         element={<CommunityPage userRole={"jobseeker"} />}
