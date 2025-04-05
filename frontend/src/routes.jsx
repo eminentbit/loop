@@ -16,7 +16,13 @@ import RecommendedPage from "@/pages/Recommended";
 import DetailPage from "@/pages/DetailPage";
 import LandingPage from "@/pages/LandingPage";
 import StartupPage from "@/pages/StartupPage";
-
+import CandidatePool from "@/pages/CandidatePool";
+import TeamCollaboration from "@/pages/TeamCollaboration";
+import HiringAnalytics from "@/pages/HiringAnalytics";
+import InvestorTracker from "@/pages/InvestorTracker";
+import Settings from "@/pages/Setting";
+import Report from "@/pages/Report";
+import StartupListing from "@/pages/StartupListings";
 const AppRoutes = () => {
   const role = "recruiter";
   return (
@@ -53,6 +59,13 @@ const AppRoutes = () => {
         element={<NotificationPage userRole={role} />}
       />
       <Route path="/learning" element={<LearningPage userRole={role} />} />
+      <Route path="/candidates" element={<CandidatePool userRole={role} />} />
+      <Route path="/collaboration"element={<TeamCollaboration userRole={role} />}/>
+      <Route path="/analytics" element={<HiringAnalytics userRole={role} />} />
+      <Route path="/investor-tracker" element={<InvestorTracker userRole={role} />} />
+      <Route path="/reports" element={<Report userRole={role} />} />
+      <Route path="/settings" element={<Settings userRole={role} />} />
+      <Route path="/startup-listings" element={<StartupListing userRole={role} />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
