@@ -1,8 +1,8 @@
 
 from django.contrib import admin
-from .models import Recommended
+from .models import Jobs
  
-admin.site.register(Recommended)
+admin.site.register(Jobs)
 
 
 # Register your models here.

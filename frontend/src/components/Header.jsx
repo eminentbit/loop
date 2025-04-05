@@ -22,7 +22,7 @@ const Header = ({ className, userRole }) => {
           to="/dashboard"
           className="text-2xl max-md:pt-4 font-bold text-blue-600"
         >
-          <Logo className="w-15 h-15" />
+          <Logo className="w-18 h-18" />
         </Link>
         <nav className="ml-10 space-x-6 hidden md:flex">
           {userRole === "jobseeker" ? (
