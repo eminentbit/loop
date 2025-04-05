@@ -23,15 +23,54 @@ const jobs = [
     salary: "$60k - $80k",
     type: "Contract",
   },
-{
-  id: 4,
-  title: "Full Stack Developer",
-  company: "Design Hub",
-  location: "On-site",
-  salary: "$100k - $150k",
-  type: "Contract",
-},
-  // Add more jobs as needed
+  {
+    id: 4,
+    title: "Full Stack Developer",
+    company: "Design Hub",
+    location: "On-site",
+    salary: "$100k - $150k",
+    type: "Contract",
+  },
+  {
+    id: 5,
+    title: "DevOps Engineer",
+    company: "CloudWave",
+    location: "Remote",
+    salary: "$90k - $120k",
+    type: "Full-time",
+  },
+  {
+    id: 6,
+    title: "Mobile App Developer",
+    company: "Appify",
+    location: "Hybrid",
+    salary: "$75k - $95k",
+    type: "Full-time",
+  },
+  {
+    id: 7,
+    title: "Data Analyst",
+    company: "DataWorks",
+    location: "Remote",
+    salary: "$65k - $85k",
+    type: "Part-time",
+  },
+  {
+    id: 8,
+    title: "QA Engineer",
+    company: "SoftTest",
+    location: "On-site",
+    salary: "$70k - $90k",
+    type: "Full-time",
+  },
+  {
+    id: 9,
+    title: "Product Manager",
+    company: "LaunchPad",
+    location: "Hybrid",
+    salary: "$110k - $140k",
+    type: "Full-time",
+  },
 ];
 
 export default jobs;

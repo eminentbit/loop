@@ -40,7 +40,7 @@ const Sidebar = ({ userRole, isOpen, setIsOpen }) => {
     {
       name: "Startups",
       path: "/startup",
-      icon: <Folder className="w-5 h-5" />,
+      icon: <Briefcase className="w-5 h-5" />,
     },
     {
       name: "Skills",
@@ -102,7 +102,7 @@ const Sidebar = ({ userRole, isOpen, setIsOpen }) => {
       {/* Toggle Button */}
       <button
         className={`p-3 fixed top-4 left-4 z-20 rounded-md transition-colors ${
-          isDarkMode ? "bg-gray-800 text-white" : "bg-gray-200 text-gray-900"
+          isDarkMode ? "bg-gray-800 text-white" : "bg-gray-200 text-gray-800"
         }`}
         onClick={() => setIsOpen(!isOpen)}
       >

@@ -13,14 +13,14 @@ const DashboardNavbar = () => {
           placeholder="Search..."
           className="w-full p-2 pl-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+        <Search className="absolute left-3 top-2.5 text-gray-400" size={16} />
       </div>
 
       {/* Notification & Profile */}
       <div className="flex items-center space-x-6">
         {/* Notification Bell */}
         <div className="relative cursor-pointer">
-          <Bell className="text-gray-600 hover:text-gray-900" size={22} />
+          <Bell className="text-gray-600 hover:text-gray-900" size={20} />
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
             3
           </span>
