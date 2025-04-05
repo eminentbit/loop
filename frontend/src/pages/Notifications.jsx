@@ -9,8 +9,9 @@ import {
   FaBell,
   FaCheckCircle,
 } from "react-icons/fa";
+import PropTypes from "prop-types";
 
-const NotificationPage = () => {
+const NotificationPage = ({ userRole }) => {
   const { isDarkMode } = useContext(DarkModeContext);
   const [isOpen, setIsOpen] = useState(true);
   const [notifications, setNotifications] = useState([
@@ -76,7 +77,7 @@ const NotificationPage = () => {
 
   return (
     <div className="flex transition-all duration-300 ease-in-out">
-      <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
+      <Sidebar userRole={userRole} isOpen={isOpen} setIsOpen={setIsOpen} />
       <div
         className={`flex-1 p-6 transition-colors ${
           isOpen ? "ml-64" : "ml-16"
@@ -84,7 +85,7 @@ const NotificationPage = () => {
           isDarkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
         }`}
       >
-        <Header />
+        <Header userRole={userRole} />
         <div className="mt-6 flex flex-col lg:flex-row gap-6">
           {/* Left Column: Notifications List */}
           <div className="w-full lg:w-2/3">
@@ -209,6 +210,10 @@ const NotificationPage = () => {
       </div>
     </div>
   );
+};
+
+NotificationPage.propTypes = {
+  userRole: PropTypes.string.isRequired,
 };
 
 export default NotificationPage;

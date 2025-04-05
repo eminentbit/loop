@@ -4,7 +4,9 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import jobs from "../data/recommended";
 import { useParams } from "react-router-dom";
-const DetailPage = () => {
+import PropTypes from "prop-types";
+
+const DetailPage = ({ userRole }) => {
   const [selectedJob, setSelectedJob] = useState(null);
   const jobId = useParams().jobId;
 
@@ -14,7 +16,7 @@ const DetailPage = () => {
 
   return (
     <div>
-      <Header />
+      <Header userRole={userRole} />
       <div className="content">
         <Sidebar />
         <div className="job-list">
@@ -37,6 +39,10 @@ const DetailPage = () => {
       </div>
     </div>
   );
+};
+
+DetailPage.propTypes = {
+  userRole: PropTypes.string,
 };
 
 export default DetailPage;

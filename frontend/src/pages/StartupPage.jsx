@@ -23,7 +23,12 @@ const Dropdown = ({ label, options, selected, onSelect }) => {
   }, []);
 
   return (
-    <div ref={dropdownRef} className={`relative m-0 transition-colors ${isDarkMode ? "text-gray-200" : "text-gray-900"}`}>
+    <div
+      ref={dropdownRef}
+      className={`relative m-0 transition-colors ${
+        isDarkMode ? "text-gray-200" : "text-gray-900"
+      }`}
+    >
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`border rounded-full px-4 py-2 text-left focus:outline-none transition-colors ${
@@ -38,11 +43,22 @@ const Dropdown = ({ label, options, selected, onSelect }) => {
         </div>
       </button>
       {isOpen && (
-        <ul className={`absolute z-10 mt-1 rounded-md shadow-lg transition-colors ${
-          isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"
-        }`}>
+        <ul
+          className={`absolute z-10 mt-1 rounded-md shadow-lg transition-colors ${
+            isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"
+          }`}
+        >
           {options.map((option) => (
-            <li key={option} onClick={() => { onSelect(option); setIsOpen(false); }} className={`px-4 py-2 cursor-pointer transition-colors ${isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"}`}>
+            <li
+              key={option}
+              onClick={() => {
+                onSelect(option);
+                setIsOpen(false);
+              }}
+              className={`px-4 py-2 cursor-pointer transition-colors ${
+                isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
+              }`}
+            >
               {option}
             </li>
           ))}
@@ -59,7 +75,7 @@ Dropdown.propTypes = {
   onSelect: PropTypes.func.isRequired,
 };
 
-const StartupsPage = () => {
+const StartupsPage = ({ userRole }) => {
   const [isSidebarOpen, setSidebarIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedIndustry, setSelectedIndustry] = useState("All");
@@ -75,23 +91,21 @@ const StartupsPage = () => {
       fundingStage: "Seed",
     },
     {
-        id: 2,
-        name: "Healthcare Center",
-        industry: "Healthcare",
-        description: "Save the life of human's.",
-        fundingStage: "Seed",
+      id: 2,
+      name: "Healthcare Center",
+      industry: "Healthcare",
+      description: "Save the life of human's.",
+      fundingStage: "Seed",
     },
-      {
-        id: 3,
-        name: "UBA Bank",
-        industry: "Finance",
-        description: "Save money and give out Loans.",
-        fundingStage: "Seed",
-      },
-      
+    {
+      id: 3,
+      name: "UBA Bank",
+      industry: "Finance",
+      description: "Save money and give out Loans.",
+      fundingStage: "Seed",
+    },
   ];
 
-  
   const industries = ["All", "Technology", "Healthcare", "Finance"];
   // You might add other filters for funding stage or location
 
@@ -99,15 +113,28 @@ const StartupsPage = () => {
     const matchesSearch =
       startup.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       startup.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesIndustry = selectedIndustry === "All" || startup.industry === selectedIndustry;
+    const matchesIndustry =
+      selectedIndustry === "All" || startup.industry === selectedIndustry;
     return matchesSearch && matchesIndustry;
   });
 
   return (
-    <div className={`flex min-h-screen transition-colors ${isDarkMode ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-900"}`}>
-      <Sidebar userRole="startup" isOpen={isSidebarOpen} setIsOpen={setSidebarIsOpen} />
-      <div className={`flex-1 p-6 transition-all ${isSidebarOpen ? "lg:ml-64" : "lg:ml-16"} ${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
-        <Header className="mb-6" />
+    <div
+      className={`flex min-h-screen transition-colors ${
+        isDarkMode ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-900"
+      }`}
+    >
+      <Sidebar
+        userRole="startup"
+        isOpen={isSidebarOpen}
+        setIsOpen={setSidebarIsOpen}
+      />
+      <div
+        className={`flex-1 p-6 transition-all ${
+          isSidebarOpen ? "lg:ml-64" : "lg:ml-16"
+        } ${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}
+      >
+        <Header userRole={userRole} className="mb-6" />
         <h1 className="text-3xl font-bold mb-6">Startups</h1>
 
         {/* Filters Section */}
@@ -118,22 +145,41 @@ const StartupsPage = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className={`flex-1 border rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[200px] transition-colors ${
-              isDarkMode ? "bg-gray-700 text-gray-200 border-gray-600" : "bg-white text-gray-700 border-gray-300"
+              isDarkMode
+                ? "bg-gray-700 text-gray-200 border-gray-600"
+                : "bg-white text-gray-700 border-gray-300"
             }`}
           />
-          <Dropdown label="Industry" options={industries} selected={selectedIndustry} onSelect={setSelectedIndustry} />
+          <Dropdown
+            label="Industry"
+            options={industries}
+            selected={selectedIndustry}
+            onSelect={setSelectedIndustry}
+          />
           {/* Add more dropdowns for other filters if needed */}
         </div>
 
         {/* Startup Listings Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredStartups.map((startup) => (
-            <StartupCard key={startup.id} startup={startup} className={`transition-transform duration-200 hover:scale-105 ${isDarkMode ? "dark:bg-gray-800 text-white border border-gray-700" : "bg-white text-gray-800 border border-gray-300"}`} />
+            <StartupCard
+              key={startup.id}
+              startup={startup}
+              className={`transition-transform duration-200 hover:scale-105 ${
+                isDarkMode
+                  ? "dark:bg-gray-800 text-white border border-gray-700"
+                  : "bg-white text-gray-800 border border-gray-300"
+              }`}
+            />
           ))}
         </div>
       </div>
     </div>
   );
+};
+
+StartupsPage.propTypes = {
+  userRole: PropTypes.string,
 };
 
 export default StartupsPage;

@@ -6,7 +6,7 @@ import { DarkModeContext } from "./DarkModeContext";
 import PropTypes from "prop-types";
 import Logo from "./Logo";
 
-const Header = ({ className }) => {
+const Header = ({ className, userRole }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { isDarkMode, toggleDarkMode } = useContext(DarkModeContext);
 
@@ -25,31 +25,61 @@ const Header = ({ className }) => {
           <Logo className="w-15 h-15" />
         </Link>
         <nav className="ml-10 space-x-6 hidden md:flex">
-          <Link
-            to="/dashboard"
-            className="hover:text-blue-600 font-medium transition"
-          >
-            Dashboard
-          </Link>
-          <Link
-            to="/jobs"
-            className="hover:text-blue-600 font-medium transition"
-          >
-            Jobs
-          </Link>
-          <Link
-            to="/network"
-            className="hover:text-blue-600 font-medium transition"
-          >
-            Network
-          </Link>
-          <Link
-            to="/learning"
-            className="hover:text-blue-600 font-medium transition"
-          >
-            Learning
-          </Link>
-          
+          {userRole === "jobseeker" ? (
+            <>
+              <Link
+                to="/dashboard"
+                className="hover:text-blue-600 font-medium transition"
+              >
+                Dashboard
+              </Link>
+              <Link
+                to="/jobs"
+                className="hover:text-blue-600 font-medium transition"
+              >
+                Jobs
+              </Link>
+              <Link
+                to="/network"
+                className="hover:text-blue-600 font-medium transition"
+              >
+                Network
+              </Link>
+              <Link
+                to="/learning"
+                className="hover:text-blue-600 font-medium transition"
+              >
+                Learning
+              </Link>
+            </>
+          ) : userRole === "recruiter" ? (
+            <>
+              <Link
+                to="/dashboard"
+                className="hover:text-blue-600 font-medium transition"
+              >
+                Dashboard
+              </Link>
+              <Link
+                to="/candidates"
+                className="hover:text-blue-600 font-medium transition"
+              >
+                Candidates
+              </Link>
+              <Link
+                to="/reports"
+                className="hover:text-blue-600 font-medium transition"
+              >
+                Reports
+              </Link>
+              <Link
+                to="/settings"
+                className="hover:text-blue-600 font-medium transition"
+              >
+                Settings
+              </Link>
+            </>
+          ) : null}
         </nav>
       </div>
 
@@ -143,6 +173,7 @@ const Header = ({ className }) => {
 
 Header.propTypes = {
   className: PropTypes.string,
+  userRole: PropTypes.oneOf(["jobseeker", "recruiter"]).isRequired,
 };
 
 export default Header;

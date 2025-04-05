@@ -4,8 +4,9 @@ import Header from "@/components/Header";
 import kApplications from "@/data/applications";
 import { FaSearch, FaEnvelope, FaTimesCircle } from "react-icons/fa";
 import { DarkModeContext } from "@/components/DarkModeContext";
+import PropTypes from "prop-types";
 
-const MyApplications = () => {
+const MyApplications = ({ userRole }) => {
   const [search, setSearch] = useState("");
   const [isOpen, setIsOpen] = useState(true);
   const { isDarkMode } = useContext(DarkModeContext);
@@ -35,13 +36,13 @@ const MyApplications = () => {
 
   return (
     <div className={`flex ${isDarkMode ? "dark" : ""}`}>
-      <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
+      <Sidebar userRole={userRole} isOpen={isOpen} setIsOpen={setIsOpen} />
       <div
         className={`w-full transition-all duration-300 ${
           !isOpen ? "ml-16" : "ml-64 max-w-6xl"
         }`}
       >
-        <Header />
+        <Header userRole={userRole} />
 
         {/* Container Card */}
         <div
@@ -151,6 +152,10 @@ const MyApplications = () => {
       </div>
     </div>
   );
+};
+
+MyApplications.propTypes = {
+  userRole: PropTypes.string.isRequired,
 };
 
 export default MyApplications;

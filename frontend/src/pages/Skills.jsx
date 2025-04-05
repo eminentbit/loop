@@ -36,7 +36,7 @@ const SkillsPage = ({ userRole }) => {
           isOpen ? "ml-64" : "ml-16"
         } bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-white`}
       >
-        <Header />
+        <Header userRole={userRole} />
         <div className="flex flex-col md:flex-row gap-6">
           {/* Left Column */}
           <div className="w-full md:w-2/3 space-y-6">

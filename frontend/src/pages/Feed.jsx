@@ -61,7 +61,7 @@ const sampleInsights = [
   },
 ];
 
-const Feed = () => {
+const Feed = ({ userRole }) => {
   const { isDarkMode } = useContext(DarkModeContext);
   const [posts] = useState(samplePosts);
   const [isOpen, setIsopen] = useState(false);
@@ -74,7 +74,7 @@ const Feed = () => {
     >
       {/* Global Header */}
       <div className={`ml-20 px-6 ${isOpen ? "lg:ml-64" : "lg:ml-20"}`}>
-        <Header />
+        <Header userRole={userRole} />
       </div>
 
       <div className="flex max-w-7xl mx-auto pt-4">
@@ -105,6 +105,10 @@ const Feed = () => {
       </div>
     </div>
   );
+};
+
+Feed.propTypes = {
+  userRole: PropTypes.string,
 };
 
 const CareerInsights = ({ insights }) => {

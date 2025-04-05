@@ -14,6 +14,8 @@ import {
   UsersRound,
   ChevronRightIcon,
   ChevronDownIcon,
+  TrendingUp,
+  LineChart,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
@@ -74,6 +76,16 @@ const Sidebar = ({ userRole, isOpen, setIsOpen }) => {
       name: "Hiring Analytics",
       path: "/analytics",
       icon: <Star className="w-5 h-5" />,
+    },
+    {
+      name: "Investor Tracker",
+      path: "/investor-tracker",
+      icon: <TrendingUp className="w-5 h-5" />,
+    },
+    {
+      name: "Startup Listings",
+      path: "/startups",
+      icon: <LineChart className="w-5 h-5" />,
     },
   ];
 

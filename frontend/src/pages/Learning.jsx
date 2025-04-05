@@ -7,7 +7,7 @@ import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import { DarkModeContext } from "@/components/DarkModeContext";
 // import "react-circular-progressbar/dist/styles.css";
 
-function LearningPage() {
+function LearningPage({ userRole }) {
   const [isOpen, setIsOpen] = useState(true);
   const { isDarkMode } = useContext(DarkModeContext);
   const overallProgress = 70;
@@ -18,13 +18,18 @@ function LearningPage() {
         isDarkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
       }`}
     >
-      <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} isDarkMode={isDarkMode} />
+      <Sidebar
+        userRole={userRole}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        isDarkMode={isDarkMode}
+      />
       <div
         className={`${
           isOpen ? "ml-64" : "ml-20"
         } flex-grow transition-all duration-300`}
       >
-        <Header isDarkMode={isDarkMode} />
+        <Header isDarkMode={isDarkMode} userRole={userRole} />
         <div className="px-6 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/** Left Column: Overall Performance with Semicircular Meter & Course Cards **/}
@@ -180,6 +185,10 @@ function LearningPage() {
     </div>
   );
 }
+
+LearningPage.propTypes = {
+  userRole: PropTypes.string.isRequired,
+};
 
 // Utility Data and Components
 

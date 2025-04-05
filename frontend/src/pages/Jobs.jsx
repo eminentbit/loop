@@ -72,7 +72,7 @@ const Dropdown = ({ label, options, selected, onSelect }) => {
   );
 };
 
-const JobsPage = () => {
+const JobsPage = ({ userRole }) => {
   const [isSidebarOpen, setSidebarIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("All");
@@ -137,7 +137,7 @@ const JobsPage = () => {
         } ${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}
       >
         {/* Header */}
-        <Header className="mb-6" />
+        <Header className="mb-6" userRole={userRole} />
 
         {/* Page Title */}
         <h1 className="text-3xl font-bold mb-6">Job Listings</h1>
@@ -211,6 +211,10 @@ const JobsPage = () => {
       </div>
     </div>
   );
+};
+
+JobsPage.propTypes = {
+  userRole: PropTypes.string,
 };
 
 Dropdown.propTypes = {

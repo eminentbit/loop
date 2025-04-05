@@ -54,7 +54,7 @@ const NetworkPage = ({ userRole }) => {
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} userRole={userRole} />
+      <Sidebar userRole={userRole} isOpen={isOpen} setIsOpen={setIsOpen} />
       <div
         className={`flex-1 p-6 transition-colors ${
           !isOpen ? "ml-16" : "ml-64"
@@ -62,7 +62,7 @@ const NetworkPage = ({ userRole }) => {
           isDarkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
         }`}
       >
-        <Header />
+        <Header userRole={userRole} />
         <h1 className="text-3xl font-extrabold mb-6">Network</h1>
         <div className="flex flex-col md:flex-row gap-6">
           {/* Left Panel: Manage My Network */}

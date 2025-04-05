@@ -8,7 +8,7 @@ import jobs from "../data/recommended";
 import PropTypes from "prop-types";
 import { DarkModeContext } from "../components/DarkModeContext";
 
-const RecomendedPage = ({ className = "" }) => {
+const RecomendedPage = ({ className, userRole }) => {
   const { isDarkMode } = useContext(DarkModeContext);
   const [isOpen, setIsOpen] = useState(true);
 
@@ -17,7 +17,9 @@ const RecomendedPage = ({ className = "" }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/recommended");
+        const response = await fetch(
+          "http://localhost:8000/api/jobs/recommended"
+        );
         const data = await response.json();
         console.log("API response", data);
       } catch (error) {
@@ -30,7 +32,7 @@ const RecomendedPage = ({ className = "" }) => {
 
   return (
     <div className="flex">
-      <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
+      <Sidebar userRole={userRole} isOpen={isOpen} setIsOpen={setIsOpen} />
       <div
         className={`${
           isOpen ? "ml-64" : "ml-16"
@@ -42,7 +44,7 @@ const RecomendedPage = ({ className = "" }) => {
       } 
       ${className}`}
       >
-        <Header />
+        <Header userRole={userRole} />
         {/* Grid container wrapping the job cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {jobs.map((job) => (
@@ -55,8 +57,8 @@ const RecomendedPage = ({ className = "" }) => {
 };
 
 RecomendedPage.propTypes = {
-  job: PropTypes.object,
   className: PropTypes.string,
+  userRole: PropTypes.string,
 };
 
 export default RecomendedPage;

@@ -18,37 +18,41 @@ import LandingPage from "@/pages/LandingPage";
 import StartupPage from "@/pages/StartupPage";
 
 const AppRoutes = () => {
+  const role = "recruiter";
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<SignupWizard />} />
       <Route path="/signup" element={<SignupWizard />} />
-      <Route path="/dashboard" element={<Dashboard userRole={"jobSeeker"} />} />
-      <Route path="/jobs" element={<JobsPage />} />
-      <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/dashboard" element={<Dashboard userRole={role} />} />
+      <Route path="/jobs" element={<JobsPage userRole={role} />} />
+      <Route path="/profile" element={<ProfilePage userRole={role} />} />
       <Route path="/test" element={<TestDashboard />} />
-      <Route path="/feed" element={<Feed />} />
-      <Route path="/network" element={<NetworkPage />} />
-      <Route path="/recommended" element={<RecommendedPage />} />
-      <Route path="/startup" element={<StartupPage />} />
+      <Route path="/feed" element={<Feed userRole={role} />} />
+      <Route path="/network" element={<NetworkPage userRole={role} />} />
       <Route
-        path="/community"
-        element={<CommunityPage userRole={"jobseeker"} />}
+        path="/recommended"
+        element={<RecommendedPage userRole={role} />}
       />
-      <Route
-        path="/assessments"
-        element={<SkillsPage userRole={"jobseeker"} />}
-      />
+      <Route path="/startup" element={<StartupPage userRole={role} />} />
+      <Route path="/community" element={<CommunityPage userRole={role} />} />
+      <Route path="/assessments" element={<SkillsPage userRole={role} />} />
       <Route path="/jobs">
         <Route
           path="/jobs/recommended"
           element={<RecommendedPage userRole={"jobseeker"} />}
         />
-        <Route path="/jobs/:jobId" element={<DetailPage />} />
+        <Route path="/jobs/:jobId" element={<DetailPage userRole={role} />} />
       </Route>
-      <Route path="/applications" element={<MyApplications />} />
-      <Route path="/notifications" element={<NotificationPage />} />
-      <Route path="/learning" element={<LearningPage />} />
+      <Route
+        path="/applications"
+        element={<MyApplications userRole={role} />}
+      />
+      <Route
+        path="/notifications"
+        element={<NotificationPage userRole={role} />}
+      />
+      <Route path="/learning" element={<LearningPage userRole={role} />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

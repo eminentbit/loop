@@ -109,7 +109,7 @@ const CommunityPage = ({ userRole }) => {
           isDarkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
         } ${isOpen ? "ml-64" : "ml-16"}`}
       >
-        <Header />
+        <Header userRole={userRole} />
         <h1 className="text-3xl font-bold mb-4">
           {showExplore ? "Explore Communities" : "Your Communities"}
         </h1>

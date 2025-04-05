@@ -3,20 +3,21 @@ import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import { useContext, useState } from "react";
 import { DarkModeContext } from "@/components/DarkModeContext";
+import PropTypes from "prop-types";
 
-const ProfilePage = () => {
+const ProfilePage = ({ userRole }) => {
   const { isDarkMode } = useContext(DarkModeContext);
   const [isOpen, setIsOpen] = useState(true);
 
   return (
     <div className="flex transition-all duration-300 ease-in-out">
-      <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
+      <Sidebar userRole={userRole} isOpen={isOpen} setIsOpen={setIsOpen} />
       <div
         className={`p-6 transition-colors ${!isOpen ? "ml-16" : "ml-[16em]"} ${
           isDarkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
         }`}
       >
-        <Header />
+        <Header userRole={userRole} />
         {/* Profile Header */}
         <div
           className={`shadow rounded-lg p-6 mb-6 ${
@@ -127,6 +128,10 @@ const ProfilePage = () => {
       </div>
     </div>
   );
+};
+
+ProfilePage.propTypes = {
+  userRole: PropTypes.string.isRequired,
 };
 
 export default ProfilePage;

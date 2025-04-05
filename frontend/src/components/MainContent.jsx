@@ -31,12 +31,17 @@ const MainContent = ({ userRole }) => {
           <Recommendations type="jobs" />
           <ActivityFeed type="community" />
         </>
-      ) : (
+      ) : userRole === "recruiter" ? (
         <>
           <Recommendations type="candidates" />
           <ActivityFeed type="recruitment" />
         </>
-      )}
+      ) : userRole === "investor" ? (
+        <>
+          <Recommendations type="startups" />
+          <ActivityFeed type="investment" />
+        </>
+      ) : null}
     </main>
   );
 };
