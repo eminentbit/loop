@@ -1,7 +1,11 @@
-from rest_framework.generics import ListAPIView # type: ignore
+# jobs/views.py
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from .models import Job
-from .serializers import JobSerializer # type: ignore
+from .serializers import JobSerializer
 
-class JobsList(ListAPIView):
-    queryset = Job.objects.all()
-    serializer_class = JobSerializer
+class JobListView(APIView):
+    def get(self, request):
+        jobs = Job.objects.all().order_by('-posted_at')
+        serializer = JobSerializer(jobs, many=True)
+        return Response(serializer.data)

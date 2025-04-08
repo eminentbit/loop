@@ -6,7 +6,6 @@ import Header from "../components/Header";
 function CandidatePool() {
   const { darkMode } = useContext(DarkModeContext);
   const [isOpen, setIsOpen] = useState(false);
-
   const userRole = "admin"; // Can be dynamic if needed
 
   const candidates = [

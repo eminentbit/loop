@@ -24,7 +24,7 @@ import Settings from "@/pages/Setting";
 import Report from "@/pages/Report";
 import StartupListing from "@/pages/StartupListings";
 const AppRoutes = () => {
-  const role = "recruiter";
+  const role = "jobseeker";
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
@@ -60,12 +60,21 @@ const AppRoutes = () => {
       />
       <Route path="/learning" element={<LearningPage userRole={role} />} />
       <Route path="/candidates" element={<CandidatePool userRole={role} />} />
-      <Route path="/collaboration"element={<TeamCollaboration userRole={role} />}/>
+      <Route
+        path="/collaboration"
+        element={<TeamCollaboration userRole={role} />}
+      />
       <Route path="/analytics" element={<HiringAnalytics userRole={role} />} />
-      <Route path="/investor-tracker" element={<InvestorTracker userRole={role} />} />
+      <Route
+        path="/investor-tracker"
+        element={<InvestorTracker userRole={role} />}
+      />
       <Route path="/reports" element={<Report userRole={role} />} />
       <Route path="/settings" element={<Settings userRole={role} />} />
-      <Route path="/startup-listings" element={<StartupListing userRole={role} />} />
+      <Route
+        path="/startup-listings"
+        element={<StartupListing userRole={role} />}
+      />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
