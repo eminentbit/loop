@@ -5,6 +5,11 @@ const jobs = [
     company: "Tech Corp",
     location: "Remote",
     salary: "$70k - $90k",
+    description: "Develop and maintain user interfaces using React.js.",
+    requirements: [
+      "2+ years of experience with React.js",
+      "Strong knowledge of HTML, CSS, and JavaScript",
+    ],
     type: "Full-time",
   },
   {
@@ -13,6 +18,11 @@ const jobs = [
     company: "Innovate Inc.",
     location: "Hybrid",
     salary: "$80k - $100k",
+    description: "Build and maintain server-side applications using Node.js.",
+    requirements: [
+      "3+ years of experience with Node.js",
+      "Experience with databases like MongoDB or PostgreSQL",
+    ],
     type: "Full-time",
   },
   {
@@ -21,6 +31,11 @@ const jobs = [
     company: "Design Hub",
     location: "On-site",
     salary: "$60k - $80k",
+    description: "Create user-friendly designs and prototypes.",
+    requirements: [
+      "Proficiency in design tools like Figma or Sketch",
+      "Experience in user research and usability testing",
+    ],
     type: "Contract",
   },
   {
@@ -29,6 +44,11 @@ const jobs = [
     company: "Design Hub",
     location: "On-site",
     salary: "$100k - $150k",
+    description: "Work on both front-end and back-end development.",
+    requirements: [
+      "Proficiency in React.js and Node.js",
+      "Experience with RESTful APIs",
+    ],
     type: "Contract",
   },
   {
@@ -37,6 +57,11 @@ const jobs = [
     company: "CloudWave",
     location: "Remote",
     salary: "$90k - $120k",
+    description: "Manage cloud infrastructure and CI/CD pipelines.",
+    requirements: [
+      "Experience with AWS, Docker, and Kubernetes",
+      "Strong scripting skills in Python or Bash",
+    ],
     type: "Full-time",
   },
   {
@@ -45,6 +70,11 @@ const jobs = [
     company: "Appify",
     location: "Hybrid",
     salary: "$75k - $95k",
+    description: "Develop mobile applications for iOS and Android.",
+    requirements: [
+      "Experience with React Native or Flutter",
+      "Knowledge of mobile UI/UX principles",
+    ],
     type: "Full-time",
   },
   {
@@ -53,6 +83,11 @@ const jobs = [
     company: "DataWorks",
     location: "Remote",
     salary: "$65k - $85k",
+    description: "Analyze data and generate reports.",
+    requirements: [
+      "Proficiency in SQL and data visualization tools",
+      "Experience with Python or R is a plus",
+    ],
     type: "Part-time",
   },
   {
@@ -61,6 +96,11 @@ const jobs = [
     company: "SoftTest",
     location: "On-site",
     salary: "$70k - $90k",
+    description: "Ensure software quality through testing and debugging.",
+    requirements: [
+      "Experience with automated testing tools",
+      "Strong attention to detail and analytical skills",
+    ],
     type: "Full-time",
   },
   {
@@ -69,6 +109,11 @@ const jobs = [
     company: "LaunchPad",
     location: "Hybrid",
     salary: "$110k - $140k",
+    description: "Oversee product development and strategy.",
+    requirements: [
+      "Experience in product management or related field",
+      "Strong communication and leadership skills",
+    ],
     type: "Full-time",
   },
 ];

@@ -9,10 +9,5 @@ urlpatterns = [
     # API endpoints
     path('api/jobs/', include('jobs.urls')),          
     path('api/network/', include('network.urls')), 
-    path('api/learning/', include('learning.urls')),   
-    path(
-        '',
-        RedirectView.as_view(url='/api/jobs/', permanent=False),
-        name='root-redirect'
-    ),
+    path('api/learning/', include('learning.urls')),  
 ]

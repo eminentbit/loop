@@ -28,7 +28,7 @@ function LearningPage({ userRole }) {
       try {
         const token = localStorage.getItem("token");
         const res = await fetch(
-          "http://localhost:8000/api/learning/dashboard/",
+          "http://localhost:8000/api/learning/",
           {
             headers: {
               "Content-Type": "application/json",

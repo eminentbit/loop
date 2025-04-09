@@ -5,7 +5,6 @@ import Header from "../components/Header";
 import { ChevronDownIcon } from "lucide-react";
 import PropTypes from "prop-types";
 import { DarkModeContext } from "../components/DarkModeContext";
-
 // 🔽 Dropdown Component
 const Dropdown = ({ label, options, selected, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -84,7 +83,9 @@ const JobsPage = ({ userRole }) => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/jobs"); // <-- Adjust to your actual backend URL
+        const response = await fetch("http://localhost:8000/api/jobs", {
+          // credentials: "include",
+        }); // <-- Adjust to your actual backend URL
         const data = await response.json();
         console.log("Fetched jobs:", data);
         setJobs(data);

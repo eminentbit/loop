@@ -1,11 +1,11 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
 from .models import Enrollment, Streak
 from .serializers import EnrollmentSerializer, StreakSerializer
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def learning_dashboard(request):
     user = request.user
     enrollments = Enrollment.objects.filter(user=user)

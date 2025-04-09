@@ -3,7 +3,7 @@ from django.shortcuts import render
 # network/views.py
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth.models import User
 from .models import Follow
 from .serializers import UserSerializer
@@ -16,7 +16,7 @@ class UserListAPIView(APIView):
         return Response(serializer.data)
 
 class FollowToggleAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     def post(self, request):
         target_id = request.data.get('user_id')
         try:

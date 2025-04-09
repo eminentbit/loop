@@ -36,6 +36,7 @@ const AppRoutes = () => {
       <Route path="/test" element={<TestDashboard />} />
       <Route path="/feed" element={<Feed userRole={role} />} />
       <Route path="/network" element={<NetworkPage userRole={role} />} />
+      <Route path="/details" element={<DetailPage userRole={role} />} />
       <Route
         path="/recommended"
         element={<RecommendedPage userRole={role} />}
