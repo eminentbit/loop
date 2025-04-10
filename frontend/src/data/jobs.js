@@ -2,7 +2,7 @@ const jobs = [
   {
     id: 1,
     title: "Frontend Developer",
-    company: "Tech Corp",
+    company: "Etablissement TF le Grand Bazar",
     location: "Remote",
     salary: "$70k - $90k",
     description: "Develop and maintain user interfaces using React.js.",
