@@ -1,18 +1,14 @@
-// JobsPage.jsx
 import { useState, useEffect, useRef, useContext } from "react";
 import JobCard from "../components/JobsCard";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
-import jobs from "../data/jobs";
 import { ChevronDownIcon } from "lucide-react";
 import PropTypes from "prop-types";
 import { DarkModeContext } from "../components/DarkModeContext";
-
-// Custom Dropdown component
+// 🔽 Dropdown Component
 const Dropdown = ({ label, options, selected, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
-  // eslint-disable-next-line no-unused-vars
-  const { isDarkMode, setIsDarkMode } = useContext(DarkModeContext);
+  const { isDarkMode } = useContext(DarkModeContext);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -72,15 +68,34 @@ const Dropdown = ({ label, options, selected, onSelect }) => {
   );
 };
 
+// 🔽 Main Jobs Page Component
 const JobsPage = ({ userRole }) => {
+  const [jobs, setJobs] = useState([]);
   const [isSidebarOpen, setSidebarIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("All");
   const [selectedJobType, setSelectedJobType] = useState("All");
   const [selectedCompany, setSelectedCompany] = useState("All");
   const [selectedSalary, setSelectedSalary] = useState("All");
-  // eslint-disable-next-line no-unused-vars
-  const { isDarkMode, setIsDarkMode } = useContext(DarkModeContext);
+  const { isDarkMode } = useContext(DarkModeContext);
+
+  // 🔁 Fetch jobs from API
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/api/jobs", {
+          // credentials: "include",
+        }); // <-- Adjust to your actual backend URL
+        const data = await response.json();
+        console.log("Fetched jobs:", data);
+        setJobs(data);
+      } catch (error) {
+        console.error("Failed to fetch jobs:", error);
+      }
+    };
+
+    fetchJobs();
+  }, []);
 
   // Filter options
   const locations = ["All", "Remote", "Hybrid", "On-site"];
@@ -94,7 +109,7 @@ const JobsPage = ({ userRole }) => {
     "100k+",
   ];
 
-  // Filter jobs by all criteria
+  // 🔍 Filter jobs based on search & selections
   const filteredJobs = jobs.filter((job) => {
     const matchesSearch =
       job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -123,28 +138,22 @@ const JobsPage = ({ userRole }) => {
         isDarkMode ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-900"
       }`}
     >
-      {/* Sidebar */}
       <Sidebar
         userRole={"jobseeker"}
         isOpen={isSidebarOpen}
         setIsOpen={setSidebarIsOpen}
       />
 
-      {/* Main Content */}
       <div
         className={`flex-1 p-6 transition-all ${
           isSidebarOpen ? "lg:ml-64" : "lg:ml-16"
         } ${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}
       >
-        {/* Header */}
         <Header className="mb-6" userRole={userRole} />
-
-        {/* Page Title */}
         <h1 className="text-3xl font-bold mb-6">Job Listings</h1>
 
-        {/* Filters Section */}
+        {/* 🔽 Filters */}
         <div className="flex flex-wrap items-center gap-2 mb-6">
-          {/* Search Filter */}
           <input
             type="text"
             placeholder="Search jobs..."
@@ -157,44 +166,33 @@ const JobsPage = ({ userRole }) => {
             }`}
           />
 
-          {/* Location Filter */}
           <Dropdown
             label="Location"
             options={locations}
             selected={selectedLocation}
             onSelect={setSelectedLocation}
-            isDarkMode={isDarkMode}
           />
-
-          {/* Job Type Filter */}
           <Dropdown
             label="Job Type"
             options={jobTypes}
             selected={selectedJobType}
             onSelect={setSelectedJobType}
-            isDarkMode={isDarkMode}
           />
-
-          {/* Company Filter */}
           <Dropdown
             label="Company"
             options={companies}
             selected={selectedCompany}
             onSelect={setSelectedCompany}
-            isDarkMode={isDarkMode}
           />
-
-          {/* Salary Range Filter */}
           <Dropdown
             label="Salary Range"
             options={salaryRanges}
             selected={selectedSalary}
             onSelect={setSelectedSalary}
-            isDarkMode={isDarkMode}
           />
         </div>
 
-        {/* Job Listings Grid */}
+        {/* 🧱 Job Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredJobs.map((job) => (
             <JobCard

@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-6%5j%h%g^g-el&hmzwg$^iky4=2ls^j-af#-wq)%tny(vc32d3'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -41,8 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    # 'auth',
     'jobs',
-    'auth',
+    'network',
+    'learning',
 ]
 
 MIDDLEWARE = [
@@ -54,8 +56,22 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsPostCsrfMiddleware',
 ]
+
+# Rest Framework 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
+
+
+SESSION_COOKIE_AGE = 7200 # 2 hours
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 
 ROOT_URLCONF = 'core.urls'
 
@@ -119,7 +135,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-AUTH_USER_MODEL = 'auth.UserAccount'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -130,3 +145,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# AUTH_USER_MODEL = 'auth.UserAccount'
+

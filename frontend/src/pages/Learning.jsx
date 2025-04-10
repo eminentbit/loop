@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import PropTypes from "prop-types";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import { DarkModeContext } from "@/components/DarkModeContext";
@@ -10,7 +10,101 @@ import { DarkModeContext } from "@/components/DarkModeContext";
 function LearningPage({ userRole }) {
   const [isOpen, setIsOpen] = useState(true);
   const { isDarkMode } = useContext(DarkModeContext);
-  const overallProgress = 70;
+
+  // ─── Dashboard state ─────────────────────────────────────────────────────
+  const [overallProgress, setOverallProgress] = useState(0);
+  const [enrolled, setEnrolled]           = useState(0);
+  const [completed, setCompleted]         = useState(0);
+  const [hours, setHours]                 = useState(0);
+  const [quizzes, setQuizzes]             = useState(0);
+  const [userCourses, setUserCourses]     = useState([]);
+  const [streakMap, setStreakMap]         = useState({});
+  const [loading, setLoading]             = useState(true);
+  const [error, setError]                 = useState(null);
+
+  // ─── Fetch on mount ──────────────────────────────────────────────────────
+  useEffect(() => {
+    async function fetchDashboard() {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(
+          "http://localhost:8000/api/learning/",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (!res.ok) throw new Error(`Server responded ${res.status}`);
+        const data = await res.json();
+
+        // Stats
+        setOverallProgress(data.overall_progress);
+        setEnrolled(data.enrolled);
+        setCompleted(data.completed);
+        setHours(data.hours);
+        setQuizzes(data.quizzes);
+
+        // Courses (flatten Enrollment → Course)
+        const courses = data.courses.map(({ course }) => ({
+          title: course.title,
+          image: course.image_url || course.image,
+        }));
+        setUserCourses(courses);
+
+        // Streak (array → map for quick lookup)
+        const streakObj = {};
+        data.streak.forEach(({ day, active }) => {
+          streakObj[day] = active;
+        });
+        setStreakMap(streakObj);
+      } catch (err) {
+        console.error(err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchDashboard();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading…
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div className="text-red-500 text-center mt-8">
+        Error loading dashboard: {error}
+      </div>
+    );
+  }
+
+  // ─── Constants ──────────────────────────────────────────────────────────
+  const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  // keep your static “Trending This Week” here
+  const trendingCourses = [
+    {
+      title: "Intro to JavaScript",
+      image:
+        "https://tse3.mm.bing.net/th?id=OIP.7_ojbVQQu1aoICcsmIWV0AHaEK&w=266&h=266&c=7",
+    },
+    {
+      title: "CSS Mastery",
+      image:
+        "https://tse4.mm.bing.net/th?id=OIP.QTKdgqg26vaSNV9KXHbJZgHaEK&w=266&h=266&c=7",
+    },
+    {
+      title: "Node.js for Beginners",
+      image:
+        "https://tse4.mm.bing.net/th?id=OIP.tpwkUkFsa02d1XfS8fKG_wHaEK&w=266&h=266&c=7",
+    },
+  ];
 
   return (
     <div
@@ -30,10 +124,12 @@ function LearningPage({ userRole }) {
         } flex-grow transition-all duration-300`}
       >
         <Header isDarkMode={isDarkMode} userRole={userRole} />
+
         <div className="px-6 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/** Left Column: Overall Performance with Semicircular Meter & Course Cards **/}
+            {/* Left Column */}
             <div className="lg:col-span-2 space-y-8">
+              {/* Overall Performance */}
               <div
                 className={`rounded-xl shadow-lg p-6 flex flex-col items-center ${
                   isDarkMode ? "bg-gray-800" : "bg-white"
@@ -52,16 +148,16 @@ function LearningPage({ userRole }) {
                       rotation: 0.75,
                       strokeLinecap: "butt",
                       textSize: "16px",
-                      pathColor: isDarkMode ? "#60a5fa" : "#3b82f6", // blue-400 vs blue-500
-                      textColor: isDarkMode ? "#ffffff" : "#1f2937", // white vs gray-800
-                      trailColor: isDarkMode ? "#4b5563" : "#d1d5db", // gray-700 vs gray-300
+                      pathColor: isDarkMode ? "#60a5fa" : "#3b82f6",
+                      textColor: isDarkMode ? "#ffffff" : "#1f2937",
+                      trailColor: isDarkMode ? "#4b5563" : "#d1d5db",
                     })}
                   />
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
                   <StatCircle
                     title="Enrolled"
-                    value={8}
+                    value={enrolled}
                     borderColor={
                       isDarkMode ? "border-blue-400" : "border-blue-500"
                     }
@@ -69,7 +165,7 @@ function LearningPage({ userRole }) {
                   />
                   <StatCircle
                     title="Completed"
-                    value={5}
+                    value={completed}
                     borderColor={
                       isDarkMode ? "border-green-400" : "border-green-500"
                     }
@@ -77,7 +173,7 @@ function LearningPage({ userRole }) {
                   />
                   <StatCircle
                     title="Hours"
-                    value={42}
+                    value={hours}
                     borderColor={
                       isDarkMode ? "border-purple-400" : "border-purple-500"
                     }
@@ -85,7 +181,7 @@ function LearningPage({ userRole }) {
                   />
                   <StatCircle
                     title="Quizzes"
-                    value={12}
+                    value={quizzes}
                     borderColor={
                       isDarkMode ? "border-red-400" : "border-red-500"
                     }
@@ -94,16 +190,19 @@ function LearningPage({ userRole }) {
                 </div>
               </div>
 
+              {/* Your Courses */}
               <div
                 className={`rounded-xl shadow-lg p-6 ${
                   isDarkMode ? "bg-gray-800" : "bg-white"
                 }`}
               >
-                <h2 className="text-2xl font-semibold mb-6">Your Courses</h2>
+                <h2 className="text-2xl font-semibold mb-6">
+                  Your Courses
+                </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {trendingCourses.map((course, index) => (
+                  {userCourses.map((course, idx) => (
                     <CourseCard
-                      key={index}
+                      key={idx}
                       course={course}
                       isDarkMode={isDarkMode}
                     />
@@ -121,8 +220,9 @@ function LearningPage({ userRole }) {
               </div>
             </div>
 
-            {/** Right Column: Weekly Streak & Trending This Week **/}
+            {/* Right Column */}
             <div className="space-y-8">
+              {/* Streak */}
               <div
                 className={`rounded-xl shadow-lg p-6 ${
                   isDarkMode ? "bg-gray-800" : "bg-white"
@@ -136,46 +236,51 @@ function LearningPage({ userRole }) {
                     <div key={day} className="flex flex-col items-center">
                       <span className="text-sm font-medium">{day}</span>
                       <div className="mt-2">
-                        <FlameIcon
-                          active={streak[day]}
-                          isDarkMode={isDarkMode}
-                        />
+                        <FlameIcon active={streakMap[day]} />
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
 
+              {/* Trending This Week */}
               <div
                 className={`rounded-xl shadow-lg p-6 ${
                   isDarkMode ? "bg-gray-800" : "bg-white"
                 }`}
               >
-                <h2 className="text-2xl font-bold mb-4">Trending This Week</h2>
+                <h2 className="text-2xl font-bold mb-4">
+                  Trending This Week
+                </h2>
                 <div className="space-y-4">
-                  <div
-                    className={`flex items-center gap-4 p-4 rounded-lg border ${
-                      isDarkMode
-                        ? "border-gray-700 hover:shadow-gray-600"
-                        : "border-gray-200 hover:shadow-md"
-                    } transition-shadow duration-300`}
-                  >
-                    <img
-                      src="your_image_url"
-                      alt="Trending Course"
-                      className="w-16 h-16 rounded-lg"
-                    />
-                    <div>
-                      <h3 className="font-semibold text-lg">Course Title</h3>
-                      <p
-                        className={`text-sm ${
-                          isDarkMode ? "text-gray-400" : "text-gray-600"
-                        }`}
-                      >
-                        Short description
-                      </p>
+                  {trendingCourses.map((c, i) => (
+                    <div
+                      key={i}
+                      className={`flex items-center gap-4 p-4 rounded-lg border ${
+                        isDarkMode
+                          ? "border-gray-700 hover:shadow-gray-600"
+                          : "border-gray-200 hover:shadow-md"
+                      } transition-shadow duration-300`}
+                    >
+                      <img
+                        src={c.image}
+                        alt={c.title}
+                        className="w-16 h-16 rounded-lg"
+                      />
+                      <div>
+                        <h3 className="font-semibold text-lg">
+                          {c.title}
+                        </h3>
+                        <p
+                          className={`text-sm ${
+                            isDarkMode ? "text-gray-400" : "text-gray-600"
+                          }`}
+                        >
+                          Short description
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -190,37 +295,7 @@ LearningPage.propTypes = {
   userRole: PropTypes.string.isRequired,
 };
 
-// Utility Data and Components
-
-const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-const streak = {
-  Sun: true,
-  Mon: false,
-  Tue: true,
-  Wed: true,
-  Thu: false,
-  Fri: true,
-  Sat: false,
-};
-
-const trendingCourses = [
-  {
-    title: "Intro to JavaScript",
-    image:
-      "https://tse3.mm.bing.net/th?id=OIP.7_ojbVQQu1aoICcsmIWV0AHaEK&w=266&h=266&c=7",
-  },
-  {
-    title: "CSS Mastery",
-    image:
-      "https://tse4.mm.bing.net/th?id=OIP.QTKdgqg26vaSNV9KXHbJZgHaEK&w=266&h=266&c=7",
-  },
-  {
-    title: "Node.js for Beginners",
-    image:
-      "https://tse4.mm.bing.net/th?id=OIP.tpwkUkFsa02d1XfS8fKG_wHaEK&w=266&h=266&c=7",
-  },
-];
+// ─── Utility Components ─────────────────────────────────────────────────
 
 function StatCircle({ title, value, borderColor, isDarkMode }) {
   return (
@@ -254,9 +329,7 @@ StatCircle.propTypes = {
 
 function FlameIcon({ active }) {
   return (
-    <span
-      className={active ? "text-red-500 text-2xl" : "text-gray-300 text-2xl"}
-    >
+    <span className={active ? "text-red-500 text-2xl" : "text-gray-300 text-2xl"}>
       🔥
     </span>
   );
@@ -266,19 +339,26 @@ FlameIcon.propTypes = {
   active: PropTypes.bool,
 };
 
-function CourseCard({ course }) {
+function CourseCard({ course, isDarkMode }) {
   return (
-    <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+    <div
+      className={`rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden ${
+        isDarkMode ? "bg-gray-700" : "bg-white"
+      }`}
+    >
       <img
         src={course.image}
         alt={course.title}
         className="w-full h-40 object-cover"
       />
       <div className="p-4">
-        <h3 className="text-lg font-semibold text-gray-800">{course.title}</h3>
+        <h3 className="text-lg font-semibold text-gray-800">
+          {course.title}
+        </h3>
         <Link
           to="/courses"
-          className="mt-3 inline-block text-blue-500 hover:underline font-medium"
+          className="mt-3 inline-block font-medium hover:underline"
+          style={{ color: isDarkMode ? "#60a5fa" : "#3b82f6" }}
         >
           View Course
         </Link>
@@ -292,6 +372,7 @@ CourseCard.propTypes = {
     title: PropTypes.string,
     image: PropTypes.string,
   }),
+  isDarkMode: PropTypes.bool,
 };
 
 export default LearningPage;

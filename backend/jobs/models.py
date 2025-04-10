@@ -1,27 +1,32 @@
+# jobs/models.py
 from django.db import models
 
-class Recommended (models.Model):
-    title = models.CharField(max_length=200)
-    company = models.CharField(max_length=200)
-    locatiom = models.CharField(max_length=200, blank=True, null=True)
-    description= models.TextField()
-    salary = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    job_type = models.CharField(
-        max_length=50,
-        choices=[
-            ('full_time', 'Full Time'),
-            ('part_time', 'Part Time'),
-            ('contract', 'Contract'),
-            ('internship', 'Internship'),
-        ],
-        default='full_time'
-    )
-    posted_at = models.DateTimeField(auto_now_add=True)
+class Job(models.Model):
+    JOB_TYPES = [
+        ('Full-time', 'Full-time'),
+        ('Contract', 'Contract'),
+    ]
 
-    class Meta:
-        ordering = ['-posted_at']
+    LOCATIONS = [
+        ('Remote', 'Remote'),
+        ('Hybrid', 'Hybrid'),
+        ('On-site', 'On-site'),
+    ]
+
+    SALARY_RANGES = [
+        ('$60k - $80k', '$60k - $80k'),
+        ('$70k - $90k', '$70k - $90k'),
+        ('$80k - $100k', '$80k - $100k'),
+        ('100k+', '100k+'),
+    ]
+
+    title = models.CharField(max_length=255)
+    company = models.CharField(max_length=255)
+    description = models.TextField()
+    location = models.CharField(max_length=50, choices=LOCATIONS)
+    type = models.CharField(max_length=50, choices=JOB_TYPES)
+    salary = models.CharField(max_length=50, choices=SALARY_RANGES)
+    posted_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.title} at {self.company}"
-
-# Create your models here.

@@ -84,7 +84,7 @@ const Sidebar = ({ userRole, isOpen, setIsOpen }) => {
     },
     {
       name: "Startup Listings",
-      path: "/startups",
+      path: "/startup-listings",
       icon: <LineChart className="w-5 h-5" />,
     },
   ];

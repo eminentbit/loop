@@ -1,9 +1,11 @@
 import PropTypes from "prop-types";
 import { useContext } from "react";
 import { DarkModeContext } from "./DarkModeContext";
+import { useNavigate } from "react-router-dom";
 
 const JobCard = ({ job, className = "" }) => {
   const { isDarkMode } = useContext(DarkModeContext);
+  const navigate = useNavigate();
 
   return (
     <div
@@ -45,6 +47,10 @@ const JobCard = ({ job, className = "" }) => {
         </span>
       </div>
       <button
+        type="button"
+        onClick={() => {
+          navigate(`/jobs/${job.id}`);
+        }}
         className={`mt-4 w-full py-2 rounded-full transition-colors cursor-pointer 
         ${
           isDarkMode
