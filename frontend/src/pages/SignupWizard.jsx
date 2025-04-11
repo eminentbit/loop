@@ -7,6 +7,7 @@ import RecruiterProfileStep from "../components/Auth/RecruiterProfileStep";
 import ProfilePictureStep from "../components/Auth/ProfilePictureStep";
 import ProgressBar from "../components/Auth/ProgressBar";
 import FinalStep from "../components/Auth/FinalStep";
+import axios from "axios";
 
 const SignupWizard = () => {
   const [step, setStep] = useState(1);
@@ -35,8 +36,36 @@ const SignupWizard = () => {
     setFormData({ ...formData, ...newData });
   };
 
-  const handleOnSubmit = () => {
-    console.log("Submitted");
+  const handleOnSubmit = async () => {
+    try {
+      const url = `${import.meta.env.VITE_ROOT_API_URL}/auth/register`;
+      console.log("Sending request to:", url); // Debugging line
+
+      const response = await axios.post(url, formData, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      console.log("Form submitted successfully:", response.data);
+      // Optionally handle successful response here, like showing a message
+    } catch (error) {
+      console.error(
+        "Error during signup:",
+        error.response ? error.response.data : error.message
+      );
+
+      // You can display specific error message to the user based on status code
+      if (error.response) {
+        // Example: Handle server-side error
+        if (error.response.status === 409) {
+          alert("Email is already in use.");
+        } else {
+          alert("There was an issue with registration. Please try again.");
+        }
+      } else {
+        // If no response (network error, etc.)
+        alert("Network error. Please check your connection and try again.");
+      }
+    }
   };
 
   return (
@@ -94,7 +123,11 @@ const SignupWizard = () => {
 
       {/* Step 6 (Final Step): agreement to T&C */}
       {step === 5 && (
-        <FinalStep prevStep={prevStep} onSubmit={handleOnSubmit} />
+        <FinalStep
+          prevStep={prevStep}
+          onSubmit={handleOnSubmit}
+          formData={formData}
+        />
       )}
     </div>
   );

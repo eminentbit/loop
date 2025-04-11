@@ -20,6 +20,10 @@ const JobSeekerProfileStep = ({
   );
 
   const handleNext = () => {
+    if (!jobTitle || !experienceLevel || !skills.length) {
+      alert("Please fill in all required fields");
+      return;
+    }
     updateFormData({
       jobTitle,
       experienceLevel,

@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 const FinalStep = ({ prevStep, onSubmit, formData }) => {
   // Helper function to handle missing data
   const getValue = (value) => (value ? value : "N/A");
+  console.log("FinalStep formData:", formData);
 
   return (
     <div className="flex flex-col items-center text-center p-8 max-w-md mx-auto bg-white rounded-lg shadow-md">

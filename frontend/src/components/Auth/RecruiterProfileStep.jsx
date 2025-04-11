@@ -17,6 +17,10 @@ const RecruiterProfileStep = ({
   );
 
   const handleNext = () => {
+    if (!companyName || !companyIndustry || !companySize || !recruitingRole) {
+      alert("Please fill in all required fields");
+      return;
+    }
     updateFormData({
       companyName,
       companyIndustry,
@@ -48,42 +52,75 @@ const RecruiterProfileStep = ({
         <label htmlFor="companyIndustry" className="block font-medium">
           Company Industry
         </label>
-        <input
+        <select
           id="companyIndustry"
-          type="text"
           value={companyIndustry}
           onChange={(e) => setCompanyIndustry(e.target.value)}
-          placeholder="Company Industry"
           className="w-full p-2 border rounded"
-        />
+        >
+          <option value="" disabled>
+            Select an industry
+          </option>
+          <optgroup label="Technology">
+            <option value="Software">Software</option>
+            <option value="Hardware">Hardware</option>
+            <option value="AI">AI</option>
+          </optgroup>
+          <optgroup label="Healthcare">
+            <option value="Pharmaceuticals">Pharmaceuticals</option>
+            <option value="Medical Devices">Medical Devices</option>
+            <option value="Biotechnology">Biotechnology</option>
+          </optgroup>
+          <optgroup label="Finance">
+            <option value="Banking">Banking</option>
+            <option value="Insurance">Insurance</option>
+            <option value="Investment">Investment</option>
+          </optgroup>
+        </select>
       </div>
 
       <div>
         <label htmlFor="companySize" className="block font-medium">
           Company Size
         </label>
-        <input
+        <select
           id="companySize"
-          type="text"
           value={companySize}
           onChange={(e) => setCompanySize(e.target.value)}
-          placeholder="Company Size"
           className="w-full p-2 border rounded"
-        />
+        >
+          <option value="" disabled>
+            Select company size
+          </option>
+          <option value="1-10">1-10</option>
+          <option value="11-50">11-50</option>
+          <option value="51-200">51-200</option>
+          <option value="201-500">201-500</option>
+          <option value="501-1000">501-1000</option>
+          <option value="1001+">1001+</option>
+        </select>
       </div>
 
       <div>
         <label htmlFor="recruitingRole" className="block font-medium">
           Recruiting Role
         </label>
-        <input
+        <select
           id="recruitingRole"
-          type="text"
           value={recruitingRole}
           onChange={(e) => setRecruitingRole(e.target.value)}
-          placeholder="Recruiting Role"
           className="w-full p-2 border rounded"
-        />
+        >
+          <option value="" disabled>
+            Select your role
+          </option>
+          <option value="Recruiter">Recruiter</option>
+          <option value="HR Manager">HR Manager</option>
+          <option value="Talent Acquisition Specialist">
+            Talent Acquisition Specialist
+          </option>
+          <option value="Other">Other</option>
+        </select>
       </div>
 
       <div className="flex justify-between">

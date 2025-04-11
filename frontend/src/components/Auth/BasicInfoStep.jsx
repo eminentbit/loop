@@ -8,6 +8,10 @@ const BasicInfoStep = ({ nextStep, updateFormData, formData }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleNext = () => {
+    if (!fullName || !email || !password || !confirmPassword) {
+      alert("Please fill in all fields");
+      return;
+    }
     if (password !== confirmPassword) {
       alert("Passwords do not match");
       return;
@@ -28,6 +32,7 @@ const BasicInfoStep = ({ nextStep, updateFormData, formData }) => {
           id="fullName"
           type="text"
           value={fullName}
+          required
           onChange={(e) => setFullName(e.target.value)}
           placeholder="Enter your full name"
           className="w-full p-2 border rounded"
@@ -41,6 +46,7 @@ const BasicInfoStep = ({ nextStep, updateFormData, formData }) => {
         <input
           id="email"
           type="email"
+          required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter your email"
@@ -56,6 +62,7 @@ const BasicInfoStep = ({ nextStep, updateFormData, formData }) => {
           id="password"
           type="password"
           value={password}
+          required
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Enter a password"
           className="w-full p-2 border rounded"
@@ -70,6 +77,7 @@ const BasicInfoStep = ({ nextStep, updateFormData, formData }) => {
           id="confirmPassword"
           type="password"
           value={confirmPassword}
+          required
           onChange={(e) => setConfirmPassword(e.target.value)}
           placeholder="Confirm your password"
           className="w-full p-2 border rounded"

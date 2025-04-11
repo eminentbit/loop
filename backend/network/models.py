@@ -1,10 +1,11 @@
 # network/models.py
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 
 class Profile(models.Model):
-    user     = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    user     = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
     avatar   = models.URLField(blank=True, null=True)
     verified = models.BooleanField(default=False)
 
@@ -13,8 +14,8 @@ class Profile(models.Model):
 
 
 class Follow(models.Model):
-    follower  = models.ForeignKey(User, related_name='following_set', on_delete=models.CASCADE)
-    following = models.ForeignKey(User, related_name='followers_set', on_delete=models.CASCADE)
+    follower  = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='following_set', on_delete=models.CASCADE)
+    following = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='followers_set', on_delete=models.CASCADE)
     created   = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -25,7 +26,7 @@ class Page(models.Model):
     title        = models.CharField(max_length=200)
     slug         = models.SlugField(max_length=200, unique=True, blank=True)
     content      = models.TextField()
-    author       = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='pages')
+    author       = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='pages')
     is_published = models.BooleanField(default=False)
     created_at   = models.DateTimeField(auto_now_add=True)
     updated_at   = models.DateTimeField(auto_now=True)
@@ -50,7 +51,7 @@ class Event(models.Model):
     start_time   = models.DateTimeField()
     end_time     = models.DateTimeField()
     location     = models.CharField(max_length=255, blank=True)
-    organizer    = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='organized_events')
+    organizer    = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='organized_events')
     is_public    = models.BooleanField(default=True)
     created_at   = models.DateTimeField(auto_now_add=True)
     updated_at   = models.DateTimeField(auto_now=True)
@@ -66,7 +67,7 @@ class Event(models.Model):
 
 class Subscriber(models.Model):
     email         = models.EmailField(unique=True)
-    user          = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='newsletter_subscriptions')
+    user          = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='newsletter_subscriptions')
     subscribed_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
