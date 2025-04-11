@@ -1,14 +1,14 @@
 const jobs = [
   {
     id: 1,
-    title: "Frontend Developer",
+    title: "Sale Personnel",
     company: "Etablissement TF le Grand Bazar",
-    location: "Remote",
-    salary: "$70k - $90k",
-    description: "Develop and maintain user interfaces using React.js.",
+    location: "On-site",
+    salary: "$60k - $80k",
+    description: "Responsible for selling products and providing customer service.",
     requirements: [
-      "2+ years of experience with React.js",
-      "Strong knowledge of HTML, CSS, and JavaScript",
+      "Excellent communication skills",
+      "Experience in retail or sales is a plus",
     ],
     type: "Full-time",
   },
