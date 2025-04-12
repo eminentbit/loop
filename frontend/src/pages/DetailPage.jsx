@@ -1,17 +1,17 @@
 // src/components/JobDetails.jsx
-import { useState, useRef } from 'react';
+import { useState, useRef } from "react";
 import emailjs from 'emailjs-com';
-import jobs from '@/data/jobs';
-import { useParams } from 'react-router-dom';
+import jobs from "@/data/jobs";
+import { useParams } from "react-router-dom";
 
 const JobDetails = () => {
   const { jobId } = useParams();
   const job = jobs.find((j) => j.id === Number(jobId));
   const formRef = useRef();
-  const [showModal, setShowModal]     = useState(false);
-  const [submitting, setSubmitting]   = useState(false);
-  const [submitted, setSubmitted]     = useState(false);
-  const [fileErrors, setFileErrors]   = useState({ cv: '', cover_letter: '' });
+  const [showModal, setShowModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [fileErrors, setFileErrors] = useState({ cv: "", cover_letter: "" });
 
   // if someone navigates to an invalid ID
   if (!job) {
@@ -22,11 +22,11 @@ const JobDetails = () => {
     );
   }
 
-  const openModal  = () => setShowModal(true);
+  const openModal = () => setShowModal(true);
   const closeModal = () => {
     setShowModal(false);
     setSubmitted(false);
-    setFileErrors({ cv: '', cover_letter: '' });
+    setFileErrors({ cv: "", cover_letter: "" });
     formRef.current?.reset();
   };
 
@@ -36,10 +36,10 @@ const JobDetails = () => {
     if (file && file.size > 10 * 1024 * 1024) {
       setFileErrors((errs) => ({
         ...errs,
-        [name]: 'File must be under 10 MB.',
+        [name]: "File must be under 10 MB.",
       }));
     } else {
-      setFileErrors((errs) => ({ ...errs, [name]: '' }));
+      setFileErrors((errs) => ({ ...errs, [name]: "" }));
     }
   };
 
@@ -48,26 +48,26 @@ const JobDetails = () => {
 
     // prevent send if file errors exist
     if (fileErrors.cv || fileErrors.cover_letter) {
-      alert('Please fix file size errors before submitting.');
+      alert("Please fix file size errors before submitting.");
       return;
     }
 
     setSubmitting(true);
     emailjs
       .sendForm(
-        'YOUR_SERVICE_ID',    // ← replace with your EmailJS service ID
-        'YOUR_TEMPLATE_ID',   // ← replace with your EmailJS template ID
+        "YOUR_SERVICE_ID", // ← replace with your EmailJS service ID
+        "YOUR_TEMPLATE_ID", // ← replace with your EmailJS template ID
         formRef.current,
-        'YOUR_USER_ID'        // ← replace with your EmailJS user ID
+        "YOUR_USER_ID" // ← replace with your EmailJS user ID
       )
       .then(() => {
         setSubmitting(false);
         setSubmitted(true);
       })
       .catch((err) => {
-        console.error('EmailJS error:', err);
+        console.error("EmailJS error:", err);
         setSubmitting(false);
-        alert('Something went wrong. Please try again.');
+        alert("Something went wrong. Please try again.");
       });
   };
 
@@ -85,13 +85,17 @@ const JobDetails = () => {
 
         {/* Description */}
         <section className="mb-6">
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">Job Description</h2>
+          <h2 className="text-xl font-semibold text-gray-700 mb-2">
+            Job Description
+          </h2>
           <p className="text-gray-600 leading-relaxed">{job.description}</p>
         </section>
 
         {/* Requirements */}
         <section className="mb-6">
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">Requirements</h2>
+          <h2 className="text-xl font-semibold text-gray-700 mb-2">
+            Requirements
+          </h2>
           <ul className="list-disc list-inside text-gray-600 space-y-1">
             {job.requirements.map((req, i) => (
               <li key={i}>{req}</li>
@@ -124,7 +128,9 @@ const JobDetails = () => {
 
             {!submitted ? (
               <>
-                <h3 className="text-xl font-semibold mb-4">Apply for {job.title}</h3>
+                <h3 className="text-xl font-semibold mb-4">
+                  Apply for {job.title}
+                </h3>
 
                 {/* Requirements */}
                 <ul className="list-disc list-inside mb-4 text-gray-700 space-y-1">
@@ -143,7 +149,10 @@ const JobDetails = () => {
 
                   {/* Name & Email */}
                   <div className="mb-4">
-                    <label htmlFor="from_name" className="block text-gray-700 mb-1">
+                    <label
+                      htmlFor="from_name"
+                      className="block text-gray-700 mb-1"
+                    >
                       Full Name
                     </label>
                     <input
@@ -156,7 +165,10 @@ const JobDetails = () => {
                   </div>
 
                   <div className="mb-4">
-                    <label htmlFor="from_email" className="block text-gray-700 mb-1">
+                    <label
+                      htmlFor="from_email"
+                      className="block text-gray-700 mb-1"
+                    >
                       Email Address
                     </label>
                     <input
@@ -183,13 +195,18 @@ const JobDetails = () => {
                       className="w-full"
                     />
                     {fileErrors.cv && (
-                      <p className="text-red-500 text-sm mt-1">{fileErrors.cv}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {fileErrors.cv}
+                      </p>
                     )}
                   </div>
 
                   {/* Cover Letter Upload */}
                   <div className="mb-4">
-                    <label htmlFor="cover_letter" className="block text-gray-700 mb-1">
+                    <label
+                      htmlFor="cover_letter"
+                      className="block text-gray-700 mb-1"
+                    >
                       Upload Cover Letter (PDF/DOC, max 10 MB)
                     </label>
                     <input
@@ -202,7 +219,9 @@ const JobDetails = () => {
                       className="w-full"
                     />
                     {fileErrors.cover_letter && (
-                      <p className="text-red-500 text-sm mt-1">{fileErrors.cover_letter}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {fileErrors.cover_letter}
+                      </p>
                     )}
                   </div>
 
@@ -215,7 +234,7 @@ const JobDetails = () => {
                     }
                     className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2 px-4 rounded-lg"
                   >
-                    {submitting ? 'Submitting…' : 'Submit Application'}
+                    {submitting ? "Submitting…" : "Submit Application"}
                   </button>
                 </form>
               </>

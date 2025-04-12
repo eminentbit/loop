@@ -1,8 +1,51 @@
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { FaGoogle, FaGithub, FaFacebook } from "react-icons/fa";
+import process from "process";
 
 function SignInModal({ setIsModalOpen }) {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Get the username and password from the form
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+
+    // Validate the form data (optional)
+    if (!email || !password) {
+      alert("Please enter both username and password");
+      return;
+    }
+
+    try {
+      const url = `${process.env.VITE_API_ROOT_URL}/auth/login`;
+      // Send the login request (you can replace this with your API call)
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      // Check if the login was successful
+      if (response.ok) {
+        const data = await response.json();
+        // Handle successful login (store token, redirect, etc.)
+        console.log("Login successful", data);
+        // You can store tokens or redirect the user here
+      } else {
+        const errorData = await response.json();
+        // Handle login error (e.g., invalid credentials)
+        alert(errorData.message || "Login failed");
+      }
+    } catch (error) {
+      // Handle any network errors or unexpected errors
+      console.error("Login error:", error);
+      alert("An error occurred. Please try again.");
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 backdrop-blur-md">
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-lg w-full relative">
@@ -53,6 +96,7 @@ function SignInModal({ setIsModalOpen }) {
             className="border border-gray-300 rounded px-3 py-2"
           />
           <button
+            onClick={handleSubmit}
             type="submit"
             className="bg-[hsl(201,83%,43%)] text-white px-4 py-2 rounded hover:bg-[hsl(201,83%,53%)] transition"
           >
