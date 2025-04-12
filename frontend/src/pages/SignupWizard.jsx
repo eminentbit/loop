@@ -38,7 +38,7 @@ const SignupWizard = () => {
 
   const handleOnSubmit = async () => {
     try {
-      const url = `${import.meta.env.VITE_ROOT_API_URL}/auth/register`;
+      const url = `http://localhost:3000/api/auth/register`;
       console.log("Sending request to:", url); // Debugging line
 
       const response = await axios.post(url, formData, {

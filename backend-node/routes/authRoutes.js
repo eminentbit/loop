@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const router = express.Router();
-const db = require("../models"); // Import the models
+const db = require("../db"); // Import the models
 const { isAuthenticated } = require("../middlewares/authMiddleware");
 
 // Register route

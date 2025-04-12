@@ -1,68 +1,60 @@
 const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
+const { connectDB, sequelize } = require("./db");
 const authRoutes = require("./routes/authRoutes");
-const jobRoutes = require("./routes/jobRoutes");
+const eventRoutes = require("./routes/eventRoutes");
 const learningRoutes = require("./routes/learningRoutes");
-const eventRoutes = require("./routes/eventRoutes"); 
-const pageRoutes = require("./routes/pageRoutes");
-
-const session = require("express-session");
-const { sequelize } = require("./db");
+// const learningRoutes = require("./routes/learningRoutes");
 require("dotenv").config();
+const cors = require("cors");
+const session = require("express-session");
+const SQLiteStore = require("connect-sqlite3")(session);
 
-const db = require("./db"); 
 const app = express();
 
-// Middleware
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-); // Allow requests from your frontend
-app.use(bodyParser.json());
+app.use(express.json()); // Middleware to parse JSON request bodies.
 
-// After `app.use(bodyParser.json());`
+// Connect to the database.
+connectDB();
+
+const corsOptions = {
+  origin: ["http://localhost:5173", "http://localhost:5174"], // Allowed domains
+  methods: ["GET", "POST"], // Allowed methods (optional)
+  credentials: true, // Allow credentials (optional)
+  optionsSuccessStatus: 200, // For legacy browser support (optional)
+};
+
+// Sync models with the database.
+sequelize.sync({ alter: false }).then(() => {
+  console.log("Database synced successfully!");
+});
+
+app.use(cors(corsOptions));
+
+// Set up session middleware
 app.use(
   session({
-    name: "loop-session",
-    secret: process.env.SESSION_SECRET || "yourSecretKey",
+    name: "loop_session",
+    store: new SQLiteStore({ db: "database.sqlite", dir: "./" }),
+    secret: process.env.SESSION_SECRET || "somesecretkey",
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false, 
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24, 
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 1000 * 60 * 60 * 4, // 4 hours
     },
   })
 );
 
-// Test route
-app.get("/", (req, res) => {
-  res.send("Welcome to the API!");
+// Use  routes.
+app.use("/api/auth", authRoutes);
+app.use("/api/transactions", transactionRoutes);
+app.use("/api/subscription", subscriptionRoutes);
+app.use("/api/payment", paymentRoutes);
+app.use("/api/admin", adminRoutes);
+
+app.get("/api", (req, res) => {
+  res.json({ message: "Url is working well" });
 });
 
-app.use("/api/auth", authRoutes);
-app.use("/api/job", jobRoutes);
-app.use("/api/learning", learningRoutes); 
-app.use("/api/event", eventRoutes);
-app.use("/api/page", pageRoutes);
-
-// Sync DB and start server
-const PORT = process.env.PORT || 5000;
-
-db.authenticate()
-  .then(() => {
-    console.log("✅ Connected to the database");
-
-    return sequelize;
-  })
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error("❌ Unable to connect to the database:", err.message);
-  });
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
