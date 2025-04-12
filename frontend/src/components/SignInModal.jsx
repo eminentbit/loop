@@ -62,7 +62,11 @@ function SignInModal({ setIsModalOpen }) {
 
         {/* Forgot Password + Register Links */}
         <div className="mt-4 text-sm text-gray-600 text-center">
-          <Link to="/forgot-password" className="text-blue-500 hover:underline">
+          <Link
+            to="/forgot-password"
+            onClick={() => setIsModalOpen(false)}
+            className="text-blue-500 hover:underline"
+          >
             Forgot password?
           </Link>
         </div>

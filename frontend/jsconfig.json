@@ -1,9 +1,12 @@
+// jsconfig.json
 {
   "compilerOptions": {
-    "baseUrl": "src",
-    "paths": {
-      "@/*": ["*"]
-    }
-  },
-  "include": ["src"]
+    "baseUrl": ".",
+    "paths": { /* … */ },
+    "types": [
+      "node",           
+      "react",
+      "react-dom"
+    ]
+  }
 }

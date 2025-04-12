@@ -23,6 +23,7 @@ import InvestorTracker from "@/pages/InvestorTracker";
 import Settings from "@/pages/Setting";
 import Report from "@/pages/Report";
 import StartupListing from "@/pages/StartupListings";
+import ForgotPassword from "./pages/ForgetPassword";
 const AppRoutes = () => {
   const role = "jobseeker";
   return (
@@ -76,6 +77,7 @@ const AppRoutes = () => {
         path="/startup-listings"
         element={<StartupListing userRole={role} />}
       />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

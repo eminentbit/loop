@@ -2,11 +2,16 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
+const jobRoutes = require("./routes/jobRoutes");
+const learningRoutes = require("./routes/learningRoutes");
+const eventRoutes = require("./routes/eventRoutes"); 
+const pageRoutes = require("./routes/pageRoutes");
+
 const session = require("express-session");
 const { sequelize } = require("./db");
 require("dotenv").config();
 
-const db = require("./db"); // Your Sequelize setup
+const db = require("./db"); 
 const app = express();
 
 // Middleware
@@ -26,9 +31,9 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false, // Set to true if using HTTPS
+      secure: false, 
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24, // 1 day
+      maxAge: 1000 * 60 * 60 * 24, 
     },
   })
 );
@@ -39,6 +44,10 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/job", jobRoutes);
+app.use("/api/learning", learningRoutes); 
+app.use("/api/event", eventRoutes);
+app.use("/api/page", pageRoutes);
 
 // Sync DB and start server
 const PORT = process.env.PORT || 5000;
