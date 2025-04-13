@@ -9,6 +9,7 @@ router.post("/", async (req, res) => {
     const page = await Page.create({ title, content, is_published });
     res.status(201).json(page);
   } catch (error) {
+    console.log(`Error creating page: ${error}`);
     res.status(500).json({ message: "Error creating page", error });
   }
 });
