@@ -1,0 +1,190 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+enum Role {
+  jobseeker
+  recruiter
+  investor
+}
+
+enum Weekday {
+  Sun
+  Mon
+  Tue
+  Wed
+  Thu
+  Fri
+  Sat
+}
+
+enum JobLocation {
+  REMOTE
+  ONSITE
+  HYBRID
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  FREELANCE
+  INTERN
+}
+
+enum SalaryRange {
+  LOW // You could define ranges like LOW = "< $1000"
+  MEDIUM // "$1000 - $3000"
+  HIGH // "$3000 - $6000"
+  VERY_HIGH // "> $6000"
+}
+
+model User {
+  id        String  @id @default(uuid())
+  email     String  @unique
+  full_name String
+  role      Role
+  password  String
+  is_active Boolean @default(true)
+  is_staff  Boolean @default(false)
+
+  // Recruiter-specific
+  company_name    String?
+  company_role    String?
+  industry        String?
+  company_size    String?
+  additional_info String?
+
+  // Jobseeker/Investor-specific
+  current_job_title   String?
+  experience_level    String?
+  primary_skills      String?
+  career_interests    String?
+  location_preference String?
+
+  profile                  Profile?
+  pages                    Page[]
+  organized_events         Event[]
+  newsletter_subscriptions Subscriber[]
+  followers_set            Follow[]     @relation("Followers")
+  following_set            Follow[]     @relation("Following")
+
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  Enrollment Enrollment[]
+  Streak     Streak[]
+}
+
+model Profile {
+  id       String  @id @default(uuid())
+  user     User    @relation(fields: [userId], references: [id])
+  userId   String  @unique
+  avatar   String?
+  verified Boolean @default(false)
+}
+
+model Follow {
+  id          String   @id @default(uuid())
+  follower    User     @relation("Following", fields: [followerId], references: [id])
+  following   User     @relation("Followers", fields: [followingId], references: [id])
+  followerId  String
+  followingId String
+  created     DateTime @default(now())
+
+  @@unique([followerId, followingId])
+}
+
+model Page {
+  id           String   @id @default(uuid())
+  title        String
+  slug         String   @unique
+  content      String
+  author       User?    @relation(fields: [authorId], references: [id])
+  authorId     String?
+  is_published Boolean  @default(false)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  start_time  DateTime
+  end_time    DateTime
+  location    String?
+  organizer   User?    @relation(fields: [organizerId], references: [id])
+  organizerId String?
+  is_public   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model Subscriber {
+  id            String       @id @default(uuid())
+  email         String       @unique
+  user          User?        @relation(fields: [userId], references: [id])
+  userId        String?
+  subscribed_at DateTime     @default(now())
+  newsletters   Newsletter[] @relation("NewsletterSubscribers")
+}
+
+model Newsletter {
+  id          String       @id @default(uuid())
+  subject     String
+  body        String
+  send_date   DateTime
+  is_sent     Boolean      @default(false)
+  subscribers Subscriber[] @relation("NewsletterSubscribers")
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+}
+
+model Course {
+  id          String       @id @default(uuid())
+  title       String
+  image_url   String
+  enrollments Enrollment[]
+}
+
+model Enrollment {
+  id            String  @id @default(uuid())
+  user          User    @relation(fields: [userId], references: [id])
+  userId        String
+  course        Course  @relation(fields: [courseId], references: [id])
+  courseId      String
+  completed     Boolean @default(false)
+  hours_spent   Int     @default(0)
+  quizzes_taken Int     @default(0)
+}
+
+model Streak {
+  id     String  @id @default(uuid())
+  user   User    @relation(fields: [userId], references: [id])
+  userId String
+  day    Weekday
+  active Boolean @default(false)
+}
+
+model Job {
+  id          String      @id @default(uuid())
+  title       String
+  company     String
+  description String
+  location    JobLocation
+  type        JobType
+  salary      SalaryRange
+  posted_at   DateTime    @default(now())
+}
