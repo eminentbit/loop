@@ -1,3 +1,18 @@
-node_modules
-# Keep environment variables out of version control
 .env
+.sequelizerc
+package-lock.json
+node_modules
+npm-debug.log
+yarn-error.log
+coverage
+dist
+*.log
+*.tsbuildinfo
+*.tgz
+*.zip
+*.tar.gz
+*.tar
+*.gz
+*.rar
+*.7z
+*.tar.*

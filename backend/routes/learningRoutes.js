@@ -7,8 +7,9 @@ router.post("/courses", async (req, res) => {
   try {
     const { title, image_url } = req.body;
     const course = await Course.create({ title, image_url });
-    res.status(201).json(course);
+    res.status(201).json(course, "Course created successfully");
   } catch (error) {
+    console.log(`Error creating course: ${error}`);
     res.status(500).json({ message: "Error creating course", error });
   }
 });
