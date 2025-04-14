@@ -10,8 +10,10 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // url      = "file:./dev.db"
+  // directUrl = env("DATABASE_URL_DIRECT")
 }
 
 enum Role {

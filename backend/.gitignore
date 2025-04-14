@@ -16,3 +16,5 @@ dist
 *.rar
 *.7z
 *.tar.*
+
+generated
