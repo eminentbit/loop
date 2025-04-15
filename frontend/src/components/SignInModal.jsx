@@ -1,9 +1,13 @@
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaGoogle, FaGithub, FaFacebook } from "react-icons/fa";
-import process from "process";
+import axios from "axios";
+import getCookie from "../utils/GetCookie";
+import fetchCSRF from "../utils/FetchCsrf";
 
-function SignInModal({ setIsModalOpen }) {
+function SignInModal({ setIsModalOpen, onClose }) {
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -18,31 +22,36 @@ function SignInModal({ setIsModalOpen }) {
     }
 
     try {
-      const url = `${process.env.VITE_API_ROOT_URL}/auth/login`;
-      // Send the login request (you can replace this with your API call)
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      await fetchCSRF();
 
-      // Check if the login was successful
-      if (response.ok) {
-        const data = await response.json();
-        // Handle successful login (store token, redirect, etc.)
-        console.log("Login successful", data);
-        // You can store tokens or redirect the user here
-      } else {
-        const errorData = await response.json();
-        // Handle login error (e.g., invalid credentials)
-        alert(errorData.message || "Login failed");
+      const url = `${import.meta.env.VITE_API_URL}/auth/login/`;
+
+      const response = await axios.post(
+        url,
+        { email, password },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+          withCredentials: true,
+        }
+      );
+
+      console.log("Login successful", response.data);
+
+      if (setIsModalOpen) {
+        setIsModalOpen(false);
       }
+      navigate("/feed");
     } catch (error) {
-      // Handle any network errors or unexpected errors
-      console.error("Login error:", error);
-      alert("An error occurred. Please try again.");
+      if (error.response) {
+        // Server responded with a status other than 2xx
+        alert(error.response.data.message || "Login failed");
+      } else {
+        console.error("Login error:", error);
+        alert("An error occurred. Please try again.");
+      }
     }
   };
 
@@ -51,7 +60,13 @@ function SignInModal({ setIsModalOpen }) {
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-lg w-full relative">
         {/* Close Button */}
         <button
-          onClick={() => setIsModalOpen(false)}
+          onClick={
+            onClose
+              ? onClose
+              : () => {
+                  setIsModalOpen(false);
+                }
+          }
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-lg"
         >
           ✕
@@ -84,19 +99,20 @@ function SignInModal({ setIsModalOpen }) {
         </div>
 
         {/* Email/Password Sign-in */}
-        <form className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <input
+            name="email"
             type="email"
             placeholder="Email"
             className="border border-gray-300 rounded px-3 py-2"
           />
           <input
+            name="password"
             type="password"
             placeholder="Password"
             className="border border-gray-300 rounded px-3 py-2"
           />
           <button
-            onClick={handleSubmit}
             type="submit"
             className="bg-[hsl(201,83%,43%)] text-white px-4 py-2 rounded hover:bg-[hsl(201,83%,53%)] transition"
           >
@@ -132,6 +148,7 @@ function SignInModal({ setIsModalOpen }) {
 
 SignInModal.propTypes = {
   setIsModalOpen: PropTypes.func.isRequired,
+  onClose: PropTypes.func,
 };
 
 export default SignInModal;

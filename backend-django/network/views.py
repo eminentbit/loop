@@ -1,18 +1,18 @@
 from django.shortcuts import render
-
+from rest_framework import viewsets, permissions
 # network/views.py
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from django.contrib.auth.models import User
 from .models import Follow, Newsletter, Page, Event, Profile, Subscriber
-from .serializers import EventSerializer, FollowSerializer, NewsletterSerializer, PageSerializer, ProfileSerializer, SubscriberSerializer, UserSerializer
+from .serializers import EventSerializer, FollowSerializer, NewsletterSerializer, PageSerializer, ProfileSerializer, SubscriberSerializer, UserAccountSerializer
 
 class UserListAPIView(APIView):
     permission_classes = [AllowAny]
     def get(self, request):
         users = User.objects.exclude(id=request.user.id)
-        serializer = UserSerializer(users, many=True, context={'request': request})
+        serializer = UserAccountSerializer(users, many=True, context={'request': request})
         return Response(serializer.data)
 
 class FollowToggleAPIView(APIView):
