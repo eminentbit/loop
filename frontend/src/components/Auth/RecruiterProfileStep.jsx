@@ -13,7 +13,7 @@ const RecruiterProfileStep = ({
   );
   const [companySize, setCompanySize] = useState(formData.companySize || "");
   const [recruitingRole, setRecruitingRole] = useState(
-    formData.recruitingRole || ""
+    formData.companyRole || ""
   );
 
   const handleNext = () => {
@@ -23,9 +23,9 @@ const RecruiterProfileStep = ({
     }
     updateFormData({
       companyName,
-      companyIndustry,
+      industry: companyIndustry,
       companySize,
-      recruitingRole,
+      companyRole: recruitingRole,
     });
     nextStep();
   };

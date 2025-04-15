@@ -3,10 +3,10 @@ from django.shortcuts import render
 # network/views.py
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from django.contrib.auth.models import User
-from .models import Follow
-from .serializers import UserSerializer
+from .models import Follow, Newsletter, Page, Event, Profile, Subscriber
+from .serializers import EventSerializer, FollowSerializer, NewsletterSerializer, PageSerializer, ProfileSerializer, SubscriberSerializer, UserSerializer
 
 class UserListAPIView(APIView):
     permission_classes = [AllowAny]
@@ -31,4 +31,44 @@ class FollowToggleAPIView(APIView):
             obj.delete()
             return Response({'following': False})
         return Response({'following': True})
+    
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+class FollowViewSet(viewsets.ModelViewSet):
+    queryset = Follow.objects.all()
+    serializer_class = FollowSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(follower=self.request.user)
+
+class PageViewSet(viewsets.ModelViewSet):
+    queryset = Page.objects.all()
+    serializer_class = PageSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+class EventViewSet(viewsets.ModelViewSet):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(organizer=self.request.user)
+
+class SubscriberViewSet(viewsets.ModelViewSet):
+    queryset = Subscriber.objects.all()
+    serializer_class = SubscriberSerializer
+    permission_classes = [AllowAny]  # So guests can subscribe
+
+class NewsletterViewSet(viewsets.ModelViewSet):
+    queryset = Newsletter.objects.all()
+    serializer_class = NewsletterSerializer
+    permission_classes = [AllowAny]
 

@@ -9,7 +9,7 @@ const UserTypeStep = ({ nextStep, prevStep, updateFormData, formData }) => {
       alert("Please select an account type");
       return;
     }
-    updateFormData({ userType });
+    updateFormData({ role: userType });
     nextStep();
   };
 

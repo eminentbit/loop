@@ -1,7 +1,7 @@
 # from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
@@ -28,6 +28,8 @@ class UserProfileView(APIView):
     
 
 class RegisterView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
@@ -36,6 +38,8 @@ class RegisterView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginView(APIView):
+    permission_classes = [AllowAny]
+    
     def post(self, request):
         email = request.data.get("email")
         password = request.data.get("password")

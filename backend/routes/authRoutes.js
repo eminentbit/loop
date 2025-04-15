@@ -1,26 +1,28 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const router = express.Router();
-const prisma = require("@prisma/client");
+const { PrismaClient } = require("@prisma/client");
 const { isAuthenticated } = require("../middlewares/authMiddleware");
+
+const prisma = new PrismaClient();
 
 // Register route
 router.post("/register", async (req, res) => {
   const {
     email,
-    full_name,
+    fullName,
     password,
     role,
-    company_name,
-    company_role,
+    companyName,
+    companyRole,
     industry,
-    company_size,
-    additional_info,
-    current_job_title,
-    experience_level,
-    primary_skills,
-    career_interests,
-    location_preference,
+    companySize,
+    additionalInfo,
+    currentJobTitle,
+    experienceLevel,
+    primarySkills,
+    careerInterests,
+    locationPreference,
   } = req.body;
 
   try {
@@ -37,7 +39,7 @@ router.post("/register", async (req, res) => {
 
     const newUserData = {
       email,
-      full_name,
+      fullName,
       password: hashedPassword,
       role,
     };
@@ -45,22 +47,22 @@ router.post("/register", async (req, res) => {
     // Recruiter-specific fields
     if (role === "recruiter") {
       Object.assign(newUserData, {
-        company_name,
-        company_role,
+        companyName,
+        companyRole,
         industry,
-        company_size,
-        additional_info,
+        companySize,
+        additionalInfo,
       });
     }
 
     // Jobseeker or Investor-specific fields
     if (role === "jobseeker" || role === "investor") {
       Object.assign(newUserData, {
-        current_job_title,
-        experience_level,
-        primary_skills,
-        career_interests,
-        location_preference,
+        currentJobTitle,
+        experienceLevel,
+        primarySkills,
+        careerInterests,
+        locationPreference,
       });
     }
 
@@ -74,7 +76,7 @@ router.post("/register", async (req, res) => {
       message: "User registered successfully",
       user: {
         email: user.email,
-        full_name: user.full_name,
+        fullName: user.fullName,
         role: user.role,
       },
     });
@@ -129,18 +131,18 @@ router.get("/profile", isAuthenticated, async (req, res) => {
       select: {
         id: true,
         email: true,
-        full_name: true,
+        fullName: true,
         role: true,
-        company_name: true,
-        current_job_title: true,
-        experience_level: true,
-        primary_skills: true,
-        career_interests: true,
-        location_preference: true,
+        companyName: true,
+        currentJobTitle: true,
+        experienceLevel: true,
+        primarySkills: true,
+        careerInterests: true,
+        location_Preference: true,
         industry: true,
-        company_size: true,
-        company_role: true,
-        additional_info: true,
+        companySize: true,
+        companyRole: true,
+        additionalInfo: true,
         is_active: true,
         is_staff: true,
         createdAt: true,

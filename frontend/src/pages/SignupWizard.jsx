@@ -8,27 +8,31 @@ import ProfilePictureStep from "../components/Auth/ProfilePictureStep";
 import ProgressBar from "../components/Auth/ProgressBar";
 import FinalStep from "../components/Auth/FinalStep";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+const kInitialData = {
+  fullName: "",
+  email: "",
+  password: "",
+  userType: "",
+  jobTitle: "",
+  experienceLevel: "",
+  skills: [],
+  careerInterests: "",
+  locationPreference: "",
+  companyName: "",
+  industry: "",
+  companySize: "",
+  companyRole: "",
+  profilePicture: null,
+  aiMatching: true,
+  agreedToTerms: false,
+};
 
 const SignupWizard = () => {
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    password: "",
-    userType: "",
-    jobTitle: "",
-    experienceLevel: "",
-    skills: [],
-    careerInterests: "",
-    locationPreference: "",
-    companyName: "",
-    companyIndustry: "",
-    companySize: "",
-    recruitingRole: "",
-    profilePicture: null,
-    aiMatching: true,
-    agreedToTerms: false,
-  });
+  const [formData, setFormData] = useState(kInitialData);
+  const navigate = useNavigate();
 
   const nextStep = () => setStep(step + 1);
   const prevStep = () => setStep(step - 1);
@@ -38,15 +42,16 @@ const SignupWizard = () => {
 
   const handleOnSubmit = async () => {
     try {
-      const url = `http://localhost:3000/api/auth/register`;
-      console.log("Sending request to:", url); // Debugging line
+      const url = `${import.meta.env.VITE_API_URL}/auth/register`;
+      console.log("Sending request to:", url, formData);
 
       const response = await axios.post(url, formData, {
         headers: { "Content-Type": "application/json" },
       });
 
       console.log("Form submitted successfully:", response.data);
-      // Optionally handle successful response here, like showing a message
+      setFormData(kInitialData);
+      navigate("/dashboard");
     } catch (error) {
       console.error(
         "Error during signup:",

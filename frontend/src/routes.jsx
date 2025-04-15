@@ -24,8 +24,10 @@ import Settings from "@/pages/Setting";
 import Report from "@/pages/Report";
 import StartupListing from "@/pages/StartupListings";
 import ForgotPassword from "./pages/ForgetPassword";
+
 const AppRoutes = () => {
-  const role = "jobseeker";
+  const role = "recruiter";
+
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
@@ -48,7 +50,7 @@ const AppRoutes = () => {
       <Route path="/jobs">
         <Route
           path="/jobs/recommended"
-          element={<RecommendedPage userRole={"jobseeker"} />}
+          element={<RecommendedPage userRole={role} />}
         />
         <Route path="/jobs/:jobId" element={<DetailPage userRole={role} />} />
       </Route>

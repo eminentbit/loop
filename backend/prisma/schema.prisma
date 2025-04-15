@@ -10,10 +10,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  // url      = "file:./dev.db"
-  // directUrl = env("DATABASE_URL_DIRECT")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 enum Role {
@@ -47,7 +45,7 @@ enum JobType {
 }
 
 enum SalaryRange {
-  LOW // You could define ranges like LOW = "< $1000"
+  LOW // LOW = "< $1000"
   MEDIUM // "$1000 - $3000"
   HIGH // "$3000 - $6000"
   VERY_HIGH // "> $6000"
@@ -56,32 +54,59 @@ enum SalaryRange {
 model User {
   id        String  @id @default(uuid())
   email     String  @unique
-  full_name String
+  fullName  String  @map("full_name")
   role      Role
   password  String
   is_active Boolean @default(true)
   is_staff  Boolean @default(false)
 
   // Recruiter-specific
-  company_name    String?
-  company_role    String?
-  industry        String?
-  company_size    String?
-  additional_info String?
+  companyName        String? @map("company_name")
+  companyRole        String? @map("company_role")
+  companyWebsite     String? @map("company_website")
+  companyDescription String? @map("company_description")
+  companyLogo        String?
+  industry           String?
+  companySize        String? @map("company_size")
+  additionalInfo     String?
 
   // Jobseeker/Investor-specific
-  current_job_title   String?
-  experience_level    String?
-  primary_skills      String?
-  career_interests    String?
-  location_preference String?
+  currentJobTitle    String? @map("current_job_title")
+  experienceLevel    String? @map("experience_level")
+  primarySkills      String? @map("primary_skills")
+  careerInterests    String? @map("career_interests")
+  locationPreference String? @map("location_preference")
 
-  profile                  Profile?
-  pages                    Page[]
-  organized_events         Event[]
-  newsletter_subscriptions Subscriber[]
-  followers_set            Follow[]     @relation("Followers")
-  following_set            Follow[]     @relation("Following")
+  resume               String?
+  portfolio            String?
+  socialLinks          String? @map("social_links")
+  about                String?
+  phoneNumber          String? @map("phone_number")
+  githubProfile        String? @map("github_profile")
+  linkedinProfile      String? @map("linkedin_profile")
+  twitterProfile       String? @map("twitter_profile")
+  dribbbleProfile      String? @map("dribbble_profile")
+  behanceProfile       String? @map("behance_profile")
+  website              String?
+  blog                 String?
+  youtubeChannel       String? @map("youtube_channel")
+  tiktokProfile        String? @map("tiktok_profile")
+  facebookProfile      String? @map("facebook_profile")
+  instagramProfile     String? @map("instagram_profile")
+  telegramProfile      String? @map("telegram_profile")
+  discordProfile       String? @map("discord_profile")
+  redditProfile        String? @map("reddit_profile")
+  quoraProfile         String? @map("quora_profile")
+  mediumProfile        String? @map("medium_profile")
+  devtoProfile         String? @map("devto_profile")
+  stackoverflowProfile String? @map("stackoverflow_profile")
+
+  profile                 Profile?
+  pages                   Page[]
+  organizedEvents         Event[]
+  newsletterSubscriptions Subscriber[]
+  followersSet            Follow[]     @relation("Followers")
+  followingSet            Follow[]     @relation("Following")
 
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
@@ -109,67 +134,67 @@ model Follow {
 }
 
 model Page {
-  id           String   @id @default(uuid())
-  title        String
-  slug         String   @unique
-  content      String
-  author       User?    @relation(fields: [authorId], references: [id])
-  authorId     String?
-  is_published Boolean  @default(false)
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  content     String
+  author      User?    @relation(fields: [authorId], references: [id])
+  authorId    String?
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Event {
   id          String   @id @default(uuid())
   title       String
   description String
-  start_time  DateTime
-  end_time    DateTime
+  startTime   DateTime
+  endTime     DateTime
   location    String?
   organizer   User?    @relation(fields: [organizerId], references: [id])
   organizerId String?
-  is_public   Boolean  @default(true)
+  isPublic    Boolean  @default(true)
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 }
 
 model Subscriber {
-  id            String       @id @default(uuid())
-  email         String       @unique
-  user          User?        @relation(fields: [userId], references: [id])
-  userId        String?
-  subscribed_at DateTime     @default(now())
-  newsletters   Newsletter[] @relation("NewsletterSubscribers")
+  id           String       @id @default(uuid())
+  email        String       @unique
+  user         User?        @relation(fields: [userId], references: [id])
+  userId       String?
+  subscribedAt DateTime     @default(now())
+  newsletters  Newsletter[] @relation("NewsletterSubscribers")
 }
 
 model Newsletter {
   id          String       @id @default(uuid())
   subject     String
   body        String
-  send_date   DateTime
-  is_sent     Boolean      @default(false)
+  sendDate    DateTime
+  isSent      Boolean      @default(false)
   subscribers Subscriber[] @relation("NewsletterSubscribers")
-  created_at  DateTime     @default(now())
-  updated_at  DateTime     @updatedAt
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model Course {
   id          String       @id @default(uuid())
   title       String
-  image_url   String
+  imageUrl    String
   enrollments Enrollment[]
 }
 
 model Enrollment {
-  id            String  @id @default(uuid())
-  user          User    @relation(fields: [userId], references: [id])
-  userId        String
-  course        Course  @relation(fields: [courseId], references: [id])
-  courseId      String
-  completed     Boolean @default(false)
-  hours_spent   Int     @default(0)
-  quizzes_taken Int     @default(0)
+  id           String  @id @default(uuid())
+  user         User    @relation(fields: [userId], references: [id])
+  userId       String
+  course       Course  @relation(fields: [courseId], references: [id])
+  courseId     String
+  completed    Boolean @default(false)
+  hoursSpent   Int     @default(0)
+  quizzesTaken Int     @default(0)
 }
 
 model Streak {
@@ -188,5 +213,5 @@ model Job {
   location    JobLocation
   type        JobType
   salary      SalaryRange
-  posted_at   DateTime    @default(now())
+  postedAt    DateTime    @default(now())
 }

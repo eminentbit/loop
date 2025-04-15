@@ -8,7 +8,7 @@ from .models import UserAccount
 
 class UserAccountAdmin(BaseUserAdmin):
     ordering = ['email']
-    list_display = ['email', 'full_name', 'role', 'is_staff']
+    list_display = ['email', 'fullName', 'role', 'is_staff']
     list_filter = ['role', 'is_staff', 'is_superuser']
 
     fieldsets = (
@@ -17,15 +17,15 @@ class UserAccountAdmin(BaseUserAdmin):
 
         (_('Recruiter Info'), {
             'fields': (
-                'company_name', 'company_role', 'industry',
-                'company_size', 'additional_info',
+                'companyName', 'companyRole', 'industry',
+                'companySize', 'additionalInfo',
             )
         }),
         (_('Jobseeker / Investor Info'), {
             'fields': (
-                'current_job_title', 'experience_level',
-                'primary_skills', 'career_interests',
-                'location_preference',
+                'currentJobTitle', 'experienceLevel',
+                'primarySkills', 'careerInterests',
+                'locationPreference',
             )
         }),
         (_('Permissions'), {
@@ -38,11 +38,11 @@ class UserAccountAdmin(BaseUserAdmin):
         (None, {
             'classes': ('wide',),
             'fields': (
-                'email', 'full_name', 'role', 'password1', 'password2',
-                'company_name', 'company_role', 'industry',
-                'company_size', 'additional_info',
-                'current_job_title', 'experience_level',
-                'primary_skills', 'career_interests', 'location_preference',
+                'email', 'fullName', 'role', 'password1', 'password2',
+                'companyName', 'companyRole', 'industry',
+                'companySize', 'additionalInfo',
+                'currentJobTitle', 'experienceLevel',
+                'primarySkills', 'careerInterests', 'locationPreference',
             ),
         }),
     )
