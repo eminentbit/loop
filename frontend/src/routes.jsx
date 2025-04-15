@@ -24,6 +24,8 @@ import Settings from "@/pages/Setting";
 import Report from "@/pages/Report";
 import StartupListing from "@/pages/StartupListings";
 import ForgotPassword from "./pages/ForgetPassword";
+import About from "./pages/About";
+import ContactPage from "./pages/Contact";
 
 const AppRoutes = () => {
   const role = "recruiter";
@@ -81,6 +83,8 @@ const AppRoutes = () => {
       />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="*" element={<NotFoundPage />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<ContactPage />} />
     </Routes>
   );
 };

@@ -20,18 +20,18 @@ const LandingPage = () => {
             <ul className="flex items-center space-x-6 max-[500px]:space-x-2">
               <li>
                 <Link
-                  to="/"
-                  className="transition transform hover:-translate-y-1 hover:text-indigo-600 text-sm max-[500px]:text-xs"
+                  to="/about"
+                  className="border border-[hsl(201,83%,43%)] text-[hsl(201,83%,43%)] px-4 py-2 rounded transition transform hover:bg-[hsl(201,83%,43%)] hover:text-white hover:-translate-y-1 text-sm max-[500px]:px-2 max-[500px]:py-1 max-[500px]:text-xs"
                 >
-                  Home
+                  About Us
                 </Link>
               </li>
               <li>
                 <Link
-                  to="/about"
-                  className="transition transform hover:-translate-y-1 hover:text-indigo-600 text-sm max-[500px]:text-xs"
+                  to="/contact"
+                  className="border border-[hsl(201,83%,43%)] text-[hsl(201,83%,43%)] px-4 py-2 rounded transition transform hover:bg-[hsl(201,83%,43%)] hover:text-white hover:-translate-y-1 text-sm max-[500px]:px-2 max-[500px]:py-1 max-[500px]:text-xs"
                 >
-                  About Us
+                  Contact
                 </Link>
               </li>
               <li>
