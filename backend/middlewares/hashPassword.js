@@ -1,5 +1,5 @@
 // prisma/middleware/hashPassword.js
-const bcrypt = require("bcryptjs");
+import { genSalt, hash } from "bcryptjs";
 
 const hashPasswordMiddleware = async (params, next) => {
   if (
@@ -8,11 +8,11 @@ const hashPasswordMiddleware = async (params, next) => {
   ) {
     const password = params.args.data.password;
     if (password) {
-      const salt = await bcrypt.genSalt(10);
-      params.args.data.password = await bcrypt.hash(password, salt);
+      const salt = await genSalt(10);
+      params.args.data.password = await hash(password, salt);
     }
   }
   return next(params);
 };
 
-module.exports = hashPasswordMiddleware;
+export default hashPasswordMiddleware;

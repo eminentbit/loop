@@ -1,10 +1,9 @@
-import { Router } from "express";
+import express from "express";
 import { hash, compare } from "bcryptjs";
-const router = Router();
-import { PrismaClient } from "@prisma/client";
-import { isAuthenticated } from "../middlewares/authMiddleware";
-
-const prisma = new PrismaClient();
+const router = express.Router();
+import prisma from "../lib/prisma.js";
+import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
+import { verifyToken } from "../middlewares/verifyToken.js";
 
 // Register route
 router.post("/register", async (req, res) => {
@@ -26,15 +25,12 @@ router.post("/register", async (req, res) => {
   } = req.body;
 
   try {
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
+    const existingUser = await prisma.user.findUnique({ where: { email } });
 
     if (existingUser) {
       return res.status(409).json({ message: "Email already in use" });
     }
 
-    // Hash password manually (since Prisma doesn't have model hooks like Sequelize)
     const hashedPassword = await hash(password, 10);
 
     const newUserData = {
@@ -44,33 +40,34 @@ router.post("/register", async (req, res) => {
       role,
     };
 
-    // Recruiter-specific fields
-    if (role === "recruiter") {
-      Object.assign(newUserData, {
-        companyName,
-        companyRole,
-        industry,
-        companySize,
-        additionalInfo,
-      });
+    switch (role) {
+      case "recruiter":
+        Object.assign(newUserData, {
+          companyName,
+          companyRole,
+          industry,
+          companySize,
+          additionalInfo,
+        });
+        break;
+
+      case "jobseeker":
+      case "investor":
+        Object.assign(newUserData, {
+          currentJobTitle,
+          experienceLevel,
+          primarySkills,
+          careerInterests,
+          locationPreference,
+        });
+        break;
     }
 
-    // Jobseeker or Investor-specific fields
-    if (role === "jobseeker" || role === "investor") {
-      Object.assign(newUserData, {
-        currentJobTitle,
-        experienceLevel,
-        primarySkills,
-        careerInterests,
-        locationPreference,
-      });
-    }
+    // generate token and set cookie
+    generateTokenAndSetCookie(res, user.id);
 
-    const user = await prisma.user.create({
-      data: newUserData,
-    });
-
-    req.session.userId = user.id;
+    // create user in database
+    const user = await prisma.user.create({ data: newUserData });
 
     res.status(201).json({
       message: "User registered successfully",
@@ -81,9 +78,9 @@ router.post("/register", async (req, res) => {
       },
     });
   } catch (err) {
+    console.error(err); // log it at least
     res.status(400).json({
       message: "Registration failed",
-      error: err.message,
     });
   }
 });
@@ -101,10 +98,11 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    req.session.userId = user.id;
+    // generate token and set cookie
+    generateTokenAndSetCookie(res, user.id);
 
     res.status(200).json({
-      message: "Login successful",
+      message: "Login successfully",
       user: { email: user.email, role: user.role },
     });
   } catch (err) {
@@ -114,17 +112,58 @@ router.post("/login", async (req, res) => {
 
 // Logout route
 router.post("/logout", (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({ message: "Logout failed" });
+  res.clearCookie("token");
+  res.status(200).json({ message: "Logout successful!" });
+});
+
+// check auth
+router.get("/check-auth", verifyToken, async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.userId },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        role: true,
+        companyName: true,
+        currentJobTitle: true,
+        experienceLevel: true,
+        primarySkills: true,
+        careerInterests: true,
+        location_Preference: true,
+        industry: true,
+        companySize: true,
+        companyRole: true,
+        additionalInfo: true,
+        is_active: true,
+        is_staff: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User not found",
+      });
     }
-    res.clearCookie("loop-session"); // or whatever your session name is
-    res.status(200).json({ message: "Logged out successfully" });
-  });
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    console.error("Error checking auth", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error! Please try again later.",
+    });
+  }
 });
 
 // Profile route (protected)
-router.get("/profile", isAuthenticated, async (req, res) => {
+router.get("/profile", verifyToken, async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.session.userId },
