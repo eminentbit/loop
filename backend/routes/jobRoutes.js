@@ -1,6 +1,6 @@
-const express = require("express");
-const router = express.Router();
-const { Job } = require("../models"); // Import the Job model
+import { Router } from "express";
+const router = Router();
+import { Job } from "../models"; // Import the Job model
 
 // CREATE a new Job
 router.post("/", async (req, res) => {
@@ -68,4 +68,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

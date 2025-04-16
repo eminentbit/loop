@@ -15,7 +15,7 @@ SECRET_KEY = 'django-insecure-6%5j%h%g^g-el&hmzwg$^iky4=2ls^j-af#-wq)%tny(vc32d3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 # Application definition
 INSTALLED_APPS = [
@@ -32,6 +32,7 @@ INSTALLED_APPS = [
 
     # Local apps
     'user',
+    'feed',
     'jobs',
     'network',
     'learning',
@@ -151,6 +152,9 @@ LOGGING = {
         },
     },
 }
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Session settings
 SESSION_COOKIE_AGE = 7200  # 2 hours

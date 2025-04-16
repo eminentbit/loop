@@ -2,14 +2,20 @@
 import Sidebar from "../components/Sidebar";
 import MainContent from "../components/MainContent";
 import PropTypes from "prop-types";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { DarkModeContext } from "../components/DarkModeContext";
 // import Footer from "../components/Footer";
 
 const Dashboard = ({ userRole }) => {
-  // eslint-disable-next-line no-unused-vars
-  const { isDarkMode, setIsDarkMode } = useContext(DarkModeContext);
-  const [isOpen, setIsOpen] = useState(true);
+  const { isDarkMode } = useContext(DarkModeContext);
+  const [isOpen, setIsOpen] = useState(() => {
+    const storedValue = localStorage.getItem("sidebarOpen");
+    return storedValue ? JSON.parse(storedValue) : true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
+  }, [isOpen]);
 
   return (
     <div className="min-h-screen flex w-full">

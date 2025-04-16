@@ -57,3 +57,25 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class Notification(models.Model):
+    NOTIFICATION_TYPES = [
+        ("message", "Message"),
+        ("mention", "Mention"),
+        ("community", "Community"),
+        ("other", "Other"),
+    ]
+
+    user = models.ForeignKey(UserAccount, on_delete=models.CASCADE, related_name="notifications")
+    content = models.TextField()
+    type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES, default="other")
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.user.email} - {self.content[:20]}"
+

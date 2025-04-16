@@ -1,56 +1,39 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { DarkModeContext } from "../components/DarkModeContext";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
+import PropTypes from "prop-types";
+import teamMembers from "../data/teamMembers";
+import messages from "../data/messages";
 
-function TeamCollaboration() {
+function TeamCollaboration({ userRole }) {
   const { darkMode } = useContext(DarkModeContext);
 
   // Sidebar control & role
-  const [isOpen, setIsOpen] = useState(true);
-  const userRole = "admin"; // Update as needed
+  const [isOpen, setIsOpen] = useState(() => {
+    const storedValue = localStorage.getItem("sidebarOpen");
+    return storedValue ? JSON.parse(storedValue) : true;
+  });
 
-  const teamMembers = [
-    { id: 1, name: "John Doe", position: "Project Manager" },
-    { id: 2, name: "Jane Smith", position: "Software Engineer" },
-    { id: 3, name: "Alice Johnson", position: "UI/UX Designer" },
-    { id: 4, name: "Michael Brown", position: "QA Engineer" },
-  ];
-
-  const messages = [
-    {
-      id: 1,
-      sender: "John Doe",
-      content: "Let's discuss the new project timeline.",
-    },
-    {
-      id: 2,
-      sender: "Jane Smith",
-      content: "I think we need to finalize the specs soon.",
-    },
-    {
-      id: 3,
-      sender: "Alice Johnson",
-      content: "I'll prepare some design drafts by tomorrow.",
-    },
-    {
-      id: 4,
-      sender: "Michael Brown",
-      content: "I'll test the new features once they're ready.",
-    },
-  ];
+  useEffect(() => {
+    localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
+  }, [isOpen]);
 
   return (
     <div
       className={`${
-        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
+        darkMode
+          ? "bg-gray-900 min-w-full text-white"
+          : "bg-gray-100 text-gray-900"
       } min-h-screen`}
     >
-      <Header />
       <div className="flex">
         {/* Sidebar now receives parameters */}
         <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} userRole={userRole} />
-        <main className="flex-1 p-8">
+        <main
+          className={`flex-1 max-w-[100vh] p-8 ${isOpen ? "ml-64" : "ml-16"}`}
+        >
+          <Header />
           <h1 className="text-3xl font-bold mb-6">Team Collaboration</h1>
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Team Members Panel */}
@@ -120,5 +103,9 @@ function TeamCollaboration() {
     </div>
   );
 }
+
+TeamCollaboration.propTypes = {
+  userRole: PropTypes.string.isRequired,
+};
 
 export default TeamCollaboration;

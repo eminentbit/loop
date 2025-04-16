@@ -25,9 +25,9 @@ const JobSeekerProfileStep = ({
       return;
     }
     updateFormData({
-      jobTitle,
+      currentJobTitle: jobTitle,
       experienceLevel,
-      skills,
+      primarySkills: skills,
       careerInterests,
       locationPreference,
     });
@@ -56,14 +56,19 @@ const JobSeekerProfileStep = ({
         <label htmlFor="experienceLevel" className="block font-medium">
           Experience Level
         </label>
-        <input
+        <select
           id="experienceLevel"
-          type="text"
           value={experienceLevel}
           onChange={(e) => setExperienceLevel(e.target.value)}
-          placeholder="Experience Level"
           className="w-full p-2 border rounded"
-        />
+        >
+          <option value="">Select Experience Level</option>
+          <option value="0-1">0-1 years</option>
+          <option value="1-3">1-3 years</option>
+          <option value="3-5">3-5 years</option>
+          <option value="5-10">5-10 years</option>
+          <option value="10+">10+ years</option>
+        </select>
       </div>
 
       <div>
@@ -98,14 +103,17 @@ const JobSeekerProfileStep = ({
         <label htmlFor="locationPreference" className="block font-medium">
           Location Preference
         </label>
-        <input
+        <select
           id="locationPreference"
-          type="text"
           value={locationPreference}
           onChange={(e) => setLocationPreference(e.target.value)}
-          placeholder="Location Preference"
           className="w-full p-2 border rounded"
-        />
+        >
+          <option value="">Select Location</option>
+          <option value="remote">Remote</option>
+          <option value="hybrid">Hybrid</option>
+          <option value="onsite">On-site</option>
+        </select>
       </div>
 
       <div className="flex justify-between">

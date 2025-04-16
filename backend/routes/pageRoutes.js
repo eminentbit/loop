@@ -1,6 +1,6 @@
-const express = require("express");
-const router = express.Router();
-const { Page } = require("../models"); // Import the Page model
+import { Router } from "express";
+const router = Router();
+import { Page } from "../models"; // Import the Page model
 
 // CREATE a new Page
 router.post("/", async (req, res) => {
@@ -83,4 +83,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -27,12 +27,13 @@ import ForgotPassword from "./pages/ForgetPassword";
 import ProtectiveWrapper from "./components/ProtectiveWrapper";
 import SignInModal from "./components/SignInModal";
 import fetchCSRF from "./utils/FetchCsrf";
-import { useEffect } from "react";
+import getCookie from "./utils/GetCookie";
+import { useEffect, useState } from "react";
 import About from "./pages/About";
 import ContactPage from "./pages/Contact";
 
 const AppRoutes = () => {
-  const role = "recruiter";
+  const [role, setRole] = useState();
 
   useEffect(() => {
     const checkRole = async () => {
@@ -42,10 +43,15 @@ const AppRoutes = () => {
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/auth/profile/`,
           {
-            credentials: "include", // sends cookies/session data
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": getCookie("csrftoken"),
+            },
           }
         );
-        console.log(response.json());
+        const data = await response.json();
+        setRole(data.role.toLowerCase());
       } catch (error) {
         console.error("Session check failed", error);
       }
@@ -91,47 +97,159 @@ const AppRoutes = () => {
           </ProtectiveWrapper>
         }
       />
-      <Route path="/feed" element={<Feed userRole={role} />} />
-      <Route path="/network" element={<NetworkPage userRole={role} />} />
-      <Route path="/details" element={<DetailPage userRole={role} />} />
+      <Route
+        path="/feed"
+        element={
+          <ProtectiveWrapper>
+            <Feed userRole={role} />
+          </ProtectiveWrapper>
+        }
+      />
+      <Route
+        path="/network"
+        element={
+          <ProtectiveWrapper>
+            <NetworkPage userRole={role} />
+          </ProtectiveWrapper>
+        }
+      />
+      <Route
+        path="/details"
+        element={
+          <ProtectiveWrapper>
+            <DetailPage userRole={role} />
+          </ProtectiveWrapper>
+        }
+      />
       <Route
         path="/recommended"
-        element={<RecommendedPage userRole={role} />}
+        element={
+          <ProtectiveWrapper>
+            <RecommendedPage userRole={role} />
+          </ProtectiveWrapper>
+        }
       />
-      <Route path="/startup" element={<StartupPage userRole={role} />} />
-      <Route path="/community" element={<CommunityPage userRole={role} />} />
-      <Route path="/assessments" element={<SkillsPage userRole={role} />} />
+      <Route
+        path="/startup"
+        element={
+          <ProtectiveWrapper>
+            <StartupPage userRole={role} />
+          </ProtectiveWrapper>
+        }
+      />
+      <Route
+        path="/community"
+        element={
+          <ProtectiveWrapper>
+            <CommunityPage userRole={role} />
+          </ProtectiveWrapper>
+        }
+      />
+      <Route
+        path="/assessments"
+        element={
+          <ProtectiveWrapper>
+            <SkillsPage userRole={role} />
+          </ProtectiveWrapper>
+        }
+      />
       <Route path="/jobs">
         <Route
           path="/jobs/recommended"
-          element={<RecommendedPage userRole={role} />}
+          element={
+            <ProtectiveWrapper>
+              <RecommendedPage userRole={role} />
+            </ProtectiveWrapper>
+          }
         />
-        <Route path="/jobs/:jobId" element={<DetailPage userRole={role} />} />
+        <Route
+          path="/jobs/:jobId"
+          element={
+            <ProtectiveWrapper>
+              <DetailPage userRole={role} />
+            </ProtectiveWrapper>
+          }
+        />
       </Route>
       <Route
         path="/applications"
-        element={<MyApplications userRole={role} />}
+        element={
+          <ProtectiveWrapper>
+            <MyApplications userRole={role} />
+          </ProtectiveWrapper>
+        }
       />
       <Route
         path="/notifications"
-        element={<NotificationPage userRole={role} />}
+        element={
+          <ProtectiveWrapper>
+            <NotificationPage userRole={role} />
+          </ProtectiveWrapper>
+        }
       />
-      <Route path="/learning" element={<LearningPage userRole={role} />} />
-      <Route path="/candidates" element={<CandidatePool userRole={role} />} />
+      <Route
+        path="/learning"
+        element={
+          <ProtectiveWrapper>
+            <LearningPage userRole={role} />
+          </ProtectiveWrapper>
+        }
+      />
+      <Route
+        path="/candidates"
+        element={
+          <ProtectiveWrapper>
+            <CandidatePool userRole={role} />
+          </ProtectiveWrapper>
+        }
+      />
       <Route
         path="/collaboration"
-        element={<TeamCollaboration userRole={role} />}
+        element={
+          <ProtectiveWrapper>
+            <TeamCollaboration userRole={role} />
+          </ProtectiveWrapper>
+        }
       />
-      <Route path="/analytics" element={<HiringAnalytics userRole={role} />} />
+      <Route
+        path="/analytics"
+        element={
+          <ProtectiveWrapper>
+            <HiringAnalytics userRole={role} />
+          </ProtectiveWrapper>
+        }
+      />
       <Route
         path="/investor-tracker"
-        element={<InvestorTracker userRole={role} />}
+        element={
+          <ProtectiveWrapper>
+            <InvestorTracker userRole={role} />
+          </ProtectiveWrapper>
+        }
       />
-      <Route path="/reports" element={<Report userRole={role} />} />
-      <Route path="/settings" element={<Settings userRole={role} />} />
+      <Route
+        path="/reports"
+        element={
+          <ProtectiveWrapper>
+            <Report userRole={role} />
+          </ProtectiveWrapper>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <ProtectiveWrapper>
+            <Settings userRole={role} />
+          </ProtectiveWrapper>
+        }
+      />
       <Route
         path="/startup-listings"
-        element={<StartupListing userRole={role} />}
+        element={
+          <ProtectiveWrapper>
+            <StartupListing userRole={role} />
+          </ProtectiveWrapper>
+        }
       />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="*" element={<NotFoundPage />} />

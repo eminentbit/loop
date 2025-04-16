@@ -1,61 +1,35 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { DarkModeContext } from "../components/DarkModeContext";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
+import PropTypes from "prop-types";
+import startups from "../data/startups";
 
-function StartupListing() {
+function StartupListing({ userRole }) {
   const { darkMode } = useContext(DarkModeContext);
 
   // Sidebar control & role
-  const [isOpen, setIsOpen] = useState(true);
-  const userRole = "admin"; // Update as needed
+  const [isOpen, setIsOpen] = useState(() => {
+    const storedValue = localStorage.getItem("sidebarOpen");
+    return storedValue ? JSON.parse(storedValue) : true;
+  });
 
-  const startups = [
-    {
-      id: 1,
-      name: "AgroTech Solutions",
-      category: "Agriculture",
-      founder: "John Doe",
-      fundingStage: "Seed",
-    },
-    {
-      id: 2,
-      name: "HealthNet AI",
-      category: "Healthcare",
-      founder: "Jane Smith",
-      fundingStage: "Series A",
-    },
-    {
-      id: 3,
-      name: "GreenCharge",
-      category: "Energy",
-      founder: "Michael Brown",
-      fundingStage: "Pre-Seed",
-    },
-    {
-      id: 4,
-      name: "LearnLoop",
-      category: "EdTech",
-      founder: "Alice Johnson",
-      fundingStage: "Series B",
-    },
-    {
-      id: 5,
-      name: "QuickFleet",
-      category: "Logistics",
-      founder: "Emily Davis",
-      fundingStage: "Series A",
-    },
-  ];
+  useEffect(() => {
+    localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
+  }, [isOpen]);
 
   return (
-    <div className={`${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"} min-h-screen`}>
-      <Header />
+    <div
+      className={`${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
+      } min-h-screen`}
+    >
       <div className="flex">
         {/* Sidebar now receives parameters */}
         <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} userRole={userRole} />
-        <main className="flex-1 p-8">
+        <main className={"flex-1 p-8" + (isOpen ? " ml-64" : " ml-16")}>
           <h1 className="text-3xl font-bold mb-6">Startup Listings</h1>
+          <Header userRole={userRole} />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {startups.map((startup) => (
@@ -63,7 +37,9 @@ function StartupListing() {
                 key={startup.id}
                 className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700"
               >
-                <h2 className="text-xl font-semibold text-blue-700 dark:text-blue-300 mb-1">{startup.name}</h2>
+                <h2 className="text-xl font-semibold text-blue-700 dark:text-blue-300 mb-1">
+                  {startup.name}
+                </h2>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                   <strong>Category:</strong> {startup.category}
                 </p>
@@ -84,5 +60,9 @@ function StartupListing() {
     </div>
   );
 }
+
+StartupListing.propTypes = {
+  userRole: PropTypes.string.isRequired,
+};
 
 export default StartupListing;

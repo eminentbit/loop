@@ -1,6 +1,6 @@
 from django.conf import settings
 from rest_framework import serializers # type: ignore
-from .models import UserAccount
+from .models import Notification, UserAccount
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -51,3 +51,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
         return user
     
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ['id', 'user', 'content', 'type', 'is_read', 'created_at']
+        read_only_fields = ['id', 'created_at', 'user']

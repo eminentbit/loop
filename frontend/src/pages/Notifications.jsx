@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { DarkModeContext } from "@/components/DarkModeContext";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
@@ -10,52 +10,104 @@ import {
   FaCheckCircle,
 } from "react-icons/fa";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
+import getCookie from "../utils/GetCookie";
+import axios from "axios";
 
 const NotificationPage = ({ userRole }) => {
   const { isDarkMode } = useContext(DarkModeContext);
-  const [isOpen, setIsOpen] = useState(true);
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      type: "message",
-      content: "You received a message from Alex",
-      isRead: false,
-    },
-    {
-      id: 2,
-      type: "mention",
-      content: "Sarah mentioned you in a post",
-      isRead: false,
-    },
-    {
-      id: 3,
-      type: "community",
-      content: "New post in 'Developers Hub'",
-      isRead: true,
-    },
-    {
-      id: 4,
-      type: "general",
-      content: "Your profile verification was approved",
-      isRead: false,
-    },
-  ]);
+  const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(() => {
+    const storedValue = localStorage.getItem("sidebarOpen");
+    return storedValue ? JSON.parse(storedValue) : true;
+  });
+
+  // Local state for notifications, search, loading, and error
+  const [notifications, setNotifications] = useState([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const markAsRead = (id) => {
-    setNotifications((prev) =>
-      prev.map((notif) =>
-        notif.id === id ? { ...notif, isRead: true } : notif
-      )
-    );
+  // Save sidebar state to localStorage
+  useEffect(() => {
+    localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
+  }, [isOpen]);
+
+  // Fetch notifications from backend on component mount
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/auth/notifications/`,
+          {
+            withCredentials: true,
+            headers: {
+              "X-CSRFToken": getCookie("csrftoken"),
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        setNotifications(response.data);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to fetch notifications.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotifications();
+  }, []);
+
+  // Mark a single notification as read through backend then update state
+  const markAsRead = async (id) => {
+    try {
+      // Example endpoint to mark a notification as read
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/auth/notifications/${id}/mark-read/`,
+        {},
+        {
+          withCredentials: true,
+          headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setNotifications((prev) =>
+        prev.map((notif) =>
+          notif.id === id ? { ...notif, isRead: true } : notif
+        )
+      );
+    } catch (err) {
+      console.error("Error marking notification as read", err);
+    }
   };
 
-  const markAllAsRead = () => {
-    setNotifications((prev) =>
-      prev.map((notif) => ({ ...notif, isRead: true }))
-    );
+  // Mark all notifications as read
+  const markAllAsRead = async () => {
+    try {
+      // Example backend endpoint to mark all notifications as read
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/auth/notifications/mark-all-read/`,
+        {},
+        {
+          withCredentials: true,
+          headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setNotifications((prev) =>
+        prev.map((notif) => ({ ...notif, isRead: true }))
+      );
+    } catch (err) {
+      console.error("Error marking all notifications as read", err);
+    }
   };
 
+  // Return an icon for a given notification type
   const getIcon = (type) => {
     switch (type) {
       case "message":
@@ -69,6 +121,7 @@ const NotificationPage = ({ userRole }) => {
     }
   };
 
+  // Filter notifications based on search string
   const filteredNotifications = notifications.filter((notif) =>
     notif.content.toLowerCase().includes(search.toLowerCase())
   );
@@ -120,7 +173,11 @@ const NotificationPage = ({ userRole }) => {
               </div>
               {/* Notifications List */}
               <div className="space-y-4 max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-700">
-                {filteredNotifications.length > 0 ? (
+                {loading ? (
+                  <p>Loading notifications...</p>
+                ) : error ? (
+                  <p className="text-red-500">{error}</p>
+                ) : filteredNotifications.length > 0 ? (
                   filteredNotifications.map((notif) => (
                     <div
                       key={notif.id}
@@ -181,7 +238,11 @@ const NotificationPage = ({ userRole }) => {
                 Total notifications:{" "}
                 <span className="font-bold">{notifications.length}</span>
               </p>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition w-full">
+              <button
+                type="button"
+                onClick={() => navigate("/settings")}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition w-full"
+              >
                 Manage Notification Settings
               </button>
               <div className="mt-6">

@@ -1,6 +1,6 @@
-const express = require("express");
-const router = express.Router();
-const { Course, Enrollment, Streak } = require("../models"); // Import your models
+import { Router } from "express";
+const router = Router();
+import { Course, Enrollment, Streak } from "../models"; // Import your models
 
 // CREATE Course
 router.post("/courses", async (req, res) => {
@@ -149,4 +149,4 @@ router.delete("/streaks/:id", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

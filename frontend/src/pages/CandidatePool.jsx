@@ -3,64 +3,17 @@ import { DarkModeContext } from "../components/DarkModeContext";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import PropTypes from "prop-types";
+import candidates from "../data/candidates";
 
 function CandidatePool({ userRole }) {
   const { darkMode } = useContext(DarkModeContext);
-  const [isOpen, setIsOpen] = useState(false);
-
-  const candidates = [
-    {
-      id: 1,
-      name: "John Doe",
-      role: "Frontend Developer",
-      experience: "3 years",
-      skills: "React, Tailwind CSS, JavaScript",
-      profilePicture: "https://randomuser.me/api/portraits/men/1.jpg",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      role: "Backend Developer",
-      experience: "5 years",
-      skills: "Node.js, Express, MongoDB",
-      profilePicture: "https://randomuser.me/api/portraits/women/2.jpg",
-    },
-    {
-      id: 3,
-      name: "Alice Johnson",
-      role: "UI/UX Designer",
-      experience: "4 years",
-      skills: "Figma, Adobe XD, Sketch",
-      profilePicture: "https://randomuser.me/api/portraits/women/3.jpg",
-    },
-    {
-      id: 4,
-      name: "Michael Brown",
-      role: "Full Stack Developer",
-      experience: "6 years",
-      skills: "React, Node.js, PostgreSQL",
-      profilePicture: "https://randomuser.me/api/portraits/men/4.jpg",
-    },
-    {
-      id: 5,
-      name: "Emily Davis",
-      role: "DevOps Engineer",
-      experience: "4 years",
-      skills: "AWS, Docker, Kubernetes",
-      profilePicture: "https://randomuser.me/api/portraits/women/5.jpg",
-    },
-    {
-      id: 6,
-      name: "Robert Wilson",
-      role: "Product Manager",
-      experience: "7 years",
-      skills: "Agile, Scrum, Roadmapping",
-      profilePicture: "https://randomuser.me/api/portraits/men/6.jpg",
-    },
-  ];
+  const [isOpen, setIsOpen] = useState(() => {
+    const storedValue = localStorage.getItem("sidebarOpen");
+    return storedValue ? JSON.parse(storedValue) : true;
+  });
 
   useEffect(() => {
-    localStorage.setItem("sidebarOpen", isOpen);
+    localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
   }, [isOpen]);
 
   return (

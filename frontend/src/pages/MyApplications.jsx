@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import kApplications from "@/data/applications";
@@ -8,7 +8,14 @@ import PropTypes from "prop-types";
 
 const MyApplications = ({ userRole }) => {
   const [search, setSearch] = useState("");
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(() => {
+    const storedValue = localStorage.getItem("sidebarOpen");
+    return storedValue ? JSON.parse(storedValue) : true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
+  }, [isOpen]);
   const { isDarkMode } = useContext(DarkModeContext);
   // eslint-disable-next-line no-unused-vars
   const [applications, setApplications] = useState(kApplications);

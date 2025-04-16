@@ -1,10 +1,66 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { DarkModeContext } from "./DarkModeContext";
 import { Heart, MessageCircle } from "lucide-react";
+import getCookie from "../utils/GetCookie";
+import axios from "axios";
 
 const PostCard = ({ post }) => {
   const { isDarkMode } = useContext(DarkModeContext);
+  const [fullName, setFullName] = useState("");
+  const [isMe, setIsMe] = useState(false);
+  const [profilePic, setProfilePic] = useState("");
+  // eslint-disable-next-line no-unused-vars
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const handleSearch = async (email) => {
+      setFullName("");
+      setError("");
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/auth/user/full-name/`,
+          {
+            params: { email },
+            withCredentials: true,
+            headers: {
+              "X-CSRFToken": getCookie("csrftoken"),
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        setFullName(response.data.fullName);
+      } catch (err) {
+        setError(err.response?.data?.error || "Something went wrong");
+      }
+    };
+
+    const checkProfile = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/auth/profile/`,
+          {
+            withCredentials: true,
+            headers: {
+              "X-CSRFToken": getCookie("csrftoken"),
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.data.email === post.user) {
+          setIsMe(true);
+        }
+
+        setProfilePic(response.data.profilePic);
+      } catch (err) {
+        setError(err.response?.data?.error || "Something went wrong");
+      }
+    };
+    checkProfile();
+    handleSearch(post.user);
+  }, [post]);
 
   return (
     <div
@@ -13,13 +69,11 @@ const PostCard = ({ post }) => {
       }`}
     >
       <div className="flex items-center mb-4">
-        <img
-          src={post.profilePic}
-          alt={post.username}
-          className="w-10 h-10 rounded-full mr-3"
-        />
+        {profilePic && (
+          <img alt={fullName} className="w-10 h-10 rounded-full mr-3" />
+        )}
         <div>
-          <h2 className="font-bold text-sm">{post.username}</h2>
+          <h2 className="font-bold text-sm">{!isMe ? fullName : "You"}</h2>
           <span className="text-xs text-gray-500">{post.timestamp}</span>
         </div>
       </div>
@@ -69,7 +123,7 @@ const PostCard = ({ post }) => {
 PostCard.propTypes = {
   post: PropTypes.shape({
     id: PropTypes.number.isRequired,
-    username: PropTypes.string.isRequired,
+    user: PropTypes.string.isRequired,
     profilePic: PropTypes.string.isRequired,
     timestamp: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,

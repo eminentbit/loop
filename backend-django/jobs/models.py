@@ -26,6 +26,13 @@ class Job(models.Model):
     location = models.CharField(max_length=50, choices=LOCATIONS)
     type = models.CharField(max_length=50, choices=JOB_TYPES)
     salary = models.CharField(max_length=50, choices=SALARY_RANGES)
+    responsibilities = models.TextField(blank=True, null=True)
+    requirements = models.TextField(blank=True, null=True)
+    benefits = models.TextField(blank=True, null=True)
+    application_link = models.URLField(blank=True, null=True)
+    how_to_apply = models.TextField(blank=True, null=True)
+    level = models.CharField(max_length=50, blank=True, null=True)
+    department = models.CharField(max_length=100, blank=True, null=True)
     posted_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

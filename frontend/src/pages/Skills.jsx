@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiPlus, FiStar, FiCheckCircle } from "react-icons/fi";
 import { FaRegLightbulb } from "react-icons/fa";
 import PropTypes from "prop-types";
@@ -14,7 +14,14 @@ const SkillsPage = ({ userRole }) => {
     { id: 4, name: "Machine Learning", level: "Beginner", endorsements: 7 },
   ]);
 
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(() => {
+    const storedValue = localStorage.getItem("sidebarOpen");
+    return storedValue ? JSON.parse(storedValue) : true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
+  }, [isOpen]);
 
   // Recommended skills list
   const recommendedSkills = ["Next.js", "TypeScript", "GraphQL", "AWS"];
