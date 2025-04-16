@@ -219,7 +219,7 @@ const JobsPage = ({ userRole }) => {
         <h1 className="text-3xl font-bold mb-6">Job Listings</h1>
 
         {/* Recruiter Section: Show Add Job form if userRole is recruiter */}
-        {userRole.toLowerCase() === "recruiter" && (
+        {userRole === "recruiter" && (
           <AddJobModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
@@ -283,15 +283,17 @@ const JobsPage = ({ userRole }) => {
             />
           ))}
         </div>
-        <div className="flex items-center justify-center mt-5">
-          <button
-            type="button"
-            onClick={() => setIsModalOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white  font-semibold py-2 px-4 rounded-xl shadow-md transition duration-300 ease-in-out"
-          >
-            Add New Job
-          </button>
-        </div>
+        {userRole !== "jobseeker" && (
+          <div className="flex items-center justify-center mt-5">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(true)}
+              className="bg-blue-600 hover:bg-blue-700 text-white  font-semibold py-2 px-4 rounded-xl shadow-md transition duration-300 ease-in-out"
+            >
+              Add New Job
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -6,14 +6,17 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import CreatePost from "../components/CreatePost";
 // import { samplePosts } from "../data/posts";
-import { sampleInsights } from "../data/insights";
-
-// import { sampleInsights } if you still want to keep insights static
+// import { sampleInsights } from "../data/insights"; // Keep if needed elsewhere
+import CommentSection from "../components/CommentSection"; // Assuming this component can take a postId and an onClose handler
 
 const Feed = ({ userRole }) => {
   const { isDarkMode } = useContext(DarkModeContext);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  // --- State Change ---
+  // Store the ID of the post whose comments are open, or null
+  const [openedCommentPostId, setOpenedCommentPostId] = useState(null);
+  // --- End State Change ---
   const [error, setError] = useState(null);
 
   const [isOpen, setIsOpen] = useState(() => {
@@ -25,8 +28,9 @@ const Feed = ({ userRole }) => {
     localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
   }, [isOpen]);
 
-  // Fetch posts from API
   const fetchPosts = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/feed/posts/`
@@ -40,9 +44,23 @@ const Feed = ({ userRole }) => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchPosts();
   }, []);
+
+  // --- Handler Function ---
+  // Toggles the comment section for a specific post ID
+  const handleToggleComments = (postId) => {
+    setOpenedCommentPostId((prevId) => (prevId === postId ? null : postId));
+  };
+  // --- End Handler Function ---
+
+  // --- Close Handler for CommentSection ---
+  const handleCloseComments = () => {
+    setOpenedCommentPostId(null);
+  };
+  // --- End Close Handler ---
 
   return (
     <div
@@ -50,17 +68,30 @@ const Feed = ({ userRole }) => {
         isDarkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
       } min-h-screen transition-colors duration-300`}
     >
-      <div className={`ml-20 px-6 ${isOpen ? "lg:ml-64" : "lg:ml-20"}`}>
-        <Header userRole={userRole} />
+      {/* Header position depends on sidebar state */}
+      <div
+        className={`fixed top-0 left-0 right-0 z-40 ${
+          isOpen ? "lg:ml-64" : "lg:ml-20"
+        } ml-20 transition-all duration-300`}
+      >
+        {/* Added fixed positioning and z-index */}
+        <div className="px-6">
+          {" "}
+          {/* Container for padding */}
+          <Header userRole={userRole} />
+        </div>
       </div>
 
-      <div className="flex max-w-7xl mx-auto pt-4">
+      <div className="flex pt-16">
+        {" "}
+        {/* Added pt-16 (adjust as needed based on Header height) */}
+        {/* Sidebar position is fixed */}
         <Sidebar userRole={userRole} isOpen={isOpen} setIsOpen={setIsOpen} />
-
+        {/* Main content area adjusts margin based on sidebar state */}
         <div
           className={`flex-1 p-6 grid grid-cols-1 md:grid-cols-3 gap-6 ${
-            isOpen ? "lg:ml-64" : "lg:ml-16"
-          }`}
+            isOpen ? "lg:ml-64" : "lg:ml-20" // Adjusted margin based on sidebar state
+          } ml-20 transition-all duration-300`} // Added base ml-20 for small screens and transition
         >
           <main className="md:col-span-2">
             <CreatePost refreshPosts={fetchPosts} />
@@ -72,14 +103,35 @@ const Feed = ({ userRole }) => {
               ) : posts.length === 0 ? (
                 <p>No posts available.</p>
               ) : (
-                posts.map((post) => <PostCard key={post.id} post={post} />)
+                posts.map((post) => (
+                  <PostCard
+                    key={post.id}
+                    post={post}
+                    // --- Pass handler to PostCard ---
+                    onToggleComments={() => handleToggleComments(post.id)}
+                    // Optionally pass if comments are open for this post for styling in PostCard
+                    areCommentsOpen={openedCommentPostId === post.id}
+                    // --- End Pass handler ---
+                  />
+                ))
               )}
             </div>
           </main>
 
-          <aside className="hidden md:block">
-            <CareerInsights insights={sampleInsights} />
-          </aside>
+          {/* --- Aside/Comment Section Rendering Logic --- */}
+          {/* Render aside only if a post's comments are meant to be open */}
+          {openedCommentPostId !== null && (
+            <aside className="hidden md:block md:col-span-1 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
+              {/* Added sticky positioning and height/overflow control */}
+              {/* Pass the postId and a close handler to CommentSection */}
+              {/* Assuming CommentSection accepts postId and onClose props */}
+              <CommentSection
+                postId={openedCommentPostId}
+                onClose={handleCloseComments}
+              />
+            </aside>
+          )}
+          {/* --- End Aside/Comment Section Rendering Logic --- */}
         </div>
       </div>
     </div>
@@ -90,7 +142,9 @@ Feed.propTypes = {
   userRole: PropTypes.string,
 };
 
+// CareerInsights component remains unchanged unless needed
 const CareerInsights = ({ insights }) => {
+  // ... (keep existing CareerInsights code)
   const { isDarkMode } = useContext(DarkModeContext);
 
   return (

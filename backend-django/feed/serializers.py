@@ -13,6 +13,9 @@ class FeedSerializer(serializers.ModelSerializer):
     likes_count = serializers.SerializerMethodField()
     comments = CommentSerializer(many=True, read_only=True)
     image = serializers.ImageField(required=False)
+    def get_is_liked_by_user(self, obj):
+        user = self.context['request'].user
+        return user in obj.likes.all()
 
     class Meta:
         model = Feed
