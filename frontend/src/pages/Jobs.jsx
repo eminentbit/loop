@@ -4,10 +4,22 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { ChevronDownIcon } from "lucide-react";
 import PropTypes from "prop-types";
+import getCookie from "../utils/GetCookie";
 import { DarkModeContext } from "../components/DarkModeContext";
+import axios from "axios";
+
+import AddJobModal from "../components/AddJob";
 // 🔽 Dropdown Component
 const Dropdown = ({ label, options, selected, onSelect }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(() => {
+    const storedValue = localStorage.getItem("sidebarOpen");
+    return storedValue ? JSON.parse(storedValue) : true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
+  }, [isOpen]);
+
   const { isDarkMode } = useContext(DarkModeContext);
   const dropdownRef = useRef(null);
 
@@ -72,6 +84,7 @@ const Dropdown = ({ label, options, selected, onSelect }) => {
 const JobsPage = ({ userRole }) => {
   const [jobs, setJobs] = useState([]);
   const [isSidebarOpen, setSidebarIsOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("All");
   const [selectedJobType, setSelectedJobType] = useState("All");
@@ -79,14 +92,31 @@ const JobsPage = ({ userRole }) => {
   const [selectedSalary, setSelectedSalary] = useState("All");
   const { isDarkMode } = useContext(DarkModeContext);
 
+  // State for new job form (only used if userRole is recruiter)
+  const [newJob, setNewJob] = useState({
+    title: "",
+    company: "",
+    location: "",
+    type: "",
+    description: "",
+    salary: "",
+  });
+
   // 🔁 Fetch jobs from API
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/jobs", {
-          // credentials: "include",
-        }); // <-- Adjust to your actual backend URL
-        const data = await response.json();
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/jobs/`,
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": getCookie("csrftoken"),
+            },
+          }
+        );
+        const data = await response.data;
         console.log("Fetched jobs:", data);
         setJobs(data);
       } catch (error) {
@@ -132,6 +162,42 @@ const JobsPage = ({ userRole }) => {
     );
   });
 
+  // Handle recruiter's job submission
+  const handleJobSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/jobs/`,
+        newJob,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+          withCredentials: true,
+        }
+      );
+
+      console.log("Job submitted successfully:", response.data);
+      setJobs((prevJobs) => [...prevJobs, response.data]);
+      setNewJob({
+        title: "",
+        company: "",
+        location: "",
+        type: "",
+        description: "",
+        salary: "",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    console.log("Submitting job:", newJob);
+
+    // Refresh jobs (or optimistically update jobs state)
+    // const updatedJobs = await fetchUpdatedJobs();
+    // setJobs(updatedJobs);
+  };
+
   return (
     <div
       className={`flex min-h-screen transition-colors ${
@@ -151,6 +217,17 @@ const JobsPage = ({ userRole }) => {
       >
         <Header className="mb-6" userRole={userRole} />
         <h1 className="text-3xl font-bold mb-6">Job Listings</h1>
+
+        {/* Recruiter Section: Show Add Job form if userRole is recruiter */}
+        {userRole.toLowerCase() === "recruiter" && (
+          <AddJobModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            handleJobSubmit={handleJobSubmit}
+            newJob={newJob}
+            setNewJob={setNewJob}
+          />
+        )}
 
         {/* 🔽 Filters */}
         <div className="flex flex-wrap items-center gap-2 mb-6">
@@ -206,13 +283,22 @@ const JobsPage = ({ userRole }) => {
             />
           ))}
         </div>
+        <div className="flex items-center justify-center mt-5">
+          <button
+            type="button"
+            onClick={() => setIsModalOpen(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white  font-semibold py-2 px-4 rounded-xl shadow-md transition duration-300 ease-in-out"
+          >
+            Add New Job
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
 JobsPage.propTypes = {
-  userRole: PropTypes.string,
+  userRole: PropTypes.string.isRequired,
 };
 
 Dropdown.propTypes = {

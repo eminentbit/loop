@@ -6,3 +6,4 @@ admin.site.register(Job)
 
 
 # Register your models here.
+admin.register(Job)

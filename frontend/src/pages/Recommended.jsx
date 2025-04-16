@@ -10,7 +10,14 @@ import { DarkModeContext } from "../components/DarkModeContext";
 
 const RecomendedPage = ({ className, userRole }) => {
   const { isDarkMode } = useContext(DarkModeContext);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(() => {
+    const storedValue = localStorage.getItem("sidebarOpen");
+    return storedValue ? JSON.parse(storedValue) : true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
+  }, [isOpen]);
 
   console.log("isDarkMode", isDarkMode);
 

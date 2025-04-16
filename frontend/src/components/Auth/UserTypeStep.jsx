@@ -20,9 +20,9 @@ const UserTypeStep = ({ nextStep, prevStep, updateFormData, formData }) => {
       <div className="flex space-x-4">
         <button
           className={`px-4 py-2 rounded ${
-            userType === "job_seeker" ? "bg-blue-500 text-white" : "bg-gray-300"
+            userType === "jobseeker" ? "bg-blue-500 text-white" : "bg-gray-300"
           }`}
-          onClick={() => setUserType("job_seeker")}
+          onClick={() => setUserType("jobseeker")}
         >
           Job Seeker
         </button>

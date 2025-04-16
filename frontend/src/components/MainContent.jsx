@@ -16,7 +16,7 @@ const MainContent = ({ userRole }) => {
         isDarkMode ? "bg-gray-800 text-gray-100" : "bg-gray-50 text-gray-900"
       }`}
     >
-      <Header />
+      <Header userRole={userRole} />
 
       {/* Dashboard Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

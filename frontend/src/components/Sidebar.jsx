@@ -17,14 +17,37 @@ import {
   TrendingUp,
   LineChart,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { DarkModeContext } from "./DarkModeContext";
 import Logo from "./Logo";
+import axios from "axios";
+import getCookie from "../utils/GetCookie";
 
 const Sidebar = ({ userRole, isOpen, setIsOpen }) => {
   const [isSubSectionOpen, setIsSubSectionOpen] = useState(false);
   const { isDarkMode } = useContext(DarkModeContext);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/auth/logout/`,
+        {},
+        {
+          withCredentials: true,
+          headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      navigate("/signin");
+    } catch (error) {
+      console.log("Error loggin out", error);
+    }
+  };
 
   // Define role-based navigation links.
   const jobSeekerLinks = [
@@ -227,7 +250,10 @@ const Sidebar = ({ userRole, isOpen, setIsOpen }) => {
             }`}
           >
             <LogOut className="w-5 h-5" />
-            <span className={`${isOpen ? "block" : "hidden"} text-sm`}>
+            <span
+              className={`${isOpen ? "block" : "hidden"} text-sm`}
+              onClick={handleLogout}
+            >
               Logout
             </span>
           </button>

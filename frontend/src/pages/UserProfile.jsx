@@ -1,13 +1,20 @@
 import user from "@/data/user";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { DarkModeContext } from "@/components/DarkModeContext";
 import PropTypes from "prop-types";
 
 const ProfilePage = ({ userRole }) => {
   const { isDarkMode } = useContext(DarkModeContext);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(() => {
+    const storedValue = localStorage.getItem("sidebarOpen");
+    return storedValue ? JSON.parse(storedValue) : true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
+  }, [isOpen]);
 
   return (
     <div className="flex transition-all duration-300 ease-in-out">

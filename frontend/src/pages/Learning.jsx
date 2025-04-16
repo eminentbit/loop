@@ -8,34 +8,38 @@ import { DarkModeContext } from "@/components/DarkModeContext";
 // import "react-circular-progressbar/dist/styles.css";
 
 function LearningPage({ userRole }) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(() => {
+    const storedValue = localStorage.getItem("sidebarOpen");
+    return storedValue ? JSON.parse(storedValue) : true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
+  }, [isOpen]);
   const { isDarkMode } = useContext(DarkModeContext);
 
   // ─── Dashboard state ─────────────────────────────────────────────────────
   const [overallProgress, setOverallProgress] = useState(0);
-  const [enrolled, setEnrolled]           = useState(0);
-  const [completed, setCompleted]         = useState(0);
-  const [hours, setHours]                 = useState(0);
-  const [quizzes, setQuizzes]             = useState(0);
-  const [userCourses, setUserCourses]     = useState([]);
-  const [streakMap, setStreakMap]         = useState({});
-  const [loading, setLoading]             = useState(true);
-  const [error, setError]                 = useState(null);
+  const [enrolled, setEnrolled] = useState(0);
+  const [completed, setCompleted] = useState(0);
+  const [hours, setHours] = useState(0);
+  const [quizzes, setQuizzes] = useState(0);
+  const [userCourses, setUserCourses] = useState([]);
+  const [streakMap, setStreakMap] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // ─── Fetch on mount ──────────────────────────────────────────────────────
   useEffect(() => {
     async function fetchDashboard() {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(
-          "http://localhost:8000/api/learning/",
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await fetch("http://localhost:8000/api/learning/", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (!res.ok) throw new Error(`Server responded ${res.status}`);
         const data = await res.json();
 
@@ -72,9 +76,7 @@ function LearningPage({ userRole }) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        Loading…
-      </div>
+      <div className="flex items-center justify-center h-screen">Loading…</div>
     );
   }
   if (error) {
@@ -196,9 +198,7 @@ function LearningPage({ userRole }) {
                   isDarkMode ? "bg-gray-800" : "bg-white"
                 }`}
               >
-                <h2 className="text-2xl font-semibold mb-6">
-                  Your Courses
-                </h2>
+                <h2 className="text-2xl font-semibold mb-6">Your Courses</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {userCourses.map((course, idx) => (
                     <CourseCard
@@ -249,9 +249,7 @@ function LearningPage({ userRole }) {
                   isDarkMode ? "bg-gray-800" : "bg-white"
                 }`}
               >
-                <h2 className="text-2xl font-bold mb-4">
-                  Trending This Week
-                </h2>
+                <h2 className="text-2xl font-bold mb-4">Trending This Week</h2>
                 <div className="space-y-4">
                   {trendingCourses.map((c, i) => (
                     <div
@@ -268,9 +266,7 @@ function LearningPage({ userRole }) {
                         className="w-16 h-16 rounded-lg"
                       />
                       <div>
-                        <h3 className="font-semibold text-lg">
-                          {c.title}
-                        </h3>
+                        <h3 className="font-semibold text-lg">{c.title}</h3>
                         <p
                           className={`text-sm ${
                             isDarkMode ? "text-gray-400" : "text-gray-600"
@@ -329,7 +325,9 @@ StatCircle.propTypes = {
 
 function FlameIcon({ active }) {
   return (
-    <span className={active ? "text-red-500 text-2xl" : "text-gray-300 text-2xl"}>
+    <span
+      className={active ? "text-red-500 text-2xl" : "text-gray-300 text-2xl"}
+    >
       🔥
     </span>
   );
@@ -352,9 +350,7 @@ function CourseCard({ course, isDarkMode }) {
         className="w-full h-40 object-cover"
       />
       <div className="p-4">
-        <h3 className="text-lg font-semibold text-gray-800">
-          {course.title}
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-800">{course.title}</h3>
         <Link
           to="/courses"
           className="mt-3 inline-block font-medium hover:underline"

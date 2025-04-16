@@ -118,7 +118,7 @@ const SignupWizard = () => {
 
       {/* Step 4: Profile details (Job Seeker or Recruiter) */}
       {step === 3 &&
-        (formData.userType === "job_seeker" ? (
+        (formData.role === "jobseeker" ? (
           <JobSeekerProfileStep
             nextStep={nextStep}
             prevStep={prevStep}

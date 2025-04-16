@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import { ChevronDownIcon } from "lucide-react";
 import PropTypes from "prop-types";
 import { DarkModeContext } from "../components/DarkModeContext";
+import startups from "../data/startups"; // Sample data, replace with your actual data source
 
 // Reuse your Dropdown component if it fits your needs
 const Dropdown = ({ label, options, selected, onSelect }) => {
@@ -76,35 +77,18 @@ Dropdown.propTypes = {
 };
 
 const StartupsPage = ({ userRole }) => {
-  const [isSidebarOpen, setSidebarIsOpen] = useState(false);
+  const [isSidebarOpen, setSidebarIsOpen] = useState(() => {
+    const storedValue = localStorage.getItem("sidebarOpen");
+    return storedValue ? JSON.parse(storedValue) : true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("sidebarOpen", JSON.stringify(isSidebarOpen));
+  }, [isSidebarOpen]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedIndustry, setSelectedIndustry] = useState("All");
   // Other filters could include funding stage, location, etc.
   const { isDarkMode } = useContext(DarkModeContext);
-
-  const startups = [
-    {
-      id: 1,
-      name: "Tech Innovators",
-      industry: "Technology",
-      description: "Innovating the future with cutting-edge tech.",
-      fundingStage: "Seed",
-    },
-    {
-      id: 2,
-      name: "Healthcare Center",
-      industry: "Healthcare",
-      description: "Save the life of human's.",
-      fundingStage: "Seed",
-    },
-    {
-      id: 3,
-      name: "UBA Bank",
-      industry: "Finance",
-      description: "Save money and give out Loans.",
-      fundingStage: "Seed",
-    },
-  ];
 
   const industries = ["All", "Technology", "Healthcare", "Finance"];
   // You might add other filters for funding stage or location

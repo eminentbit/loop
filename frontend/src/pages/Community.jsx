@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import CreateCommunityModal from "../components/CommunityCreationModal";
 import CommunityCard from "../components/CommunityCard";
 import CreateCommunityCard from "../components/CreateCommunityCard";
@@ -12,7 +12,14 @@ const CommunityPage = ({ userRole }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showExplore, setShowExplore] = useState(false);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(() => {
+    const storedValue = localStorage.getItem("sidebarOpen");
+    return storedValue ? JSON.parse(storedValue) : true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
+  }, [isOpen]);
   // eslint-disable-next-line no-unused-vars
   const [sortOption, setSortOption] = useState("date");
   const [sortOrder, setSortOrder] = useState("desc");

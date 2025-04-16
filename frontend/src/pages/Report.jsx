@@ -1,42 +1,57 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { DarkModeContext } from "../components/DarkModeContext";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
+import PropTypes from "prop-types";
 
-function Report() {
+function Report({ userRole }) {
   const { darkMode } = useContext(DarkModeContext);
-  const [isOpen, setIsOpen] = useState(true);
-  const userRole = "admin"; // Change this as needed
+  const [isOpen, setIsOpen] = useState(() => {
+    const storedValue = localStorage.getItem("sidebarOpen");
+    return storedValue ? JSON.parse(storedValue) : true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
+  }, [isOpen]);
 
   const reports = [
     {
       id: 1,
       title: "Quarterly Hiring Report",
       date: "Q1 2023",
-      description: "An overview of recruitment trends and hires made during Q1 2023.",
+      description:
+        "An overview of recruitment trends and hires made during Q1 2023.",
     },
     {
       id: 2,
       title: "Investor Engagement Report",
       date: "March 2023",
-      description: "Detailed analysis of investor interactions and feedback trends.",
+      description:
+        "Detailed analysis of investor interactions and feedback trends.",
     },
     {
       id: 3,
       title: "Market Analysis Report",
       date: "February 2023",
-      description: "Insights into current market trends, competitive analysis, and projections.",
+      description:
+        "Insights into current market trends, competitive analysis, and projections.",
     },
     {
       id: 4,
       title: "Employee Performance Report",
       date: "January 2023",
-      description: "Key performance indicators and productivity metrics for employees.",
+      description:
+        "Key performance indicators and productivity metrics for employees.",
     },
   ];
 
   return (
-    <div className={`${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"} min-h-screen`}>
+    <div
+      className={`${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
+      } min-h-screen`}
+    >
       <Header />
       <div className="flex">
         {/* Pass props here */}
@@ -51,7 +66,9 @@ function Report() {
                 className="bg-white dark:bg-gray-800 shadow rounded p-6 border border-gray-200 dark:border-gray-700"
               >
                 <h2 className="text-xl font-semibold mb-2">{report.title}</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{report.date}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                  {report.date}
+                </p>
                 <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">
                   {report.description}
                 </p>
@@ -66,5 +83,9 @@ function Report() {
     </div>
   );
 }
+
+Report.propTypes = {
+  userRole: PropTypes.string.isRequired,
+};
 
 export default Report;
