@@ -63,10 +63,11 @@ router.post("/register", async (req, res) => {
         break;
     }
 
-    const user = await prisma.user.create({ data: newUserData });
-
     // generate token and set cookie
     generateTokenAndSetCookie(res, user.id);
+
+    // create user in database
+    const user = await prisma.user.create({ data: newUserData });
 
     res.status(201).json({
       message: "User registered successfully",
@@ -97,10 +98,11 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    req.session.userId = user.id;
+    // generate token and set cookie
+    generateTokenAndSetCookie(res, user.id);
 
     res.status(200).json({
-      message: "Login successful",
+      message: "Login successfully",
       user: { email: user.email, role: user.role },
     });
   } catch (err) {
