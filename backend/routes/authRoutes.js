@@ -1,8 +1,8 @@
-const express = require("express");
-const bcrypt = require("bcryptjs");
-const router = express.Router();
-const { PrismaClient } = require("@prisma/client");
-const { isAuthenticated } = require("../middlewares/authMiddleware");
+import { Router } from "express";
+import { hash, compare } from "bcryptjs";
+const router = Router();
+import { PrismaClient } from "@prisma/client";
+import { isAuthenticated } from "../middlewares/authMiddleware";
 
 const prisma = new PrismaClient();
 
@@ -35,7 +35,7 @@ router.post("/register", async (req, res) => {
     }
 
     // Hash password manually (since Prisma doesn't have model hooks like Sequelize)
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await hash(password, 10);
 
     const newUserData = {
       email,
@@ -97,7 +97,7 @@ router.post("/login", async (req, res) => {
       where: { email },
     });
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user || !(await compare(password, user.password))) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
@@ -162,4 +162,4 @@ router.get("/profile", isAuthenticated, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

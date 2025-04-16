@@ -1,10 +1,8 @@
-const express = require("express");
-const session = require("express-session");
-const SQLiteStore = require("connect-sqlite3")(session);
-const cors = require("cors");
+import express, { json } from "express";
+import cors from "cors";
 require("dotenv").config();
 
-const authRoutes = require("./routes/authRoutes");
+import authRoutes from "./routes/authRoutes";
 // const transactionRoutes = require("./routes/transactionRoutes");
 // const subscriptionRoutes = require("./routes/subscriptionRoutes");
 // const paymentRoutes = require("./routes/paymentRoutes");
@@ -13,7 +11,7 @@ const authRoutes = require("./routes/authRoutes");
 const app = express();
 
 // Middleware
-app.use(express.json());
+app.use(json());
 
 // CORS config
 const corsOptions = {
