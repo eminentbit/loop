@@ -31,6 +31,7 @@ import getCookie from "./utils/GetCookie";
 import { useEffect, useState } from "react";
 import About from "./pages/About";
 import ContactPage from "./pages/Contact";
+import StartupDetail from "./pages/StartupDetial";
 
 const AppRoutes = () => {
   const [role, setRole] = useState();
@@ -255,6 +256,7 @@ const AppRoutes = () => {
       <Route path="*" element={<NotFoundPage />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<ContactPage />} />
+      <Route path="/details" element={<StartupDetail />} />
     </Routes>
   );
 };

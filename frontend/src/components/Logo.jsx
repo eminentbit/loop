@@ -1,4 +1,4 @@
-import LoopLogo from "@/assets/loop-logo.jpg";
+import LoopLogo from "@/assets/logo-loop.jpg";
 import PropTypes from "prop-types";
 
 function Logo({ className }) {

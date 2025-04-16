@@ -8,8 +8,11 @@ import Dammy from '../assets/Dammy.png';
 import Daryl from '../assets/Daryl.jpg';
 import Market from '../assets/Market.jpg';
 import Adn from '../assets/Adn.jpg';
-import FrankCEO from '../assets/FrankCEO.jpg';
+//import FrankCEO from '../assets/FrankCEO.jpg';
 import Charles from '../assets/Charles.jpg';
+import emp from '../assets/emp.jpg';
+import randy from '../assets/randy.jpg';
+import logoLoop from '../assets/logo-loop.jpg';
 
 
 function AboutPage() {
@@ -54,15 +57,15 @@ function AboutPage() {
     },
     {
       name: " ",
-      role: "DevOps Engineer",
+      role: "Backend Developer",
       image: Charles,
-      description: "Implements and maintains CI/CD pipelines and infrastructure automation."
+      description: "Develops the server-side logic, database management, and API integration."
     },
     {
       name: " ",
-      role: "HR Manager",
-      //image: Frank,
-      description: "Oversees recruitment, employee relations, and organizational culture."
+      role: "Frontend Developer",
+      image: randy,
+      description: "Develops user interfaces and ensures responsive design for web applications."
     }
   ];
 
@@ -121,7 +124,7 @@ function AboutPage() {
           </div>
           <div className="w-full md:w-1/2">
             <img
-              src={FrankCEO}
+              src={emp}
               alt="Our Mission"
               className="w-full max-h-[300px] object-contain rounded-lg shadow-md"
             />
@@ -143,7 +146,7 @@ function AboutPage() {
           </div>
           <div className="w-full md:w-1/2">
             <img
-              src={Market}
+              src={logoLoop}
               alt="Our Vision"
               className="w-full max-h-[300px] object-contain rounded-lg shadow-md"
             />

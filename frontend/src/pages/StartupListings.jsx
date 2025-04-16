@@ -1,4 +1,6 @@
+// src/pages/StartupListing.jsx
 import { useContext, useState, useEffect } from "react";
+import { Link } from "react-router-dom";               // ← import Link
 import { DarkModeContext } from "../components/DarkModeContext";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
@@ -20,14 +22,11 @@ function StartupListing({ userRole }) {
 
   return (
     <div
-      className={`${
-        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
-      } min-h-screen`}
+      className={`${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"} min-h-screen`}
     >
       <div className="flex">
-        {/* Sidebar now receives parameters */}
         <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} userRole={userRole} />
-        <main className={"flex-1 p-8" + (isOpen ? " ml-64" : " ml-16")}>
+        <main className={`flex-1 p-8${isOpen ? " ml-64" : " ml-16"}`}>
           <h1 className="text-3xl font-bold mb-6">Startup Listings</h1>
           <Header userRole={userRole} />
 
@@ -49,9 +48,14 @@ function StartupListing({ userRole }) {
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                   <strong>Funding Stage:</strong> {startup.fundingStage}
                 </p>
-                <button className="text-sm bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                
+                {/* Use <Link> to navigate to /details/:id */}
+                <Link
+                  to={`/details/${startup.id}`}
+                  className="inline-block text-sm bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                >
                   View Details
-                </button>
+                </Link>
               </div>
             ))}
           </div>
