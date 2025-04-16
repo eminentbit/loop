@@ -1,10 +1,9 @@
-import { Router } from "express";
+import express from "express";
 import { hash, compare } from "bcryptjs";
-const router = Router();
-import { PrismaClient } from "@prisma/client";
-import { isAuthenticated } from "../middlewares/authMiddleware";
-
-const prisma = new PrismaClient();
+const router = express.Router();
+import prisma from "../lib/prisma.js";
+import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
+// import isAuthenticated  from "../middlewares/authMiddleware.js";
 
 // Register route
 router.post("/register", async (req, res) => {
@@ -26,15 +25,12 @@ router.post("/register", async (req, res) => {
   } = req.body;
 
   try {
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
+    const existingUser = await prisma.user.findUnique({ where: { email } });
 
     if (existingUser) {
       return res.status(409).json({ message: "Email already in use" });
     }
 
-    // Hash password manually (since Prisma doesn't have model hooks like Sequelize)
     const hashedPassword = await hash(password, 10);
 
     const newUserData = {
@@ -44,33 +40,33 @@ router.post("/register", async (req, res) => {
       role,
     };
 
-    // Recruiter-specific fields
-    if (role === "recruiter") {
-      Object.assign(newUserData, {
-        companyName,
-        companyRole,
-        industry,
-        companySize,
-        additionalInfo,
-      });
+    switch (role) {
+      case "recruiter":
+        Object.assign(newUserData, {
+          companyName,
+          companyRole,
+          industry,
+          companySize,
+          additionalInfo,
+        });
+        break;
+
+      case "jobseeker":
+      case "investor":
+        Object.assign(newUserData, {
+          currentJobTitle,
+          experienceLevel,
+          primarySkills,
+          careerInterests,
+          locationPreference,
+        });
+        break;
     }
 
-    // Jobseeker or Investor-specific fields
-    if (role === "jobseeker" || role === "investor") {
-      Object.assign(newUserData, {
-        currentJobTitle,
-        experienceLevel,
-        primarySkills,
-        careerInterests,
-        locationPreference,
-      });
-    }
+    const user = await prisma.user.create({ data: newUserData });
 
-    const user = await prisma.user.create({
-      data: newUserData,
-    });
-
-    req.session.userId = user.id;
+    // generate token and set cookie
+    generateTokenAndSetCookie(res, user.id);
 
     res.status(201).json({
       message: "User registered successfully",
@@ -81,9 +77,9 @@ router.post("/register", async (req, res) => {
       },
     });
   } catch (err) {
+    console.error(err); // log it at least
     res.status(400).json({
       message: "Registration failed",
-      error: err.message,
     });
   }
 });
@@ -124,42 +120,42 @@ router.post("/logout", (req, res) => {
 });
 
 // Profile route (protected)
-router.get("/profile", isAuthenticated, async (req, res) => {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: req.session.userId },
-      select: {
-        id: true,
-        email: true,
-        fullName: true,
-        role: true,
-        companyName: true,
-        currentJobTitle: true,
-        experienceLevel: true,
-        primarySkills: true,
-        careerInterests: true,
-        location_Preference: true,
-        industry: true,
-        companySize: true,
-        companyRole: true,
-        additionalInfo: true,
-        is_active: true,
-        is_staff: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+// router.get("/profile", isAuthenticated, async (req, res) => {
+//   try {
+//     const user = await prisma.user.findUnique({
+//       where: { id: req.session.userId },
+//       select: {
+//         id: true,
+//         email: true,
+//         fullName: true,
+//         role: true,
+//         companyName: true,
+//         currentJobTitle: true,
+//         experienceLevel: true,
+//         primarySkills: true,
+//         careerInterests: true,
+//         location_Preference: true,
+//         industry: true,
+//         companySize: true,
+//         companyRole: true,
+//         additionalInfo: true,
+//         is_active: true,
+//         is_staff: true,
+//         createdAt: true,
+//         updatedAt: true,
+//       },
+//     });
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
 
-    res.status(200).json({ user });
-  } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Failed to fetch profile", error: err.message });
-  }
-});
+//     res.status(200).json({ user });
+//   } catch (err) {
+//     res
+//       .status(500)
+//       .json({ message: "Failed to fetch profile", error: err.message });
+//   }
+// });
 
 export default router;
