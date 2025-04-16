@@ -3,7 +3,7 @@ import { hash, compare } from "bcryptjs";
 const router = express.Router();
 import prisma from "../lib/prisma.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
-// import isAuthenticated  from "../middlewares/authMiddleware.js";
+import { verifyToken } from "../middlewares/verifyToken.js";
 
 // Register route
 router.post("/register", async (req, res) => {
@@ -112,52 +112,93 @@ router.post("/login", async (req, res) => {
 
 // Logout route
 router.post("/logout", (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({ message: "Logout failed" });
+  res.clearCookie("token");
+  res.status(200).json({ message: "Logout successful!" });
+});
+
+// check auth
+router.get("/check-auth", verifyToken, async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.userId },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        role: true,
+        companyName: true,
+        currentJobTitle: true,
+        experienceLevel: true,
+        primarySkills: true,
+        careerInterests: true,
+        location_Preference: true,
+        industry: true,
+        companySize: true,
+        companyRole: true,
+        additionalInfo: true,
+        is_active: true,
+        is_staff: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User not found",
+      });
     }
-    res.clearCookie("loop-session"); // or whatever your session name is
-    res.status(200).json({ message: "Logged out successfully" });
-  });
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    console.error("Error checking auth", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error! Please try again later.",
+    });
+  }
 });
 
 // Profile route (protected)
-// router.get("/profile", isAuthenticated, async (req, res) => {
-//   try {
-//     const user = await prisma.user.findUnique({
-//       where: { id: req.session.userId },
-//       select: {
-//         id: true,
-//         email: true,
-//         fullName: true,
-//         role: true,
-//         companyName: true,
-//         currentJobTitle: true,
-//         experienceLevel: true,
-//         primarySkills: true,
-//         careerInterests: true,
-//         location_Preference: true,
-//         industry: true,
-//         companySize: true,
-//         companyRole: true,
-//         additionalInfo: true,
-//         is_active: true,
-//         is_staff: true,
-//         createdAt: true,
-//         updatedAt: true,
-//       },
-//     });
+router.get("/profile", verifyToken, async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.session.userId },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        role: true,
+        companyName: true,
+        currentJobTitle: true,
+        experienceLevel: true,
+        primarySkills: true,
+        careerInterests: true,
+        location_Preference: true,
+        industry: true,
+        companySize: true,
+        companyRole: true,
+        additionalInfo: true,
+        is_active: true,
+        is_staff: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
 
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-//     res.status(200).json({ user });
-//   } catch (err) {
-//     res
-//       .status(500)
-//       .json({ message: "Failed to fetch profile", error: err.message });
-//   }
-// });
+    res.status(200).json({ user });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Failed to fetch profile", error: err.message });
+  }
+});
 
 export default router;
