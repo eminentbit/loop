@@ -1,8 +1,8 @@
-from rest_framework import serializers
+from rest_framework import serializers # type: ignore
 from django.contrib.auth.models import User
 from .models import Profile, Follow
 
-from rest_framework import serializers
+from rest_framework import serializers # type: ignore
 from django.contrib.auth import get_user_model
 from .models import  Follow, Page, Event, Subscriber, Newsletter
 from user.serializers import UserAccountSerializer

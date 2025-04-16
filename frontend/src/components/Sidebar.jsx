@@ -57,6 +57,7 @@ const Sidebar = ({ userRole, isOpen, setIsOpen }) => {
   ];
 
   const recruiterLinks = [
+    { name: "Feed", path: "/feed", icon: <Rss className="w-5 h-5" /> },
     {
       name: "Candidate Pool",
       path: "/candidates",
@@ -127,9 +128,9 @@ const Sidebar = ({ userRole, isOpen, setIsOpen }) => {
           isOpen ? "w-64" : "w-16"
         } ${isDarkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"}`}
       >
-        <div className="flex flex-col flex-grow pt-2">
+        <div className="flex flex-col flex-grow pt-5 ">
           <h2
-            className={`text-xl font-bold mb-4 text-center transition-all ${
+            className={`text-xl font-bold text-center transition-all pl-5  ${
               isOpen ? "block" : "hidden"
             }`}
           >

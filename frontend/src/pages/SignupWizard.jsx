@@ -7,6 +7,7 @@ import RecruiterProfileStep from "../components/Auth/RecruiterProfileStep";
 import ProfilePictureStep from "../components/Auth/ProfilePictureStep";
 import ProgressBar from "../components/Auth/ProgressBar";
 import FinalStep from "../components/Auth/FinalStep";
+import getCookie from "../utils/GetCookie";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -40,13 +41,41 @@ const SignupWizard = () => {
     setFormData({ ...formData, ...newData });
   };
 
+  // const isFormValid = () => {
+  //   const requiredFields = [
+  //     "fullName",
+  //     "email",
+  //     "password",
+  //     "userType",
+  //     "agreedToTerms",
+  //   ];
+  //   for (let field of requiredFields) {
+  //     if (!formData[field]) return false;
+  //   }
+  //   return true;
+  // };
+
   const handleOnSubmit = async () => {
     try {
-      const url = `${import.meta.env.VITE_API_URL}/auth/register`;
-      console.log("Sending request to:", url, formData);
+      const url = `${import.meta.env.VITE_API_URL}/auth/register/`;
+      const data = new FormData();
 
-      const response = await axios.post(url, formData, {
-        headers: { "Content-Type": "application/json" },
+      for (const key in formData) {
+        if (key === "skills" && Array.isArray(formData[key])) {
+          formData[key].forEach((skill, index) => {
+            data.append(`skills[${index}]`, skill);
+          });
+        } else {
+          data.append(key, formData[key]);
+        }
+      }
+
+      const response = await axios.post(url, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+        withCredentials: true,
       });
 
       console.log("Form submitted successfully:", response.data);
@@ -57,19 +86,7 @@ const SignupWizard = () => {
         "Error during signup:",
         error.response ? error.response.data : error.message
       );
-
-      // You can display specific error message to the user based on status code
-      if (error.response) {
-        // Example: Handle server-side error
-        if (error.response.status === 409) {
-          alert("Email is already in use.");
-        } else {
-          alert("There was an issue with registration. Please try again.");
-        }
-      } else {
-        // If no response (network error, etc.)
-        alert("Network error. Please check your connection and try again.");
-      }
+      alert("There was an error during registration.");
     }
   };
 
@@ -85,6 +102,7 @@ const SignupWizard = () => {
           nextStep={nextStep}
           updateFormData={updateFormData}
           formData={formData}
+          canContinue={formData.fullName && formData.email && formData.password}
         />
       )}
 

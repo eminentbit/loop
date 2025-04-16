@@ -1,8 +1,9 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
-from .models import Enrollment, Streak
-from .serializers import EnrollmentSerializer, StreakSerializer
+from rest_framework.decorators import api_view, permission_classes # type: ignore
+from rest_framework.response import Response # type: ignore
+from rest_framework.permissions import AllowAny, IsAuthenticated # type: ignore
+from rest_framework import viewsets, permissions # type: ignore
+from .models import Course, Enrollment, Streak
+from .serializers import CourseSerializer, EnrollmentSerializer, StreakSerializer
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -26,3 +27,30 @@ def learning_dashboard(request):
         'courses': EnrollmentSerializer(enrollments, many=True).data,
         'streak': StreakSerializer(streak, many=True).data
     })
+
+class CourseViewSet(viewsets.ModelViewSet):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+    permission_classes = [AllowAny]  # Anyone can view courses
+
+class EnrollmentViewSet(viewsets.ModelViewSet):
+    queryset = Enrollment.objects.all()
+    serializer_class = EnrollmentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Enrollment.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class StreakViewSet(viewsets.ModelViewSet):
+    queryset = Streak.objects.all()
+    serializer_class = StreakSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Streak.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

@@ -139,7 +139,7 @@ const JobsPage = ({ userRole }) => {
       }`}
     >
       <Sidebar
-        userRole={"jobseeker"}
+        userRole={userRole}
         isOpen={isSidebarOpen}
         setIsOpen={setSidebarIsOpen}
       />

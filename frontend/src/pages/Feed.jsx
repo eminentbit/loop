@@ -79,7 +79,7 @@ const Feed = ({ userRole }) => {
 
       <div className="flex max-w-7xl mx-auto pt-4">
         {/* Global Sidebar (Navigation) */}
-        <Sidebar userRole="jobseeker" isOpen={isOpen} setIsOpen={setIsopen} />
+        <Sidebar userRole={userRole} isOpen={isOpen} setIsOpen={setIsopen} />
 
         {/* Main Content Area */}
         <div

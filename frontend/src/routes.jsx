@@ -24,21 +24,73 @@ import Settings from "@/pages/Setting";
 import Report from "@/pages/Report";
 import StartupListing from "@/pages/StartupListings";
 import ForgotPassword from "./pages/ForgetPassword";
+import ProtectiveWrapper from "./components/ProtectiveWrapper";
+import SignInModal from "./components/SignInModal";
+import fetchCSRF from "./utils/FetchCsrf";
+import { useEffect } from "react";
 import About from "./pages/About";
 import ContactPage from "./pages/Contact";
 
 const AppRoutes = () => {
   const role = "recruiter";
 
+  useEffect(() => {
+    const checkRole = async () => {
+      try {
+        await fetchCSRF();
+
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/auth/profile/`,
+          {
+            credentials: "include", // sends cookies/session data
+          }
+        );
+        console.log(response.json());
+      } catch (error) {
+        console.error("Session check failed", error);
+      }
+    };
+
+    checkRole();
+  }, []);
+
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<SignupWizard />} />
+      <Route path="/signin" element={<SignInModal />} />
       <Route path="/signup" element={<SignupWizard />} />
-      <Route path="/dashboard" element={<Dashboard userRole={role} />} />
-      <Route path="/jobs" element={<JobsPage userRole={role} />} />
-      <Route path="/profile" element={<ProfilePage userRole={role} />} />
-      <Route path="/test" element={<TestDashboard />} />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectiveWrapper>
+            <Dashboard userRole={role} />
+          </ProtectiveWrapper>
+        }
+      />
+      <Route
+        path="/jobs"
+        element={
+          <ProtectiveWrapper>
+            <JobsPage userRole={role} />
+          </ProtectiveWrapper>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectiveWrapper>
+            <ProfilePage userRole={role} />
+          </ProtectiveWrapper>
+        }
+      />
+      <Route
+        path="/test"
+        element={
+          <ProtectiveWrapper>
+            <TestDashboard />
+          </ProtectiveWrapper>
+        }
+      />
       <Route path="/feed" element={<Feed userRole={role} />} />
       <Route path="/network" element={<NetworkPage userRole={role} />} />
       <Route path="/details" element={<DetailPage userRole={role} />} />
