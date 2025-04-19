@@ -8,6 +8,7 @@ import courseRoutes from "./routes/courseRoutes.js";
 import enrollmentRoutes from "./routes/enrollmentRoutes.js";
 import streakRoutes from "./routes/streakRoutes.js";
 import { verifyToken } from "./middlewares/verifyToken.js";
+import feedRoutes from "./routes/feedRoutes.js";
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -31,5 +32,6 @@ app.use("/api/events", verifyToken, eventRoutes);
 app.use("/api/courses", verifyToken, courseRoutes);
 app.use("/api/enrollments", verifyToken, enrollmentRoutes);
 app.use("/api/streaks", verifyToken, streakRoutes);
+app.use("/api/feed/posts", feedRoutes);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

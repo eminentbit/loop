@@ -26,7 +26,6 @@ import StartupListing from "@/pages/StartupListings";
 import ForgotPassword from "./pages/ForgetPassword";
 import ProtectiveWrapper from "./components/ProtectiveWrapper";
 import SignInModal from "./components/SignInModal";
-import fetchCSRF from "./utils/FetchCsrf";
 import getCookie from "./utils/GetCookie";
 import { useEffect, useState } from "react";
 import About from "./pages/About";
@@ -39,8 +38,6 @@ const AppRoutes = () => {
   useEffect(() => {
     const checkRole = async () => {
       try {
-        await fetchCSRF();
-
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/auth/profile/`,
           {

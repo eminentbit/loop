@@ -3,7 +3,7 @@ import { hash, compare } from "bcryptjs";
 const router = express.Router();
 import prisma from "../lib/prisma.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
-import { verifyToken } from "../middlewares/verifyToken.js";
+import verifyToken from "../middlewares/verifyToken.js";
 
 // Register route
 router.post("/register", async (req, res) => {
@@ -62,12 +62,10 @@ router.post("/register", async (req, res) => {
         });
         break;
     }
-
-    // generate token and set cookie
-    generateTokenAndSetCookie(res, user.id);
+    const user = await prisma.user.create({ data: newUserData });
 
     // create user in database
-    const user = await prisma.user.create({ data: newUserData });
+    generateTokenAndSetCookie(res, user.id);
 
     res.status(201).json({
       message: "User registered successfully",
@@ -131,7 +129,7 @@ router.get("/check-auth", verifyToken, async (req, res) => {
         experienceLevel: true,
         primarySkills: true,
         careerInterests: true,
-        location_Preference: true,
+        locationPreference: true,
         industry: true,
         companySize: true,
         companyRole: true,
