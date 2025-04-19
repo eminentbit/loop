@@ -3,15 +3,16 @@ import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/authRoutes.js";
+import eventRoutes from "./routes/eventRoutes.js";
+import courseRoutes from "./routes/courseRoutes.js";
+import enrollmentRoutes from "./routes/enrollmentRoutes.js";
+import streakRoutes from "./routes/streakRoutes.js";
+import { verifyToken } from "./middlewares/verifyToken.js";
+import feedRoutes from "./routes/feedRoutes.js";
 
 dotenv.config();
 const PORT = process.env.PORT || 8000;
 const app = express();
-
-// const transactionRoutes = require("./routes/transactionRoutes");
-// const subscriptionRoutes = require("./routes/subscriptionRoutes");
-// const paymentRoutes = require("./routes/paymentRoutes");
-// const adminRoutes = require("./routes/adminRoutes");
 
 // Middleware
 app.use(express.json());
@@ -25,10 +26,12 @@ app.use(
 );
 app.use(cookieParser()); // allow cookie parsing
 
+// Routes
 app.use("/api/auth", authRoutes);
-// app.use("/api/transactions", transactionRoutes);
-// app.use("/api/subscription", subscriptionRoutes);
-// app.use("/api/payment", paymentRoutes);
-// app.use("/api/admin", adminRoutes);
+app.use("/api/events", verifyToken, eventRoutes);
+app.use("/api/courses", verifyToken, courseRoutes);
+app.use("/api/enrollments", verifyToken, enrollmentRoutes);
+app.use("/api/streaks", verifyToken, streakRoutes);
+app.use("/api/feed/posts", feedRoutes);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

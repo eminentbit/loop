@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaGoogle, FaGithub, FaFacebook } from "react-icons/fa";
 import axios from "axios";
 import getCookie from "../utils/GetCookie";
-import fetchCSRF from "../utils/FetchCsrf";
 
 function SignInModal({ setIsModalOpen, onClose }) {
   const navigate = useNavigate();
@@ -22,8 +21,6 @@ function SignInModal({ setIsModalOpen, onClose }) {
     }
 
     try {
-      await fetchCSRF();
-
       const url = `${import.meta.env.VITE_API_URL}/auth/login/`;
 
       const response = await axios.post(

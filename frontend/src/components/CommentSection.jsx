@@ -1,19 +1,36 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import getCookie from "../utils/GetCookie";
+import { ThumbsUp } from "lucide-react";
+import ReportModal from "./ReportModal";
 
 const CommentSection = ({ postId, onClose }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [reportTarget, setReportTarget] = useState(null);
 
   useEffect(() => {
-    // Fetch comments for the postId
     const fetchComments = async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/feed/posts/${postId}/comments/`
+          `${import.meta.env.VITE_API_URL}/feed/posts/${postId}/list_comments/`,
+          {
+            credentials: "include",
+            headers: {
+              "X-CSRFToken": getCookie("csrftoken"),
+            },
+          }
         );
         const data = await res.json();
-        setComments(data);
+        // Expecting API to return likes count and liked_by_user boolean
+        setComments(
+          data.map((c) => ({
+            ...c,
+            likes: c.likes || 0,
+            likedByUser: c.liked_by_user || false,
+          }))
+        );
       } catch (error) {
         console.error("Error fetching comments:", error);
       }
@@ -27,13 +44,14 @@ const CommentSection = ({ postId, onClose }) => {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/feed/posts/${postId}/comments/`,
+        `${import.meta.env.VITE_API_URL}/feed/posts/${postId}/comment/`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Adjust auth if needed
+            "X-CSRFToken": getCookie("csrftoken"),
           },
+          credentials: "include",
           body: JSON.stringify({ content: newComment }),
         }
       );
@@ -41,11 +59,72 @@ const CommentSection = ({ postId, onClose }) => {
       if (!response.ok) throw new Error("Failed to post comment");
 
       const added = await response.json();
-      setComments((prev) => [...prev, added]);
+      setComments((prev) => [
+        ...prev,
+        { ...added, likes: added.likes || 0, likedByUser: false },
+      ]);
       setNewComment("");
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handleLikeToggle = async (commentId) => {
+    const comment = comments.find((c) => c.id === commentId);
+    if (!comment) return;
+
+    try {
+      const endpoint = comment.likedByUser
+        ? `/feed/comments/${commentId}/unlike/`
+        : `/feed/comments/${commentId}/like/`;
+      await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
+        method: "POST",
+        headers: { "X-CSRFToken": getCookie("csrftoken") },
+        credentials: "include",
+      });
+      setComments((prev) =>
+        prev.map((c) =>
+          c.id === commentId
+            ? {
+                ...c,
+                likedByUser: !c.likedByUser,
+                likes: c.likes + (c.likedByUser ? -1 : 1),
+              }
+            : c
+        )
+      );
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    }
+  };
+
+  const handleReportClick = (commentId) => {
+    setReportTarget(commentId);
+    setReportModalOpen(true);
+  };
+
+  const handleConfirmReport = async () => {
+    try {
+      await fetch(
+        `${import.meta.env.VITE_API_URL}/feed/comments/${reportTarget}/report/`,
+        {
+          method: "POST",
+          headers: { "X-CSRFToken": getCookie("csrftoken") },
+          credentials: "include",
+        }
+      );
+      // Optionally update comment or remove
+      setReportModalOpen(false);
+      setReportTarget(null);
+      alert("Comment reported.");
+    } catch (error) {
+      console.error("Error reporting comment:", error);
+    }
+  };
+
+  const handleCancelReport = () => {
+    setReportModalOpen(false);
+    setReportTarget(null);
   };
 
   return (
@@ -67,14 +146,46 @@ const CommentSection = ({ postId, onClose }) => {
           comments.map((comment) => (
             <div
               key={comment.id}
-              className="bg-gray-100 dark:bg-gray-700 p-2 rounded-md text-sm"
+              className="bg-gray-100 dark:bg-gray-700 p-3 rounded-xl text-sm flex flex-col space-y-2"
             >
-              {comment.content}
+              <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-300">
+                <span className="font-semibold text-blue-600 dark:text-blue-400">
+                  @{comment.user?.username || "Anonymous"}
+                </span>
+                <span>{new Date(comment.created_at).toLocaleString()}</span>
+              </div>
+              <div className="text-gray-800 dark:text-gray-100">
+                {typeof comment.content === "string"
+                  ? comment.content
+                  : JSON.stringify(comment.content)}
+              </div>
+              <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                <button
+                  onClick={() => handleLikeToggle(comment.id)}
+                  className="hover:text-blue-500 transition flex items-center space-x-1"
+                >
+                  <span>
+                    {comment.likedByUser ? (
+                      <ThumbsUp fill="currentColor" className="w-4 h-4" />
+                    ) : (
+                      <ThumbsUp className="w-4 h-4" />
+                    )}
+                  </span>
+                  <span>{comment.likes}</span>
+                </button>
+                <button
+                  onClick={() => handleReportClick(comment.id)}
+                  className="hover:text-red-500 transition"
+                >
+                  🚩 Report
+                </button>
+              </div>
             </div>
           ))
         )}
       </div>
 
+      {/* New Comment Input */}
       <div className="mt-auto">
         <textarea
           value={newComment}
@@ -90,6 +201,14 @@ const CommentSection = ({ postId, onClose }) => {
           Post
         </button>
       </div>
+
+      {/* Report Confirmation Modal */}
+      {reportModalOpen && (
+        <ReportModal
+          handleCancelReport={handleCancelReport}
+          handleConfirmReport={handleConfirmReport}
+        />
+      )}
     </div>
   );
 };
