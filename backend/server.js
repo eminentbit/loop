@@ -3,15 +3,12 @@ import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/authRoutes.js";
+import eventRoutes from "./routes/eventRoutes.js";
+import { verifyToken } from "./middlewares/verifyToken.js";
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
 const app = express();
-
-// const transactionRoutes = require("./routes/transactionRoutes");
-// const subscriptionRoutes = require("./routes/subscriptionRoutes");
-// const paymentRoutes = require("./routes/paymentRoutes");
-// const adminRoutes = require("./routes/adminRoutes");
 
 // Middleware
 app.use(express.json());
@@ -26,9 +23,6 @@ app.use(
 app.use(cookieParser()); // allow cookie parsing
 
 app.use("/api/auth", authRoutes);
-// app.use("/api/transactions", transactionRoutes);
-// app.use("/api/subscription", subscriptionRoutes);
-// app.use("/api/payment", paymentRoutes);
-// app.use("/api/admin", adminRoutes);
+app.use("/api/events", verifyToken, eventRoutes);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
