@@ -1,48 +1,30 @@
-import { Link } from 'react-router-dom';
-import Logo from '@/components/Logo';
-import { motion } from 'framer-motion';
-
-const Navbar = () => (
-  <header className="bg-white shadow">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="flex justify-between items-center py-4">
-        {/* Logo with fixed height */}
-        <Logo className="h-18 w-auto" />
-
-        {/* Nav links aligned center */}
-        <nav className="flex items-center h-8">
-          <Link
-            to="/"
-            className="border border-[hsl(201,83%,43%)] text-[hsl(201,83%,43%)] px-4 py-2 rounded transition transform hover:bg-[hsl(201,83%,43%)] hover:text-white hover:-translate-y-1 text-sm max-[500px]:px-2 max-[500px]:py-1 max-[500px]:text-xs"
-          >
-            Home
-          </Link>
-        </nav>
-      </div>
-    </div>
-  </header>
-);
+import { motion } from "framer-motion";
+import Footer from "src/components/landing-page-components/Footer";
+import Navbar from "src/components/landing-page-components/Navbar";
 
 const ContactPage = () => {
   return (
-    <main className="flex flex-col min-h-screen bg-gray-50">
+    <main className="flex flex-col min-h-screen bg-gray-50 text-gray-800">
       <Navbar />
 
-      <section className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
+      {/* Spacer after navbar */}
+      <div className="h-20 sm:h-24" />
+
+      <section className="flex-grow py-10 px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="max-w-2xl mx-auto bg-white p-8 sm:p-12 rounded-2xl shadow-md"
+          className="max-w-3xl mx-auto bg-white p-6 sm:p-10 rounded-3xl shadow-xl"
         >
-          <h2 className="text-3xl font-semibold text-blue-400 mb-8 text-center">
+          <h2 className="text-3xl font-bold text-indigo-500 mb-8 text-center">
             Get in Touch with EMP Inc Solution
           </h2>
 
           <form className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Full Name */}
             <div className="flex flex-col">
-              <label htmlFor="fullName" className="text-gray-700 mb-1">
+              <label htmlFor="fullName" className="text-sm font-medium mb-2">
                 Full Name
               </label>
               <input
@@ -51,13 +33,13 @@ const ContactPage = () => {
                 type="text"
                 placeholder="Enter your name"
                 required
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-shadow"
+                className="w-full border border-gray-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-shadow"
               />
             </div>
 
             {/* Email */}
             <div className="flex flex-col">
-              <label htmlFor="email" className="text-gray-700 mb-1">
+              <label htmlFor="email" className="text-sm font-medium mb-2">
                 Email Address
               </label>
               <input
@@ -66,22 +48,22 @@ const ContactPage = () => {
                 type="email"
                 placeholder="you@example.com"
                 required
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-shadow"
+                className="w-full border border-gray-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-shadow"
               />
             </div>
 
             {/* Message (spans both columns) */}
             <div className="sm:col-span-2 flex flex-col">
-              <label htmlFor="message" className="text-gray-700 mb-1">
+              <label htmlFor="message" className="text-sm font-medium mb-2">
                 Message
               </label>
               <textarea
                 id="message"
                 name="message"
                 placeholder="Your message..."
-                rows="6"
+                rows={6}
                 required
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-shadow resize-none"
+                className="w-full border border-gray-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-shadow resize-none"
               ></textarea>
             </div>
 
@@ -89,7 +71,7 @@ const ContactPage = () => {
             <div className="sm:col-span-2 text-center">
               <button
                 type="submit"
-                className="bg-indigo-400 text-white font-medium py-3 px-8 rounded-lg hover:bg-indigo-700 transition"
+                className="bg-indigo-500 text-white font-semibold py-3 px-10 rounded-xl hover:bg-indigo-600 transition duration-300"
               >
                 Send Message
               </button>
@@ -98,22 +80,7 @@ const ContactPage = () => {
         </motion.div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-800 text-gray-300 py-6">
-        <div className="container mx-auto px-4">
-          <ul className="flex flex-wrap justify-center gap-8 mb-4">
-            <li><Link to="/user-policy" className="hover:text-indigo-400 transition text-sm">User Policy</Link></li>
-            <li><Link to="/about" className="hover:text-indigo-400 transition text-sm">About</Link></li>
-            <li><Link to="/user-agreement" className="hover:text-indigo-400 transition text-sm">User Agreement</Link></li>
-            <li><Link to="/copyright-policy" className="hover:text-indigo-400 transition text-sm">Copyright Policy</Link></li>
-            <li><Link to="/brand-policy" className="hover:text-indigo-400 transition text-sm">Brand Policy</Link></li>
-            <li><Link to="/community-guidelines" className="hover:text-indigo-400 transition text-sm">Community Guidelines</Link></li>
-          </ul>
-          <div className="text-center text-sm">
-            © 2025 EMP Inc Solution. All rights reserved.
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 };

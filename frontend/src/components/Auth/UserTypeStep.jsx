@@ -1,5 +1,6 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
+import { ArrowRight } from "lucide-react";
 
 const UserTypeStep = ({ nextStep, prevStep, updateFormData, formData }) => {
   const [userType, setUserType] = useState(formData.userType || "");
@@ -45,9 +46,10 @@ const UserTypeStep = ({ nextStep, prevStep, updateFormData, formData }) => {
         </button>
         <button
           onClick={handleNext}
-          className="px-4 py-2 bg-blue-500 text-white rounded cursor-pointer"
+          className="px-5 py-2 hover:bg-indigo-700 transition-colors duration-300 bg-indigo-500 text-white rounded cursor-pointer flex items-center gap-2"
         >
           Next
+          <ArrowRight size={18}/>
         </button>
       </div>
     </div>

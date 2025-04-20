@@ -50,6 +50,30 @@ enum SalaryRange {
   VERY_HIGH // "> $6000"
 }
 
+enum FeedType {
+  media
+  event
+  article
+  live
+  text
+}
+
+enum ReportType {
+  spam
+  inappropriate
+  harassment
+  violence
+  other
+}
+
+enum JobStatus {
+  PENDING
+  REVIEWING
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
 model User {
   id        String  @id @default(uuid())
   email     String  @unique
@@ -58,6 +82,12 @@ model User {
   password  String
   is_active Boolean @default(true)
   is_staff  Boolean @default(false)
+
+  feeds         Feed[]    @relation("UserFeeds")
+  comments      Comment[] @relation("UserComments")
+  likedPosts    Feed[]    @relation("PostLikes")
+  likedComments Comment[] @relation("CommentLikes")
+  reportsMade   Report[]  @relation("UserReports")
 
   // Recruiter-specific
   companyName        String? @map("company_name")
@@ -70,11 +100,11 @@ model User {
   additionalInfo     String?
 
   // Jobseeker/Investor-specific
-  currentJobTitle    String? @map("current_job_title")
-  experienceLevel    String? @map("experience_level")
-  primarySkills      String? @map("primary_skills")
-  careerInterests    String? @map("career_interests")
-  locationPreference String? @map("location_preference")
+  currentJobTitle    String?  @map("current_job_title")
+  experienceLevel    String?  @map("experience_level")
+  primarySkills      String[] @map("primary_skills")
+  careerInterests    String?  @map("career_interests")
+  locationPreference String?  @map("location_preference")
 
   resume               String?
   portfolio            String?
@@ -107,10 +137,13 @@ model User {
   followersSet            Follow[]     @relation("Followers")
   followingSet            Follow[]     @relation("Following")
 
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  Enrollment Enrollment[]
-  Streak     Streak[]
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  Enrollment           Enrollment[]
+  Streak               Streak[]
+  Notification         Notification[]
+  NotificationSettings NotificationSettings[]
+  JobApplication       JobApplication[]
 }
 
 model Profile {
@@ -205,12 +238,116 @@ model Streak {
 }
 
 model Job {
-  id          String      @id @default(uuid())
-  title       String
-  company     String
-  description String
-  location    JobLocation
-  type        JobType
-  salary      SalaryRange
-  postedAt    DateTime    @default(now())
+  id             String           @id @default(uuid())
+  title          String
+  company        String
+  description    String
+  location       JobLocation
+  type           JobType
+  salary         SalaryRange
+  postedAt       DateTime         @default(now())
+  JobApplication JobApplication[]
+}
+
+model Feed {
+  id            Int       @id @default(autoincrement())
+  user          User      @relation("UserFeeds", fields: [userId], references: [id])
+  userId        String
+  type          FeedType
+  title         String?
+  content       String?
+  image         String?
+  videoUrl      String?
+  eventDate     DateTime?
+  liveUrl       String?
+  likes         User[]    @relation("PostLikes")
+  comments      Comment[]
+  commentsCount Int       @default(0)
+  reports       Report[]  @relation("FeedReports")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Comment {
+  id            Int      @id @default(autoincrement())
+  feed          Feed     @relation(fields: [feedId], references: [id])
+  feedId        Int
+  user          User     @relation("UserComments", fields: [userId], references: [id])
+  userId        String
+  likes         User[]   @relation("CommentLikes")
+  reported      Boolean  @default(false)
+  content       String
+  createdAt     DateTime @default(now())
+  reportedCount Int      @default(0)
+  isDeleted     Boolean  @default(false)
+  reports       Report[] @relation("CommentReports")
+}
+
+model Report {
+  id          Int        @id @default(autoincrement())
+  feed        Feed?      @relation("FeedReports", fields: [feedId], references: [id])
+  feedId      Int?
+  comment     Comment?   @relation("CommentReports", fields: [commentId], references: [id])
+  commentId   Int?
+  reporter    User       @relation("UserReports", fields: [reporterId], references: [id])
+  reporterId  String
+  reason      ReportType
+  description String?
+  createdAt   DateTime   @default(now())
+  resolved    Boolean    @default(false)
+  isDeleted   Boolean    @default(false)
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  type      String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model NotificationSettings {
+  id                String  @id @default(uuid())
+  user              User    @relation(fields: [userId], references: [id])
+  userId            String
+  emailAlerts       Boolean @default(true)
+  pushNotifications Boolean @default(true)
+  smsAlerts         Boolean @default(false)
+}
+
+model JobApplication {
+  id                   String    @id @default(uuid())
+  job                  Job       @relation(fields: [jobId], references: [id])
+  jobId                String
+  user                 User      @relation(fields: [userId], references: [id])
+  userId               String
+  status               JobStatus @default(PENDING)
+  resume               String?
+  coverLetter          String?
+  appliedAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  isDeleted            Boolean   @default(false)
+  isShortlisted        Boolean   @default(false)
+  isAccepted           Boolean   @default(false)
+  isRejected           Boolean   @default(false)
+  isWithdrawn          Boolean   @default(false)
+  isArchived           Boolean   @default(false)
+  isFlagged            Boolean   @default(false)
+  isReported           Boolean   @default(false)
+  isSpam               Boolean   @default(false)
+  isBlocked            Boolean   @default(false)
+  isSuspended          Boolean   @default(false)
+  isBanned             Boolean   @default(false)
+  isDeactivated        Boolean   @default(false)
+  isDeletedByUser      Boolean   @default(false)
+  isDeletedByAdmin     Boolean   @default(false)
+  isDeletedBySystem    Boolean   @default(false)
+  isDeletedByModerator Boolean   @default(false)
+  isDeletedByOwner     Boolean   @default(false)
+  isDeletedByCompany   Boolean   @default(false)
+  isDeletedByRecruiter Boolean   @default(false)
+  isDeletedByInvestor  Boolean   @default(false)
+  isDeletedByJobseeker Boolean   @default(false)
 }

@@ -14,7 +14,6 @@ import MyApplications from "@/pages/MyApplications";
 import LearningPage from "./pages/Learning";
 import RecommendedPage from "@/pages/Recommended";
 import DetailPage from "@/pages/DetailPage";
-import LandingPage from "@/pages/LandingPage";
 import StartupPage from "@/pages/StartupPage";
 import CandidatePool from "@/pages/CandidatePool";
 import TeamCollaboration from "@/pages/TeamCollaboration";
@@ -26,11 +25,11 @@ import StartupListing from "@/pages/StartupListings";
 import ForgotPassword from "./pages/ForgetPassword";
 import ProtectiveWrapper from "./components/ProtectiveWrapper";
 import SignInModal from "./components/SignInModal";
-import getCookie from "./utils/GetCookie";
 import { useEffect, useState } from "react";
 import About from "./pages/About";
 import ContactPage from "./pages/Contact";
 import StartupDetail from "./pages/StartupDetial";
+import LandingPage from "./pages/LandingPage";
 
 const AppRoutes = () => {
   const [role, setRole] = useState();
@@ -39,17 +38,18 @@ const AppRoutes = () => {
     const checkRole = async () => {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/auth/profile/`,
+          `${import.meta.env.VITE_API_URL}/auth/check-auth/`,
           {
             credentials: "include",
             headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": getCookie("csrftoken"),
+              // "Content-Type": "application/json",
+              // "X-CSRFToken": getCookie("csrftoken"),
             },
           }
         );
         const data = await response.json();
-        setRole(data.role.toLowerCase());
+        setRole(data.user.role);
+        console.log(data);
       } catch (error) {
         console.error("Session check failed", error);
       }
