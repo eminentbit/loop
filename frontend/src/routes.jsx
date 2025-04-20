@@ -14,7 +14,6 @@ import MyApplications from "@/pages/MyApplications";
 import LearningPage from "./pages/Learning";
 import RecommendedPage from "@/pages/Recommended";
 import DetailPage from "@/pages/DetailPage";
-import LandingPage from "@/pages/LandingPage";
 import StartupPage from "@/pages/StartupPage";
 import CandidatePool from "@/pages/CandidatePool";
 import TeamCollaboration from "@/pages/TeamCollaboration";
@@ -31,6 +30,7 @@ import { useEffect, useState } from "react";
 import About from "./pages/About";
 import ContactPage from "./pages/Contact";
 import StartupDetail from "./pages/StartupDetial";
+import LandingPage from "./pages/LandingPage";
 
 const AppRoutes = () => {
   const [role, setRole] = useState();

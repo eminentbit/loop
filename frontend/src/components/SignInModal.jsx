@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaGoogle, FaGithub, FaFacebook } from "react-icons/fa";
 import axios from "axios";
 import getCookie from "../utils/GetCookie";
+import { ArrowLeft } from "lucide-react";
 
 function SignInModal({ setIsModalOpen, onClose }) {
   const navigate = useNavigate();
@@ -53,8 +54,16 @@ function SignInModal({ setIsModalOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 backdrop-blur-md">
-      <div className="bg-white rounded-lg shadow-lg p-8 max-w-lg w-full relative">
+    <div className="fixed bg-gray-50 inset-0 z-50 flex flex-col items-center justify-center bg-opacity-50 backdrop-blur-md">
+      {/* Back button */}
+      <div
+        className="left-4 absolute top-4 flex items-center gap-2 bg-indigo-500 text-white px-3 py-2 rounded-full hover:bg-indigo-600 cursor-pointer transition"
+        onClick={() => navigate(-1)}
+      >
+        <ArrowLeft className="w-5 h-5" />
+        <span className="text-sm">Back</span>
+      </div>
+      <div className="bg-white mt-20 overflow-auto rounded-lg shadow-xl p-8 max-w-lg w-[90%] relative">
         {/* Close Button */}
         <button
           onClick={
@@ -70,7 +79,7 @@ function SignInModal({ setIsModalOpen, onClose }) {
         </button>
 
         {/* Sign In Heading */}
-        <h2 className="text-2xl font-bold mb-6 text-center">Sign In</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">Welcome Back</h2>
 
         {/* OAuth Sign-in Options */}
         <div className="flex flex-col gap-3">
@@ -83,7 +92,7 @@ function SignInModal({ setIsModalOpen, onClose }) {
             Continue with GitHub
           </button>
           <button className="flex items-center justify-center gap-2 border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-100 transition">
-            <FaFacebook className="text-blue-600" />
+            <FaFacebook className="text-indigo-600" />
             Continue with Facebook
           </button>
         </div>
@@ -111,7 +120,7 @@ function SignInModal({ setIsModalOpen, onClose }) {
           />
           <button
             type="submit"
-            className="bg-[hsl(201,83%,43%)] text-white px-4 py-2 rounded hover:bg-[hsl(201,83%,53%)] transition"
+            className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-500 transition"
           >
             Sign In
           </button>
@@ -122,7 +131,7 @@ function SignInModal({ setIsModalOpen, onClose }) {
           <Link
             to="/forgot-password"
             onClick={() => setIsModalOpen(false)}
-            className="text-blue-500 hover:underline"
+            className="text-indigo-500 hover:underline"
           >
             Forgot password?
           </Link>
@@ -133,7 +142,7 @@ function SignInModal({ setIsModalOpen, onClose }) {
           <Link
             to="/signup"
             onClick={() => setIsModalOpen(false)}
-            className="text-[hsl(201,83%,43%)] hover:underline"
+            className="text-indigo-500 hover:underline"
           >
             Register
           </Link>
