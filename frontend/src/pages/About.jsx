@@ -18,49 +18,49 @@ function AboutPage() {
 
   const professionals = [
     {
-      name: "Frank Nkwain",
+      name: " ",
       role: "Chief Executive Officer",
       image: Frank,
       description: "Oversees company vision, strategy, and overall management."
     },
     {
-      name: "Lum Beatrice",
+      name: "  ",
       role: "Chief Financial Officer",
       image: lum,
       description: "Manages financial planning, reporting, budgeting, and risk management."
     },
     {
-      name: "Daryl Mbuh",
+      name: "  ",
       role: "Chief Technology Officer",
       image: Daryl,
       description: "Leads technology strategy, innovation, and technical teams."
     },
     {
-      name: "Dammy Brown",
+      name: "  ",
       role: "Chief Operating Officer",
       image: Dammy,
       description: "Oversees daily operations, streamlines processes, and improves efficiency."
     },
     {
-      name: "Lisa Market",
+      name: "  ",
       role: "Chief Marketing Officer",
       image: Market,
       description: "Drives marketing strategy, brand development, and customer acquisition."
     },
     {
-      name: "Adn Sali",
+      name: "  ",
       role: "Product Manager",
       image: Adn,
       description: "Defines product roadmap, gathers requirements, and coordinates cross-functional teams."
     },
     {
-      name: "Charles Tanwi",
+      name: " ",
       role: "Backend Developer",
       image: Charles,
       description: "Develops the server-side logic, database management, and API integration."
     },
     {
-      name: "Randy Owusu",
+      name: "  ",
       role: "Frontend Developer",
       image: randy,
       description: "Creates intuitive user interfaces with modern and responsive designs."
@@ -133,11 +133,13 @@ function AboutPage() {
               key={idx}
               className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition duration-300 overflow-hidden"
             >
-              <img
-                src={person.image}
-                alt={person.name}
-                className="w-full h-48 object-cover object-top rounded-t-2xl"
-              />
+              <div className="aspect-[3/4] overflow-hidden rounded-t-2xl">
+                <img
+                  src={person.image}
+                  alt={person.name}
+                  className="w-full h-full object-cover object-center"
+                />
+              </div>
               <div className="p-4">
                 <h3 className="text-xl font-bold text-blue-700">{person.name}</h3>
                 <p className="text-sm text-gray-500 font-medium">{person.role}</p>

@@ -31,6 +31,7 @@ const DashboardNavbar = () => {
           <UserCircle className="text-gray-600" size={28} />
           <span className="text-gray-800 font-medium">John Doe</span>
         </div>
+        
       </div>
     </nav>
   );
