@@ -7,7 +7,6 @@ import RecruiterProfileStep from "../components/Auth/RecruiterProfileStep";
 import ProfilePictureStep from "../components/Auth/ProfilePictureStep";
 import ProgressBar from "../components/Auth/ProgressBar";
 import FinalStep from "../components/Auth/FinalStep";
-import getCookie from "../utils/GetCookie";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
@@ -19,7 +18,7 @@ const kInitialData = {
   userType: "",
   jobTitle: "",
   experienceLevel: "",
-  skills: [],
+  primarySkills: [],
   careerInterests: "",
   locationPreference: "",
   companyName: "",
@@ -70,17 +69,18 @@ const SignupWizard = () => {
           data.append(key, formData[key]);
         }
       }
+      console.log("Form data to be sent:", formData);
+      console.log("Form data to be sent (as FormData):", data);
 
-      const response = await axios.post(url, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "X-CSRFToken": getCookie("csrftoken"),
-        },
+      const response = await axios.post(url, formData, {
+        // headers: {
+        // "Content-Type": "multipart/form-data",
+        // "X-CSRFToken": getCookie("csrftoken"),
+        // },
         withCredentials: true,
       });
 
       console.log("Form submitted successfully:", response.data);
-      setFormData(kInitialData);
       navigate("/dashboard");
     } catch (error) {
       console.error(
@@ -88,6 +88,8 @@ const SignupWizard = () => {
         error.response ? error.response.data : error.message
       );
       alert("There was an error during registration.");
+    } finally {
+      setFormData(kInitialData);
     }
   };
 

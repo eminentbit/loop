@@ -7,7 +7,7 @@ import eventRoutes from "./routes/eventRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
 import enrollmentRoutes from "./routes/enrollmentRoutes.js";
 import streakRoutes from "./routes/streakRoutes.js";
-import { verifyToken } from "./middlewares/verifyToken.js";
+import verifyToken from "./middlewares/verifyToken.js";
 import feedRoutes from "./routes/feedRoutes.js";
 
 dotenv.config();

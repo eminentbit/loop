@@ -7,12 +7,13 @@ import {
   // likePost,
   // unlikePost,
 } from "../controllers/feedController.js";
+import verifyToken from "../middlewares/verifyToken.js";
 
 const router = express.Router();
 
 // Feed routes
 router.get("/", getFeed);
-router.post("/create", createPost);
+router.post("/create", verifyToken, createPost);
 // router.put("/update/:id", verifyToken, updatePost);
 // router.delete("/delete/:id", verifyToken, deletePost);
 // router.put("/like/:id", verifyToken, likePost);
