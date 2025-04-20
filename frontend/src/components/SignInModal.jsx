@@ -2,11 +2,7 @@ import PropTypes from "prop-types";
 import { Link, useNavigate } from "react-router-dom";
 import { FaGoogle, FaGithub, FaFacebook } from "react-icons/fa";
 import axios from "axios";
-<<<<<<< HEAD
-import getCookie from "../utils/GetCookie";
 import { ArrowLeft } from "lucide-react";
-=======
->>>>>>> 822f7c1411940d484e10bce54e942564f3705494
 
 function SignInModal({ setIsModalOpen, onClose }) {
   const navigate = useNavigate();
