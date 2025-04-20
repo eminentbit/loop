@@ -2,8 +2,9 @@ import { useState, useContext, useRef } from "react";
 import { Camera, Video, FileText, Calendar, Send } from "lucide-react";
 import { DarkModeContext } from "./DarkModeContext";
 import ConfirmationModal from "./ConfirmationModal"; // Create this separately
-import getCookie from "../utils/GetCookie";
+// import getCookie from "../utils/GetCookie";
 import PropTypes from "prop-types";
+import axios from "axios";
 
 const CreatePost = ({ refreshPosts }) => {
   const [postContent, setPostContent] = useState("");
@@ -44,23 +45,22 @@ const CreatePost = ({ refreshPosts }) => {
     };
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/feed/posts/`,
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/feed/posts/create/`,
+        postData,
         {
-          method: "POST",
+          withCredentials: true,
           headers: {
             "Content-Type": "application/json",
-            "X-CSRFToken": getCookie("csrftoken"),
           },
-          credentials: "include",
-          body: JSON.stringify(postData),
         }
       );
-      console.log(await response.json());
 
-      if (response.ok) {
+      console.log(response.data);
+
+      if (response.status === 201) {
         setPostContent("");
-        refreshPosts(); // Function to refresh posts
+        refreshPosts();
       }
     } catch (error) {
       console.log("Error", error);
@@ -79,11 +79,12 @@ const CreatePost = ({ refreshPosts }) => {
     });
 
     const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/feed/posts/`,
+      `${import.meta.env.VITE_API_URL}/feed/posts/create/`,
       {
         method: "POST",
         // When using FormData, do not set Content-Type manually.
         body: formData,
+        credentials: "include",
       }
     );
 

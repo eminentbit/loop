@@ -7,6 +7,8 @@ import verifyToken from "../middlewares/verifyToken.js";
 
 // Register route
 router.post("/register", async (req, res) => {
+  console.log("Registering user with data:", req.body);
+
   const {
     email,
     fullName,
@@ -25,6 +27,7 @@ router.post("/register", async (req, res) => {
   } = req.body;
 
   try {
+    console.log("Registering user with email:", email);
     const existingUser = await prisma.user.findUnique({ where: { email } });
 
     if (existingUser) {
@@ -124,20 +127,6 @@ router.get("/check-auth", verifyToken, async (req, res) => {
         email: true,
         fullName: true,
         role: true,
-        companyName: true,
-        currentJobTitle: true,
-        experienceLevel: true,
-        primarySkills: true,
-        careerInterests: true,
-        locationPreference: true,
-        industry: true,
-        companySize: true,
-        companyRole: true,
-        additionalInfo: true,
-        is_active: true,
-        is_staff: true,
-        createdAt: true,
-        updatedAt: true,
       },
     });
     if (!user) {
@@ -164,7 +153,7 @@ router.get("/check-auth", verifyToken, async (req, res) => {
 router.get("/profile", verifyToken, async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
-      where: { id: req.session.userId },
+      where: { id: req.userId },
       select: {
         id: true,
         email: true,

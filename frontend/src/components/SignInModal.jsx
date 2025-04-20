@@ -2,7 +2,6 @@ import PropTypes from "prop-types";
 import { Link, useNavigate } from "react-router-dom";
 import { FaGoogle, FaGithub, FaFacebook } from "react-icons/fa";
 import axios from "axios";
-import getCookie from "../utils/GetCookie";
 
 function SignInModal({ setIsModalOpen, onClose }) {
   const navigate = useNavigate();
@@ -27,10 +26,10 @@ function SignInModal({ setIsModalOpen, onClose }) {
         url,
         { email, password },
         {
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCookie("csrftoken"),
-          },
+          // headers: {
+          //   "Content-Type": "application/json",
+          //   "X-CSRFToken": getCookie("csrftoken"),
+          // },
           withCredentials: true,
         }
       );
