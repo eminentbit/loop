@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import getCookie from "../utils/GetCookie";
 import { ThumbsUp, Flag, X } from "lucide-react";
 import ReportModal from "./ReportModal";
+import axios from "axios";
 
 const CommentSection = ({ postId, onClose }) => {
   const [comments, setComments] = useState([]);
@@ -14,20 +14,18 @@ const CommentSection = ({ postId, onClose }) => {
     const fetchComments = async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/feed/posts/${postId}/list_comments/`,
+          `${import.meta.env.VITE_API_URL}/feed/comments/${postId}/`,
           {
             credentials: "include",
-            headers: {
-              "X-CSRFToken": getCookie("csrftoken"),
-            },
           }
         );
         const data = await res.json();
+        console.log(data);
         setComments(
           data.map((c) => ({
             ...c,
             likes: c.likes || 0,
-            likedByUser: c.liked_by_user || false,
+            likedByUser: c.liked_by_user || c.likedByUser || false,
           }))
         );
       } catch (error) {
@@ -41,20 +39,17 @@ const CommentSection = ({ postId, onClose }) => {
   const handlePost = async () => {
     if (!newComment.trim()) return;
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/feed/posts/${postId}/comment/`,
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/feed/comments/${postId}/create/`,
+        { content: newComment },
         {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCookie("csrftoken"),
-          },
-          credentials: "include",
-          body: JSON.stringify({ content: newComment }),
+          withCredentials: true,
         }
       );
-      if (!res.ok) throw new Error("Failed to post comment");
-      const added = await res.json();
+
+      if (!res.status === 200) throw new Error("Failed to post comment");
+
+      const added = res.data;
       setComments((prev) => [
         ...prev,
         { ...added, likes: added.likes || 0, likedByUser: false },
@@ -70,14 +65,14 @@ const CommentSection = ({ postId, onClose }) => {
     if (!comment) return;
 
     try {
-      const endpoint = comment.likedByUser
-        ? `/feed/comments/${commentId}/unlike/`
-        : `/feed/comments/${commentId}/like/`;
-      await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
-        method: "POST",
-        headers: { "X-CSRFToken": getCookie("csrftoken") },
-        credentials: "include",
-      });
+      const endpoint = `/feed/comments/${commentId}/like/`;
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}${endpoint}`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
       setComments((prev) =>
         prev.map((c) =>
           c.id === commentId
@@ -104,8 +99,6 @@ const CommentSection = ({ postId, onClose }) => {
       await fetch(
         `${import.meta.env.VITE_API_URL}/feed/comments/${reportTarget}/report/`,
         {
-          method: "POST",
-          headers: { "X-CSRFToken": getCookie("csrftoken") },
           credentials: "include",
         }
       );
@@ -150,7 +143,7 @@ const CommentSection = ({ postId, onClose }) => {
                 <span className="font-medium text-blue-600 dark:text-blue-400">
                   @{comment.user?.username || "Anonymous"}
                 </span>
-                <span>{new Date(comment.created_at).toLocaleString()}</span>
+                <span>{new Date(comment.createdAt).toLocaleString()}</span>
               </div>
               <p className="text-gray-800 dark:text-gray-100">{comment.content}</p>
               <div className="flex items-center gap-5 mt-1 text-xs text-gray-500 dark:text-gray-400">

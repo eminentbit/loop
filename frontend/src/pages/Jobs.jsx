@@ -1,15 +1,12 @@
-import { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import JobCard from "../components/JobsCard";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
-import { ChevronDownIcon } from "lucide-react";
 import PropTypes from "prop-types";
-import getCookie from "../utils/GetCookie";
 import { DarkModeContext } from "../components/DarkModeContext";
 import axios from "axios";
 
 import AddJobModal from "../components/AddJob";
-
 // 🔽 Dropdown Component
 const Dropdown = ({ label, options, selected, onSelect }) => {
   const [isOpen, setIsOpen] = useState(() => {
@@ -111,10 +108,6 @@ const JobsPage = ({ userRole }) => {
           `${import.meta.env.VITE_API_URL}/jobs/`,
           {
             withCredentials: true,
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": getCookie("csrftoken"),
-            },
           }
         );
         // Ensure we get an array of jobs
@@ -170,13 +163,9 @@ const JobsPage = ({ userRole }) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/jobs/`,
+        `${import.meta.env.VITE_API_URL}/jobs/create`,
         newJob,
         {
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCookie("csrftoken"),
-          },
           withCredentials: true,
         }
       );
@@ -195,6 +184,10 @@ const JobsPage = ({ userRole }) => {
       console.log(error);
     }
     console.log("Submitting job:", newJob);
+
+    // Refresh jobs (or optimistically update jobs state)
+    // const updatedJobs = await fetchUpdatedJobs();
+    // setJobs(updatedJobs);
   };
 
   return (
@@ -300,13 +293,6 @@ const JobsPage = ({ userRole }) => {
 
 JobsPage.propTypes = {
   userRole: PropTypes.string.isRequired,
-};
-
-Dropdown.propTypes = {
-  label: PropTypes.string.isRequired,
-  options: PropTypes.arrayOf(PropTypes.string).isRequired,
-  selected: PropTypes.string.isRequired,
-  onSelect: PropTypes.func.isRequired,
 };
 
 export default JobsPage;
