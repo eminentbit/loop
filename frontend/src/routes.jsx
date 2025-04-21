@@ -30,6 +30,7 @@ import About from "./pages/About";
 import ContactPage from "./pages/Contact";
 import StartupDetail from "./pages/StartupDetial";
 import LandingPage from "./pages/LandingPage";
+import SkillTest from "./pages/SkillTest";
 
 const AppRoutes = () => {
   const [role, setRole] = useState();
@@ -249,11 +250,20 @@ const AppRoutes = () => {
           </ProtectiveWrapper>
         }
       />
+      <Route
+        path="/startup-detial/:id"
+        element={
+          <ProtectiveWrapper>
+            <StartupDetail userRole={role} />
+          </ProtectiveWrapper>
+        }
+      />
+
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="*" element={<NotFoundPage />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<ContactPage />} />
-      <Route path="/details" element={<StartupDetail />} />
+      <Route path="/skill-test" element={<SkillTest />} />
     </Routes>
   );
 };

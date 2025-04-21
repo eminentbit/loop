@@ -69,4 +69,4 @@ RecomendedPage.propTypes = {
 };
 
 export default RecomendedPage;
-//https://www.linkedin.com/help/linkedin/answer/a508610
+

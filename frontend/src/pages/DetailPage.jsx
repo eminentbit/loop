@@ -1,4 +1,3 @@
-// src/components/JobDetails.jsx
 import { useState, useRef } from "react";
 import emailjs from 'emailjs-com';
 import jobs from "@/data/jobs";

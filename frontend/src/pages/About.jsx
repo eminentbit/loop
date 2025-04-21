@@ -56,8 +56,8 @@ function AboutPage() {
         "Defines product roadmap, gathers requirements, and coordinates cross-functional teams.",
     },
     {
-      name: "Charles Tanwi",
-      role: "Backend Developer",
+      name: " ",
+      role: "Full Stack Developer",
       image: Charles,
       description:
         "Develops the server-side logic, database management, and API integration.",
@@ -150,11 +150,17 @@ function AboutPage() {
               key={idx}
               className="bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden"
             >
-              <img
-                src={person.image}
-                alt={person.name}
-                className="w-full h-48 object-cover object-top rounded-t-2xl"
-              />
+      <div className="w-full h-64 bg-white flex items-center justify-center rounded-t-2xl overflow-hidden">
+  <img
+    src={person.image}
+    alt={person.name}
+    className="w-full h-full object-contain"
+  />
+</div>
+
+
+
+
               <div className="p-4">
                 <h3 className="text-xl font-bold text-blue-700">{person.name}</h3>
                 <p className="text-sm text-gray-500 font-medium">{person.role}</p>

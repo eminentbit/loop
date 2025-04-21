@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import getCookie from "../utils/GetCookie";
-import { ThumbsUp } from "lucide-react";
+import { ThumbsUp, Flag, X } from "lucide-react";
 import ReportModal from "./ReportModal";
 
 const CommentSection = ({ postId, onClose }) => {
@@ -23,7 +23,6 @@ const CommentSection = ({ postId, onClose }) => {
           }
         );
         const data = await res.json();
-        // Expecting API to return likes count and liked_by_user boolean
         setComments(
           data.map((c) => ({
             ...c,
@@ -41,9 +40,8 @@ const CommentSection = ({ postId, onClose }) => {
 
   const handlePost = async () => {
     if (!newComment.trim()) return;
-
     try {
-      const response = await fetch(
+      const res = await fetch(
         `${import.meta.env.VITE_API_URL}/feed/posts/${postId}/comment/`,
         {
           method: "POST",
@@ -55,10 +53,8 @@ const CommentSection = ({ postId, onClose }) => {
           body: JSON.stringify({ content: newComment }),
         }
       );
-
-      if (!response.ok) throw new Error("Failed to post comment");
-
-      const added = await response.json();
+      if (!res.ok) throw new Error("Failed to post comment");
+      const added = await res.json();
       setComments((prev) => [
         ...prev,
         { ...added, likes: added.likes || 0, likedByUser: false },
@@ -113,10 +109,9 @@ const CommentSection = ({ postId, onClose }) => {
           credentials: "include",
         }
       );
-      // Optionally update comment or remove
       setReportModalOpen(false);
       setReportTarget(null);
-      alert("Comment reported.");
+      alert("Comment reported successfully.");
     } catch (error) {
       console.error("Error reporting comment:", error);
     }
@@ -128,56 +123,54 @@ const CommentSection = ({ postId, onClose }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-4 h-full flex flex-col">
-      <div className="flex justify-between items-center mb-3">
-        <h4 className="text-lg font-semibold">Comments</h4>
+    <div className="bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-5 h-full flex flex-col border border-gray-200 dark:border-gray-700 transition-all duration-300">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-4">
+        <h4 className="text-xl font-semibold text-gray-800 dark:text-white">Comments</h4>
         <button
           onClick={onClose}
-          className="text-sm text-gray-500 hover:text-red-500"
+          className="text-gray-500 hover:text-red-500 transition"
+          title="Close"
         >
-          ✕
+          <X size={20} />
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto space-y-2 pr-2 mb-4">
+      {/* Comment List */}
+      <div className="flex-1 overflow-y-auto pr-1 space-y-4 mb-4 custom-scrollbar">
         {comments.length === 0 ? (
-          <p className="text-gray-500 text-sm">No comments yet.</p>
+          <p className="text-sm text-gray-500 text-center">No comments yet. Be the first to comment.</p>
         ) : (
           comments.map((comment) => (
             <div
               key={comment.id}
-              className="bg-gray-100 dark:bg-gray-700 p-3 rounded-xl text-sm flex flex-col space-y-2"
+              className="bg-gray-100 dark:bg-gray-700 p-4 rounded-xl text-sm shadow-sm space-y-2"
             >
-              <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-300">
-                <span className="font-semibold text-blue-600 dark:text-blue-400">
+              <div className="flex justify-between text-xs text-gray-600 dark:text-gray-300">
+                <span className="font-medium text-blue-600 dark:text-blue-400">
                   @{comment.user?.username || "Anonymous"}
                 </span>
                 <span>{new Date(comment.created_at).toLocaleString()}</span>
               </div>
-              <div className="text-gray-800 dark:text-gray-100">
-                {typeof comment.content === "string"
-                  ? comment.content
-                  : JSON.stringify(comment.content)}
-              </div>
-              <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-gray-800 dark:text-gray-100">{comment.content}</p>
+              <div className="flex items-center gap-5 mt-1 text-xs text-gray-500 dark:text-gray-400">
                 <button
                   onClick={() => handleLikeToggle(comment.id)}
-                  className="hover:text-blue-500 transition flex items-center space-x-1"
+                  className="flex items-center gap-1 hover:text-blue-600 transition"
                 >
-                  <span>
-                    {comment.likedByUser ? (
-                      <ThumbsUp fill="currentColor" className="w-4 h-4" />
-                    ) : (
-                      <ThumbsUp className="w-4 h-4" />
-                    )}
-                  </span>
+                  <ThumbsUp
+                    className={`w-4 h-4 ${
+                      comment.likedByUser ? "text-blue-600 fill-blue-600" : ""
+                    }`}
+                  />
                   <span>{comment.likes}</span>
                 </button>
                 <button
                   onClick={() => handleReportClick(comment.id)}
-                  className="hover:text-red-500 transition"
+                  className="flex items-center gap-1 hover:text-red-500 transition"
                 >
-                  🚩 Report
+                  <Flag className="w-4 h-4" />
+                  <span>Report</span>
                 </button>
               </div>
             </div>
@@ -186,23 +179,23 @@ const CommentSection = ({ postId, onClose }) => {
       </div>
 
       {/* New Comment Input */}
-      <div className="mt-auto">
+      <div className="mt-3">
         <textarea
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           rows={2}
           placeholder="Write a comment..."
-          className="w-full p-2 border rounded-md text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full text-sm px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-900 dark:text-white resize-none transition"
         />
         <button
           onClick={handlePost}
-          className="mt-2 w-full bg-blue-600 text-white text-sm py-2 rounded-md hover:bg-blue-700 transition"
+          className="mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 rounded-lg font-semibold transition"
         >
-          Post
+          Post Comment
         </button>
       </div>
 
-      {/* Report Confirmation Modal */}
+      {/* Report Modal */}
       {reportModalOpen && (
         <ReportModal
           handleCancelReport={handleCancelReport}

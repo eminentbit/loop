@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import {
   Bell,
   BookOpen,
@@ -7,13 +7,9 @@ import {
   Menu,
   Star,
   Users,
-  MessageSquare,
-  Settings,
   Rss,
   Briefcase,
   UsersRound,
-  ChevronRightIcon,
-  ChevronDownIcon,
   TrendingUp,
   LineChart,
 } from "lucide-react";
@@ -25,7 +21,7 @@ import axios from "axios";
 import getCookie from "../utils/GetCookie";
 
 const Sidebar = ({ userRole, isOpen, setIsOpen }) => {
-  const [isSubSectionOpen, setIsSubSectionOpen] = useState(false);
+  // Removed unused isSubSectionOpen state
   const { isDarkMode } = useContext(DarkModeContext);
   const navigate = useNavigate();
 
@@ -115,23 +111,7 @@ const Sidebar = ({ userRole, isOpen, setIsOpen }) => {
 
   const links = userRole === "recruiter" ? recruiterLinks : jobSeekerLinks;
 
-  const additionalLinks = [
-    {
-      name: "Gamification",
-      path: "/gamification",
-      icon: <Star className="w-5 h-5" />,
-    },
-    {
-      name: "Messages",
-      path: "/messages",
-      icon: <MessageSquare className="w-5 h-5" />,
-    },
-    {
-      name: "Settings",
-      path: "/settings",
-      icon: <Settings className="w-5 h-5" />,
-    },
-  ];
+  // Removed unused additionalLinks variable
 
   return (
     <div className="h-screen flex">
@@ -184,47 +164,10 @@ const Sidebar = ({ userRole, isOpen, setIsOpen }) => {
               ))}
             </ul>
           </nav>
-
-          {/* Collapsible Sub-section */}
-          <div className="mt-4">
-            <button
-              onClick={() => setIsSubSectionOpen(!isSubSectionOpen)}
-              className={`w-full flex items-center gap-3 p-2 rounded-md transition-colors duration-300 ${
-                isDarkMode
-                  ? "bg-gray-800 hover:bg-gray-700"
-                  : "bg-gray-200 hover:bg-gray-300"
-              }`}
-            >
-              <span
-                className={`flex justify-between items-center gap-4 ${
-                  isOpen ? "block" : "hidden"
-                } text-sm`}
-              >
-                Additional{" "}
-                {isSubSectionOpen ? <ChevronRightIcon /> : <ChevronDownIcon />}
-              </span>
-            </button>
-            {isSubSectionOpen && isOpen && (
-              <ul className="mt-2">
-                {additionalLinks.map((link) => (
-                  <li key={link.path} className="mb-3">
-                    <Link
-                      to={link.path}
-                      className={`flex items-center gap-3 p-2 rounded-md transition-colors duration-300 ${
-                        isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-300"
-                      }`}
-                    >
-                      {link.icon}
-                      <span className="text-sm">{link.name}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
         </div>
 
-        {/* Notification Indicator */}
+          
+        {/* message Indicator */}
         <div className="mb-6">
           <button
             className={`flex items-center gap-3 p-2 rounded-md w-full transition-colors ${
@@ -235,7 +178,7 @@ const Sidebar = ({ userRole, isOpen, setIsOpen }) => {
           >
             <Bell className="w-5 h-5" />
             <span className={`${isOpen ? "block" : "hidden"} text-sm`}>
-              Notifications
+              Messages
             </span>
           </button>
         </div>

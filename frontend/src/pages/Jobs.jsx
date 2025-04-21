@@ -9,6 +9,7 @@ import { DarkModeContext } from "../components/DarkModeContext";
 import axios from "axios";
 
 import AddJobModal from "../components/AddJob";
+
 // 🔽 Dropdown Component
 const Dropdown = ({ label, options, selected, onSelect }) => {
   const [isOpen, setIsOpen] = useState(() => {
@@ -116,9 +117,11 @@ const JobsPage = ({ userRole }) => {
             },
           }
         );
-        const data = await response.data;
+        // Ensure we get an array of jobs
+        const data = response.data;
         console.log("Fetched jobs:", data);
-        setJobs(data);
+        const jobsArray = Array.isArray(data) ? data : data.jobs || [];
+        setJobs(jobsArray);
       } catch (error) {
         console.error("Failed to fetch jobs:", error);
       }
@@ -192,10 +195,6 @@ const JobsPage = ({ userRole }) => {
       console.log(error);
     }
     console.log("Submitting job:", newJob);
-
-    // Refresh jobs (or optimistically update jobs state)
-    // const updatedJobs = await fetchUpdatedJobs();
-    // setJobs(updatedJobs);
   };
 
   return (

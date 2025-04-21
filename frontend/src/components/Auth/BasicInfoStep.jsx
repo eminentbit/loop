@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { ArrowRight } from "lucide-react";
 
@@ -7,14 +7,35 @@ const BasicInfoStep = ({ nextStep, updateFormData, formData }) => {
   const [email, setEmail] = useState(formData.email || "");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [errors, setErrors] = useState({});
+
+  // Validate fields on change
+  useEffect(() => {
+    const newErrors = {};
+    if (confirmPassword && password !== confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+    setErrors(newErrors);
+  }, [password, confirmPassword]);
+
+  const isFormValid =
+    fullName.trim() &&
+    email.trim() &&
+    password &&
+    confirmPassword &&
+    Object.keys(errors).length === 0;
 
   const handleNext = () => {
-    if (!fullName || !email || !password || !confirmPassword) {
-      alert("Please fill in all fields");
-      return;
-    }
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
+    if (!isFormValid) {
+      // Highlight missing fields or password mismatch
+      const newErrors = {};
+      if (!fullName.trim()) newErrors.fullName = "Full name is required";
+      if (!email.trim()) newErrors.email = "Email is required";
+      if (!password) newErrors.password = "Password is required";
+      if (!confirmPassword) newErrors.confirmPassword = "Please confirm your password";
+      if (password && confirmPassword && password !== confirmPassword)
+        newErrors.confirmPassword = "Passwords do not match";
+      setErrors(newErrors);
       return;
     }
     updateFormData({ fullName, email, password });
@@ -22,82 +43,105 @@ const BasicInfoStep = ({ nextStep, updateFormData, formData }) => {
   };
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold">Basic Information</h2>
+    <div className="max-w-md mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-8 space-y-6">
+      <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 text-center">
+         Information Required
+      </h2>
 
-      <div>
-        <label htmlFor="fullName" className="block font-medium">
-          Full Name
-        </label>
-        <input
-          id="fullName"
-          type="text"
-          value={fullName}
-          required
-          onChange={(e) => setFullName(e.target.value)}
-          placeholder="Enter your full name"
-          className="w-full p-2 border rounded"
-        />
+      <div className="space-y-4">
+        {/* Full Name */}
+        <div>
+          <label
+            htmlFor="fullName"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            Full Name<span className="text-red-500">*</span>
+          </label>
+          <input
+            id="fullName"
+            type="text"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            placeholder="Enter your full name"
+            className={`mt-1 w-full px-4 py-2 border rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 border-gray-300 dark:border-gray-600 ${errors.fullName ? 'border-red-500' : ''}`}
+          />
+          {errors.fullName && (
+            <p className="mt-1 text-xs text-red-500">{errors.fullName}</p>
+          )}
+        </div>
+
+        {/* Email */}
+        <div>
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            Email<span className="text-red-500">*</span>
+          </label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            className={`mt-1 w-full px-4 py-2 border rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 border-gray-300 dark:border-gray-600 ${errors.email ? 'border-red-500' : ''}`}
+          />
+          {errors.email && (
+            <p className="mt-1 text-xs text-red-500">{errors.email}</p>
+          )}
+        </div>
+
+        {/* Password */}
+        <div>
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            Password<span className="text-red-500">*</span>
+          </label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter a strong password"
+            className={`mt-1 w-full px-4 py-2 border rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 border-gray-300 dark:border-gray-600 ${errors.password ? 'border-red-500' : ''}`}
+          />
+          {errors.password && (
+            <p className="mt-1 text-xs text-red-500">{errors.password}</p>
+          )}
+        </div>
+
+        {/* Confirm Password */}
+        <div>
+          <label
+            htmlFor="confirmPassword"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            Confirm Password<span className="text-red-500">*</span>
+          </label>
+          <input
+            id="confirmPassword"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Re-enter your password"
+            className={`mt-1 w-full px-4 py-2 border rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 border-gray-300 dark:border-gray-600 ${errors.confirmPassword ? 'border-red-500' : ''}`}
+          />
+          {errors.confirmPassword && (
+            <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>
+          )}
+        </div>
       </div>
 
-      <div>
-        <label htmlFor="email" className="block font-medium">
-          Email
-        </label>
-        <input
-          id="email"
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email"
-          className="w-full p-2 border rounded"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="password" className="block font-medium">
-          Password
-        </label>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          required
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Enter a password"
-          className="w-full p-2 border rounded"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="confirmPassword" className="block font-medium">
-          Confirm Password
-        </label>
-        <input
-          id="confirmPassword"
-          type="password"
-          value={confirmPassword}
-          required
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          placeholder="Confirm your password"
-          className="w-full p-2 border rounded"
-        />
-      </div>
-
-      <div className="flex justify-between">
-        {/* <button
-          onClick={prevStep}
-          className="px-4 py-2 bg-gray-300 rounded cursor-pointer"
-        >
-          Back
-        </button> */}
+      <div className="text-right">
         <button
           onClick={handleNext}
-          className="px-5 py-2 hover:bg-indigo-700 transition-colors duration-300 bg-indigo-500 text-white rounded cursor-pointer flex items-center gap-2"
+          disabled={!isFormValid}
+          className={`inline-flex items-center gap-2 px-6 py-3 font-semibold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200 ${!isFormValid ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           Next
-          <ArrowRight size={18}/>
+          <ArrowRight size={18} />
         </button>
       </div>
     </div>
@@ -105,10 +149,12 @@ const BasicInfoStep = ({ nextStep, updateFormData, formData }) => {
 };
 
 BasicInfoStep.propTypes = {
-  prevStep: PropTypes.func,
   nextStep: PropTypes.func.isRequired,
   updateFormData: PropTypes.func.isRequired,
-  formData: PropTypes.object.isRequired,
+  formData: PropTypes.shape({
+    fullName: PropTypes.string,
+    email: PropTypes.string,
+  }).isRequired,
 };
 
 export default BasicInfoStep;
