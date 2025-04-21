@@ -2,21 +2,20 @@ import express from "express";
 import {
   getFeed,
   createPost,
+  toggleLikePost,
   // updatePost,
   // deletePost,
   // likePost,
-  // unlikePost,
 } from "../controllers/feedController.js";
 import verifyToken from "../middlewares/verifyToken.js";
 
 const router = express.Router();
 
 // Feed routes
-router.get("/", getFeed);
+router.get("/", verifyToken, getFeed);
 router.post("/create", verifyToken, createPost);
+router.put("/:feedId/like", verifyToken, toggleLikePost);
 // router.put("/update/:id", verifyToken, updatePost);
 // router.delete("/delete/:id", verifyToken, deletePost);
-// router.put("/like/:id", verifyToken, likePost);
-// router.put("/unlike/:id", verifyToken, unlikePost);
 
 export default router;

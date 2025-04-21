@@ -22,24 +22,21 @@ import PropTypes from "prop-types";
 import { DarkModeContext } from "./DarkModeContext";
 import Logo from "./Logo";
 import axios from "axios";
-import getCookie from "../utils/GetCookie";
 
 const Sidebar = ({ userRole, isOpen, setIsOpen }) => {
   const [isSubSectionOpen, setIsSubSectionOpen] = useState(false);
   const { isDarkMode } = useContext(DarkModeContext);
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
+  const handleLogout = async (e) => {
+    e.preventDefault();
+
     try {
       await axios.post(
         `${import.meta.env.VITE_API_URL}/auth/logout/`,
         {},
         {
           withCredentials: true,
-          headers: {
-            "X-CSRFToken": getCookie("csrftoken"),
-            "Content-Type": "application/json",
-          },
         }
       );
 

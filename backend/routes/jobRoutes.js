@@ -1,71 +1,27 @@
 import { Router } from "express";
+import prisma from "../lib/prisma.js";
+import {
+  createJob,
+  deleteJob,
+  getAllJobs,
+  getJobById,
+  updateJob,
+} from "../controllers/jobControllers.js";
 const router = Router();
-import { Job } from "../models"; // Import the Job model
 
 // CREATE a new Job
-router.post("/", async (req, res) => {
-  try {
-    const { title, description, salary, location, company, isRemote } = req.body;
-    const job = await Job.create({ title, description, salary, location, company, isRemote });
-    res.status(201).json(job);
-  } catch (error) {
-    res.status(500).json({ message: "Error creating job", error });
-  }
-});
+router.post("/create", createJob);
 
 // GET all Jobs
-router.get("/", async (req, res) => {
-  try {
-    const jobs = await Job.findAll();
-    res.status(200).json(jobs);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching jobs", error });
-  }
-});
+router.get("/", getAllJobs);
 
 // GET a single Job by ID
-router.get("/:id", async (req, res) => {
-  try {
-    const job = await Job.findByPk(req.params.id);
-    if (job) {
-      res.status(200).json(job);
-    } else {
-      res.status(404).json({ message: "Job not found" });
-    }
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching job", error });
-  }
-});
+router.get("/:id", getJobById);
 
 // UPDATE a Job by ID
-router.put("/:id", async (req, res) => {
-  try {
-    const job = await Job.findByPk(req.params.id);
-    if (job) {
-      const { title, description, salary, location, company, isRemote } = req.body;
-      await job.update({ title, description, salary, location, company, isRemote });
-      res.status(200).json(job);
-    } else {
-      res.status(404).json({ message: "Job not found" });
-    }
-  } catch (error) {
-    res.status(500).json({ message: "Error updating job", error });
-  }
-});
+router.put("/update/:id", updateJob);
 
 // DELETE a Job by ID
-router.delete("/:id", async (req, res) => {
-  try {
-    const job = await Job.findByPk(req.params.id);
-    if (job) {
-      await job.destroy();
-      res.status(200).json({ message: "Job deleted successfully" });
-    } else {
-      res.status(404).json({ message: "Job not found" });
-    }
-  } catch (error) {
-    res.status(500).json({ message: "Error deleting job", error });
-  }
-});
+router.delete("/:id", deleteJob);
 
 export default router;

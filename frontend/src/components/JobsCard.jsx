@@ -2,6 +2,8 @@ import PropTypes from "prop-types";
 import { useContext } from "react";
 import { DarkModeContext } from "./DarkModeContext";
 import { useNavigate } from "react-router-dom";
+import { capitalizeFirstLetter } from "src/utils/Capitalize";
+import { enumToSalary, enumToString } from "src/utils/EnumToString";
 
 const JobCard = ({ job, className = "" }) => {
   const { isDarkMode } = useContext(DarkModeContext);
@@ -28,7 +30,7 @@ const JobCard = ({ job, className = "" }) => {
         {job.company}
       </p>
       <p className={`${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
-        {job.location}
+        {capitalizeFirstLetter(job.location)}
       </p>
       <div className="mt-2 flex justify-between items-center">
         <span
@@ -36,14 +38,14 @@ const JobCard = ({ job, className = "" }) => {
             isDarkMode ? "text-blue-400" : "text-blue-600"
           }`}
         >
-          {job.salary}
+          $ {enumToSalary(job.salary)}
         </span>
         <span
           className={`text-sm ${
             isDarkMode ? "text-gray-400" : "text-gray-500"
           }`}
         >
-          {job.type}
+          {enumToString(job.type)}
         </span>
       </div>
       <button

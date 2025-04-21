@@ -6,6 +6,7 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import CreatePost from "../components/CreatePost";
 import CommentSection from "../components/CommentSection";
+import Spinner from "src/components/Auth/Spinner";
 // import CareerInsights from "../components/CareerInsights";
 
 const Feed = ({ userRole }) => {
@@ -29,10 +30,12 @@ const Feed = ({ userRole }) => {
     setError(null);
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/feed/posts/`
+        `${import.meta.env.VITE_API_URL}/feed/posts/`,
+        { credentials: "include" }
       );
       if (!response.ok) throw new Error("Failed to fetch posts.");
       const data = await response.json();
+
       setPosts(data);
     } catch (err) {
       setError(err.message);
@@ -81,7 +84,10 @@ const Feed = ({ userRole }) => {
             <CreatePost refreshPosts={fetchPosts} />
             <div className="space-y-8 mt-8">
               {loading ? (
-                <p>Loading posts...</p>
+                <div>
+                  <p>Loading posts...</p>
+                  <Spinner />
+                </div>
               ) : error ? (
                 <p className="text-red-500">{error}</p>
               ) : posts.length === 0 ? (
