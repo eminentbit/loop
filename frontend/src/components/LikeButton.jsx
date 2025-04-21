@@ -49,7 +49,8 @@ const LikeButton = ({ feedId, initialLiked, likes }) => {
 
 LikeButton.propTypes = {
   feedId: PropTypes.number.isRequired,
-  initialLiked: PropTypes.bool,
+  initialLiked: PropTypes.bool.isRequired,
+  likes: PropTypes.number.isRequired,
 };
 
 export default LikeButton;

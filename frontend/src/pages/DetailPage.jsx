@@ -1,7 +1,6 @@
 // src/components/JobDetails.jsx
-import { useState, useRef } from "react";
-import emailjs from 'emailjs-com';
-import jobs from "@/data/jobs";
+import { useState, useRef, useEffect } from "react";
+import emailjs from "emailjs-com";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import ApplicationModal from "src/components/ApplicationModal";

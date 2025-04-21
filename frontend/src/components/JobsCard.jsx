@@ -23,13 +23,8 @@ const JobCard = ({ job, className = "" }) => {
       <p className={`text-lg font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"} mb-2`}>
         {job.company}
       </p>
-<<<<<<< HEAD
-      <p className={`text-md ${isDarkMode ? "text-gray-400" : "text-gray-500"} mb-4`}>
-        {job.location}
-=======
       <p className={`${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
         {capitalizeFirstLetter(job.location)}
->>>>>>> 51f6f19da1aac22a6b58ee402e833e2a70d4ac28
       </p>
       <div className="flex justify-between items-center">
         <span
