@@ -4,6 +4,17 @@ import Sidebar from "../components/Sidebar";
 import { useContext, useState, useEffect } from "react";
 import { DarkModeContext } from "@/components/DarkModeContext";
 import PropTypes from "prop-types";
+import {
+  MapPin,
+  Mail,
+  Phone,
+  Award,
+  Briefcase,
+  FileText,
+  CheckCircle,
+  Link as LinkIcon,
+  User as UserIcon,
+} from "lucide-react";
 
 const ProfilePage = ({ userRole }) => {
   const { isDarkMode } = useContext(DarkModeContext);
@@ -17,121 +28,218 @@ const ProfilePage = ({ userRole }) => {
   }, [isOpen]);
 
   return (
-    <div className="flex transition-all duration-300 ease-in-out">
+    <div
+      className={`min-h-screen w-full flex transition-all duration-300 ease-in-out ${
+        isDarkMode
+          ? "bg-gradient-to-br from-gray-950 via-gray-900 to-blue-900"
+          : "bg-gradient-to-br from-blue-100 via-gray-50 to-white"
+      }`}
+    >
       <Sidebar userRole={userRole} isOpen={isOpen} setIsOpen={setIsOpen} />
       <div
-        className={`p-6 transition-colors ${!isOpen ? "ml-16" : "ml-[16em]"} ${
-          isDarkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
+        className={`flex-1 min-h-screen transition-colors duration-300 ${
+          !isOpen ? "ml-16" : "ml-[16em]"
         }`}
       >
         <Header userRole={userRole} />
         {/* Profile Header */}
         <div
-          className={`shadow rounded-lg p-6 mb-6 ${
-            isDarkMode ? "bg-gray-800" : "bg-white"
-          }`}
+          className={`
+            shadow-xl rounded-2xl p-8 mb-8 flex items-center gap-8 border
+            ${isDarkMode
+              ? "bg-gray-900/80 border-gray-800"
+              : "bg-white/90 border-blue-200"}
+            backdrop-blur-md
+            animate-fadeIn
+          `}
         >
-          <div className="flex items-center">
+          <div className="relative">
             <img
               src={user.avatar}
               alt="User Avatar"
-              className="w-24 h-24 rounded-full object-cover mr-6"
+              className="w-28 h-28 rounded-full object-cover shadow-lg border-4 border-blue-500"
             />
-            <div>
-              <h1 className="text-3xl font-bold">{user.name}</h1>
-              <p className="text-gray-400">{user.title}</p>
-              <p className="mt-2 text-green-400 font-semibold">{user.status}</p>
-            </div>
+            {/* Animated online status (if online) */}
+            {user.status?.toLowerCase() === "available" && (
+              <span className="absolute bottom-2 right-3 flex h-5 w-5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-5 w-5 bg-green-500 border-2 border-white dark:border-gray-900"></span>
+              </span>
+            )}
+          </div>
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold flex items-center gap-2">
+              <UserIcon size={28} className="text-blue-600 dark:text-blue-400" />
+              {user.name}
+            </h1>
+            <p className="text-gray-400 text-lg">{user.title}</p>
+            <p className="mt-2 text-green-400 font-semibold">{user.status}</p>
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10 px-2 md:px-0 animate-fadeIn">
           {/* About Section */}
-          <div
-            className={`shadow rounded-lg p-6 ${
-              isDarkMode ? "bg-gray-800" : "bg-white"
-            }`}
+          <section
+            className={`
+              shadow-xl rounded-2xl p-8 border
+              ${isDarkMode
+                ? "bg-gray-900/80 border-gray-800"
+                : "bg-white/90 border-blue-200"}
+              backdrop-blur-md
+              transition-all
+            `}
           >
-            <h2 className="text-2xl font-bold mb-4">About Me</h2>
-            <p className="mb-4">{user.summary}</p>
-            <div className="mb-4">
-              <h3 className="font-semibold">Contact Information</h3>
-              <p className="text-gray-400">Location: {user.location}</p>
-              <p className="text-gray-400">Email: {user.email}</p>
-              <p className="text-gray-400">Phone: {user.phone}</p>
+            <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+              <FileText className="text-blue-600 dark:text-blue-400" size={22} />
+              About Me
+            </h2>
+            <p className="mb-4 text-base">{user.summary}</p>
+            <div className="mb-6">
+              <h3 className="font-semibold mb-2 flex items-center gap-2">
+                <Mail className="text-blue-500" size={18} /> Contact Information
+              </h3>
+              <div className="flex flex-col gap-1 text-gray-500 dark:text-gray-400 text-sm pl-1">
+                <span className="flex items-center gap-1">
+                  <MapPin className="inline mr-1 text-blue-400" size={16} /> {user.location}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Mail className="inline mr-1 text-blue-400" size={16} />
+                  {user.email}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Phone className="inline mr-1 text-blue-400" size={16} />
+                  {user.phone}
+                </span>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold">Skills</h3>
-              <ul className="flex flex-wrap mt-2">
+            <div className="mb-6">
+              <h3 className="font-semibold mb-2 flex items-center gap-2">
+                <CheckCircle className="text-blue-500" size={18} /> Skills
+              </h3>
+              <ul className="flex flex-wrap gap-2 mt-2">
                 {user.skills.map((skill, index) => (
                   <li
                     key={index}
-                    className={`px-3 py-1 rounded-full text-sm mr-2 mb-2 ${
-                      isDarkMode
-                        ? "bg-blue-900 text-blue-300"
-                        : "bg-blue-100 text-blue-800"
-                    }`}
+                    className={`px-3 py-1 rounded-full text-sm font-semibold shadow transition
+                      ${
+                        isDarkMode
+                          ? "bg-blue-900 text-blue-300"
+                          : "bg-blue-100 text-blue-800"
+                      }`}
                   >
                     {skill}
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="mt-4">
-              <h3 className="font-semibold">Certifications</h3>
-              <ul className="list-disc list-inside mt-2 text-gray-400">
+            <div>
+              <h3 className="font-semibold mb-2 flex items-center gap-2">
+                <Award className="text-blue-500" size={18} /> Certifications
+              </h3>
+              <ul className="flex flex-col gap-1 mt-2">
                 {user.certifications.map((cert, index) => (
-                  <li key={index}>{cert}</li>
+                  <li
+                    key={index}
+                    className={`flex items-center gap-2 text-sm pl-1
+                      ${isDarkMode ? "text-blue-200" : "text-blue-800"}`}
+                  >
+                    <span className="w-2 h-2 rounded-full bg-blue-400 inline-block"></span>
+                    {cert}
+                  </li>
                 ))}
               </ul>
             </div>
-          </div>
+          </section>
 
           {/* Experience & Portfolio Section */}
-          <div
-            className={`shadow rounded-lg p-6 ${
-              isDarkMode ? "bg-gray-800" : "bg-white"
-            }`}
+          <section
+            className={`
+              shadow-xl rounded-2xl p-8 border
+              ${isDarkMode
+                ? "bg-gray-900/80 border-gray-800"
+                : "bg-white/90 border-blue-200"}
+              backdrop-blur-md
+              transition-all
+            `}
           >
-            <h2 className="text-2xl font-bold mb-4">Experience</h2>
+            <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+              <Briefcase className="text-blue-600 dark:text-blue-400" size={22} />
+              Experience
+            </h2>
             {user.experiences.map((exp) => (
-              <div key={exp.id} className="mb-4 border-b pb-4 border-gray-600">
+              <div
+                key={exp.id}
+                className={`
+                  mb-6 pb-6 border-b
+                  ${isDarkMode ? "border-gray-700" : "border-blue-100"}
+                  last:mb-0 last:pb-0 last:border-b-0
+                `}
+              >
                 <h3 className="text-xl font-semibold">{exp.role}</h3>
                 <p className="text-gray-400">
-                  {exp.company} | {exp.duration}
+                  {exp.company} <span className="mx-1">|</span> {exp.duration}
                 </p>
-                <p className="mt-2">{exp.description}</p>
+                <p className="mt-2 text-base">{exp.description}</p>
               </div>
             ))}
 
-            <h2 className="text-2xl font-bold mt-6 mb-4">Portfolio</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <h2 className="text-2xl font-bold mt-8 mb-4 flex items-center gap-2">
+              <LinkIcon className="text-blue-600 dark:text-blue-400" size={22} />
+              Portfolio
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {user.portfolio.map((item) => (
                 <a
                   key={item.id}
                   href={item.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`block rounded-lg overflow-hidden hover:shadow-lg transition-shadow ${
-                    isDarkMode
-                      ? "bg-gray-700 hover:bg-gray-600"
-                      : "bg-gray-100 hover:bg-gray-200"
-                  }`}
+                  className={`
+                    block rounded-xl overflow-hidden shadow-lg border transition
+                    relative group
+                    ${isDarkMode
+                      ? "bg-gray-800 hover:bg-gray-700 border-gray-700"
+                      : "bg-gray-100 hover:bg-blue-100 border-blue-100"}
+                  `}
                 >
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="w-full h-40 object-cover"
+                    className="w-full h-40 object-cover transition-transform duration-200 group-hover:scale-105"
                   />
-                  <div className="p-4">
-                    <h3 className="text-lg font-medium">{item.title}</h3>
+                  {/* Overlay */}
+                  <div
+                    className={`
+                      absolute inset-0 bg-gradient-to-t
+                      ${isDarkMode
+                        ? "from-blue-950/80 via-gray-900/60 to-transparent"
+                        : "from-blue-200/60 via-white/40 to-transparent"}
+                      opacity-0 group-hover:opacity-90 transition-opacity duration-200
+                      flex flex-col justify-end
+                    `}
+                  >
+                    <div className="p-4">
+                      <h3 className="text-lg font-semibold text-white drop-shadow">{item.title}</h3>
+                    </div>
                   </div>
                 </a>
               ))}
             </div>
-          </div>
+          </section>
         </div>
+        {/* Animation */}
+        <style>
+          {`
+            .animate-fadeIn {
+              animation: fadeIn 0.7s;
+            }
+            @keyframes fadeIn {
+              from { opacity: 0; transform: translateY(30px);}
+              to { opacity: 1; transform: translateY(0);}
+            }
+          `}
+        </style>
       </div>
     </div>
   );

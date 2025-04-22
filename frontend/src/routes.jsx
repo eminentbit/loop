@@ -28,9 +28,13 @@ import SignInModal from "./components/SignInModal";
 import { useEffect, useState } from "react";
 import About from "./pages/About";
 import ContactPage from "./pages/Contact";
-import StartupDetail from "./pages/StartupDetial";
-import LandingPage from "./pages/LandingPage";
-import SkillTest from "./pages/SkillTest";
+import StartupDetail from "@/pages/StartupDetial";
+import LandingPage from "@/pages/LandingPage";
+import SkillTest from "@/pages/SkillTest";
+import Candidates from "@/data/candidates";
+import Candidate from "@/pages/Candidates";
+import ContactCandidate from "@/pages/ContactCandidate";
+import ViewReport from "@/pages/ViewReport";  
 
 const AppRoutes = () => {
   const [role, setRole] = useState();
@@ -258,12 +262,21 @@ const AppRoutes = () => {
           </ProtectiveWrapper>
         }
       />
+     <Route path="/candidates/:id" element={<Candidate userRole={role} />} />
 
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="*" element={<NotFoundPage />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/skill-test" element={<SkillTest />} />
+      <Route path="/skill-test/:id" element={<SkillTest />} />
+      <Route path="/candidates" element={<Candidates />} />
+      <Route path="/candidates/:id/contact" element={<ContactCandidate userRole= "{role}" />} />
+      <Route path="/candidates/:id" element={<Candidate />} />
+      <Route path="/reports/:id" element={<ViewReport userRole={role} />} />
+
+      <Route path="/view-report" element={<ViewReport />} />
+      
     </Routes>
   );
 };
