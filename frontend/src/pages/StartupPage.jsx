@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef, useContext } from "react";
-import StartupCard from "../components/StartupCard"; // Create this similar to JobCard
+import { Link } from "react-router-dom";
+import StartupCard from "../components/StartupCard";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { ChevronDownIcon } from "lucide-react";
 import PropTypes from "prop-types";
 import { DarkModeContext } from "../components/DarkModeContext";
-import startups from "../data/startups"; // Sample data, replace with your actual data source
+import startups from "../data/startups";
 
-// Reuse your Dropdown component if it fits your needs
+// Dropdown component
 const Dropdown = ({ label, options, selected, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { isDarkMode } = useContext(DarkModeContext);
@@ -38,8 +39,8 @@ const Dropdown = ({ label, options, selected, onSelect }) => {
             : "bg-white border-gray-300 text-gray-900 hover:bg-[#1389c9]"
         }`}
       >
-        <div className="flex">
-          {selected !== "All" && selected ? selected : label}
+        <div className="flex items-center justify-between">
+          <span>{selected !== "All" && selected ? selected : label}</span>
           <ChevronDownIcon />
         </div>
       </button>
@@ -78,27 +79,26 @@ Dropdown.propTypes = {
 
 const StartupsPage = ({ userRole }) => {
   const [isSidebarOpen, setSidebarIsOpen] = useState(() => {
-    const storedValue = localStorage.getItem("sidebarOpen");
-    return storedValue ? JSON.parse(storedValue) : true;
+    const stored = localStorage.getItem("sidebarOpen");
+    return stored ? JSON.parse(stored) : true;
   });
 
   useEffect(() => {
     localStorage.setItem("sidebarOpen", JSON.stringify(isSidebarOpen));
   }, [isSidebarOpen]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedIndustry, setSelectedIndustry] = useState("All");
-  // Other filters could include funding stage, location, etc.
   const { isDarkMode } = useContext(DarkModeContext);
 
   const industries = ["All", "Technology", "Healthcare", "Finance"];
-  // You might add other filters for funding stage or location
 
-  const filteredStartups = startups.filter((startup) => {
+  const filteredStartups = startups.filter((s) => {
     const matchesSearch =
-      startup.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      startup.description.toLowerCase().includes(searchTerm.toLowerCase());
+      s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      s.description?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesIndustry =
-      selectedIndustry === "All" || startup.industry === selectedIndustry;
+      selectedIndustry === "All" || s.industry === selectedIndustry;
     return matchesSearch && matchesIndustry;
   });
 
@@ -109,7 +109,7 @@ const StartupsPage = ({ userRole }) => {
       }`}
     >
       <Sidebar
-        userRole="startup"
+        userRole={userRole}
         isOpen={isSidebarOpen}
         setIsOpen={setSidebarIsOpen}
       />
@@ -121,7 +121,7 @@ const StartupsPage = ({ userRole }) => {
         <Header userRole={userRole} className="mb-6" />
         <h1 className="text-3xl font-bold mb-6">Startups</h1>
 
-        {/* Filters Section */}
+        {/* Filters */}
         <div className="flex flex-wrap items-center gap-2 mb-6">
           <input
             type="text"
@@ -140,21 +140,26 @@ const StartupsPage = ({ userRole }) => {
             selected={selectedIndustry}
             onSelect={setSelectedIndustry}
           />
-          {/* Add more dropdowns for other filters if needed */}
         </div>
 
-        {/* Startup Listings Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Startup Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-2">
           {filteredStartups.map((startup) => (
-            <StartupCard
+            <Link
               key={startup.id}
-              startup={startup}
-              className={`transition-transform duration-200 hover:scale-105 ${
-                isDarkMode
-                  ? "dark:bg-gray-800 text-white border border-gray-700"
-                  : "bg-white text-gray-800 border border-gray-300"
-              }`}
-            />
+              to={`/startups/${startup.id}`}
+              className="block"
+            >
+              <StartupCard
+                startup={startup}
+                className={`transition-transform duration-200 hover:scale-105 ${
+                  isDarkMode
+                    ? "dark:bg-gray-800 text-white border border-gray-700"
+                    : "bg-white text-gray-800 border border-gray-300"
+                }`}
+              />
+            </Link>
+            
           ))}
         </div>
       </div>

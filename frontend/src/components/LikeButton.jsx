@@ -3,28 +3,25 @@ import axios from "axios";
 import { Heart } from "lucide-react";
 import FilledHeartIcon from "./FilledHearIcon"; // Adjust the import based on your icon library
 import PropTypes from "prop-types";
-import getCookie from "../utils/GetCookie";
 
-const LikeButton = ({ feedId, initialLiked }) => {
+const LikeButton = ({ feedId, initialLiked, likes }) => {
   const [liked, setLiked] = useState(initialLiked);
   const [loading, setLoading] = useState(false);
+  const [likesCount, setLikesCount] = useState(likes);
 
   const handleLike = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(
+      const response = await axios.put(
         `${import.meta.env.VITE_API_URL}/feed/posts/${feedId}/like/`,
         {},
         {
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCookie("csrftoken"),
-          },
           withCredentials: true,
         }
       );
 
       setLiked(response.data.status === "liked");
+      setLikesCount(response.data.likesCount);
     } catch (err) {
       console.error("Error toggling like:", err);
     } finally {
@@ -45,14 +42,15 @@ const LikeButton = ({ feedId, initialLiked }) => {
       ) : (
         <Heart className="w-5 h-5" />
       )}
-      {liked ? "Liked" : "Like"}
+      <span className="font-medium">{likesCount}</span>
     </button>
   );
 };
 
 LikeButton.propTypes = {
   feedId: PropTypes.number.isRequired,
-  initialLiked: PropTypes.bool,
+  initialLiked: PropTypes.bool.isRequired,
+  likes: PropTypes.number.isRequired,
 };
 
 export default LikeButton;

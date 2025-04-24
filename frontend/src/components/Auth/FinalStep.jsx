@@ -1,84 +1,82 @@
 import PropTypes from "prop-types";
 
 const FinalStep = ({ prevStep, onSubmit, formData }) => {
-  // Helper function to handle missing data
   const getValue = (value) => (value ? value : "N/A");
-  console.log("FinalStep formData:", formData);
 
   return (
-    <div className="flex flex-col items-center text-center p-8 max-w-md mx-auto bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-        Review Your Information
+    <div className="flex flex-col items-center text-center p-8 max-w-lg mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-2xl transition-all">
+      <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">
+        🎉 Review & Confirm
       </h2>
-      <p className="text-gray-500 mb-6">
-        You{"'"}re almost there! Please review your details below before
-        completing your sign-up.
+      <p className="text-gray-600 dark:text-gray-300 mb-6">
+        You&apos;re almost done! Double-check your info before completing your sign-up.
       </p>
 
-      {/* Review Section */}
-      <div className="w-full bg-gray-100 p-4 rounded-lg mb-6 text-left">
-        <h3 className="text-lg font-medium text-gray-700 mb-2">Your Details</h3>
-        <p className="text-gray-700">
-          <strong>Name:</strong> {getValue(formData?.fullName)}
-        </p>
-        <p className="text-gray-700">
-          <strong>Email:</strong> {getValue(formData?.email)}
-        </p>
+      <div className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-6 rounded-xl shadow-inner text-left space-y-4">
+        <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200">
+          Your Details
+        </h3>
+
+        <div className="space-y-2">
+          <p className="text-gray-800 dark:text-gray-100">
+            <span className="font-medium">👤 Name:</span> {getValue(formData?.fullName)}
+          </p>
+          <p className="text-gray-800 dark:text-gray-100">
+            <span className="font-medium">📧 Email:</span> {getValue(formData?.email)}
+          </p>
+        </div>
 
         {formData?.profilePicture ? (
-          <div className="flex flex-col items-center mt-4">
+          <div className="mt-4 flex flex-col items-center">
             <img
               src={URL.createObjectURL(formData.profilePicture)}
-              alt="Profile Preview"
-              className="w-24 h-24 object-cover rounded-full shadow"
+              alt="Profile"
+              className="w-24 h-24 object-cover rounded-full border-2 border-blue-500 shadow-md"
             />
-            <p className="text-gray-500 text-sm mt-2">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
               {formData.profilePicture.name}
             </p>
           </div>
         ) : (
-          <p className="text-gray-700 mt-2">
-            <strong>Profile Picture:</strong> N/A
+          <p className="text-gray-800 dark:text-gray-100 mt-2">
+            <span className="font-medium">🖼️ Profile Picture:</span> N/A
           </p>
         )}
       </div>
 
-      {/* Terms & Conditions */}
-      <p className="text-gray-600 text-sm mb-6">
-        By signing up, you confirm that you have read and agree to our&nbsp;
+      <p className="text-sm text-gray-600 dark:text-gray-300 mt-6">
+        By signing up, you agree to our{" "}
         <a
           href="/terms"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 hover:underline"
+          className="text-blue-600 dark:text-blue-400 hover:underline"
         >
-          Terms and Conditions
-        </a>
-        &nbsp;and&nbsp;
+          Terms & Conditions
+        </a>{" "}
+        and{" "}
         <a
           href="/privacy"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 hover:underline"
+          className="text-blue-600 dark:text-blue-400 hover:underline"
         >
           Privacy Policy
-        </a>
-        .
+        </a>.
       </p>
 
-      {/* Navigation Buttons */}
-      <div className="flex gap-4">
+      <div className="flex gap-4 mt-8">
         <button
           onClick={prevStep}
-          className="bg-gray-300 text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-400 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-6 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
-          Back
+          ⬅ Back
         </button>
         <button
           onClick={onSubmit}
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          Confirm & Sign Up
+          ✅ Confirm & Sign Up
         </button>
       </div>
     </div>

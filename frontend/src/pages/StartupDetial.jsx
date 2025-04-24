@@ -1,68 +1,84 @@
-// src/pages/StartupDetail.js
-import { useContext, useState, useEffect } from "react";
+// pages/StartupDetailPage.jsx
+import  { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { DarkModeContext } from "../components/DarkModeContext";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
-import PropTypes from "prop-types";
 import startups from "../data/startups";
 
-function StartupDetail({ userRole }) {
-  const { darkMode } = useContext(DarkModeContext);
-  const [isOpen, setIsOpen] = useState(() => {
-    const stored = localStorage.getItem("sidebarOpen");
-    return stored ? JSON.parse(stored) : true;
-  });
+const StartupDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const startup = startups.find((s) => s.id === +id);
 
-  useEffect(() => {
-    localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
-  }, [isOpen]);
+  const [amount, setAmount] = useState("");
 
-  const startup = startups.find((s) => s.id === parseInt(id, 10));
-  if (!startup) {
-    return <div className="p-8">Startup not found.</div>;
-  }
+  if (!startup) return <p>Startup not found.</p>;
+
+  const handleFund = (e) => {
+    e.preventDefault();
+    // hook into your backend / Stripe / etc.
+    alert(`Thanks! You pledged $${amount} to ${startup.name}.`);
+    navigate(-1); // go back to listings
+  };
 
   return (
-    <div
-      className={`${
-        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
-      } min-h-screen`}
-    >
-      <div className="flex">
-        <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} userRole={userRole} />
-        <main className={`flex-1 p-8${isOpen ? " ml-64" : " ml-16"}`}>
-          <Header userRole={userRole} />
-          <button
-            onClick={() => navigate(-1)}
-            className="mb-4 text-blue-600 hover:underline"
-          >
-            &larr; Back to Listings
-          </button>
-          <h1 className="text-3xl font-bold mb-4">{startup.name}</h1>
-          <p className="mb-2">
-            <strong>Category:</strong> {startup.category}
-          </p>
-          <p className="mb-2">
+    <div className="min-h-screen p-6 bg-gray-50">
+      <button
+        onClick={() => navigate(-1)}
+        className="mb-4 text-blue-600 hover:underline"
+      >
+        ← Back to All Startups
+      </button>
+
+      <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-6">
+        <div className="flex items-center mb-6">
+          {startup.logo && (
+            <img
+              src={startup.logo}
+              alt={`${startup.name} logo`}
+              className="h-16 w-16 object-contain mr-4 bg-gray-100 p-1 rounded-md"
+            />
+          )}
+          <div>
+            <h1 className="text-3xl font-bold">{startup.name}</h1>
+            <p className="text-sm text-gray-500">{startup.industry}</p>
+          </div>
+        </div>
+
+        <p className="text-gray-700 mb-6">{startup.description}</p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 text-sm">
+          <div>
             <strong>Founder:</strong> {startup.founder}
-          </p>
-          <p className="mb-2">
-            <strong>Funding Stage:</strong> {startup.fundingStage}
-          </p>
-          <p className="mb-4">
-            <strong>Description:</strong> {startup.description}
-          </p>
-          {/* Add more fields or graphics as needed */}
-        </main>
+          </div>
+          <div>
+            <strong>Stage:</strong> {startup.fundingStage}
+          </div>
+          <div>
+            <strong>Team Size:</strong> {startup.teamSize || "N/A"}
+          </div>
+        </div>
+
+        <form onSubmit={handleFund} className="space-y-4">
+          <label className="block">
+            <span className="text-gray-700">Pledge Amount (USD)</span>
+            <input
+              type="number"
+              min="1"
+              required
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            />
+          </label>
+          <button
+            type="submit"
+            className="w-full px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-500 transition-colors"
+          >
+            Fund {startup.name}
+          </button>
+        </form>
       </div>
     </div>
   );
-}
-
-StartupDetail.propTypes = {
-  userRole: PropTypes.string.isRequired,
 };
 
-export default StartupDetail;
+export default StartupDetailPage;

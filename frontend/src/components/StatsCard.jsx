@@ -1,8 +1,9 @@
 import { useContext } from "react";
+import PropTypes from "prop-types";
 import { DarkModeContext } from "./DarkModeContext";
 
 const StatsCard = ({ title, value }) => {
-  const { isDarkMode, setIsDarkMode } = useContext(DarkModeContext);
+  const { isDarkMode } = useContext(DarkModeContext);
 
   return (
     <div
@@ -26,6 +27,10 @@ const StatsCard = ({ title, value }) => {
       </p>
     </div>
   );
+};
+StatsCard.propTypes = {
+  title: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 };
 
 export default StatsCard;

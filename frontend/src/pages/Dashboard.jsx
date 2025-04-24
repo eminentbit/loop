@@ -1,12 +1,12 @@
 // import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
-import MainContent from "../components/MainContent";
+import Dashboard from "../components/MainContent";
 import PropTypes from "prop-types";
 import { useContext, useState, useEffect } from "react";
 import { DarkModeContext } from "../components/DarkModeContext";
 // import Footer from "../components/Footer";
 
-const Dashboard = ({ userRole }) => {
+const DashboardPage = ({ userRole }) => {
   const { isDarkMode } = useContext(DarkModeContext);
   const [isOpen, setIsOpen] = useState(() => {
     const storedValue = localStorage.getItem("sidebarOpen");
@@ -26,14 +26,19 @@ const Dashboard = ({ userRole }) => {
         }`}
       >
         {" "}
-        <MainContent userRole={userRole} />
+        <Dashboard userRole={userRole} />
       </div>
     </div>
   );
 };
 
+
 Dashboard.propTypes = {
   userRole: PropTypes.string.isRequired,
 };
 
-export default Dashboard;
+DashboardPage.propTypes = {
+  userRole: PropTypes.string.isRequired,
+};
+
+export default DashboardPage;

@@ -15,55 +15,55 @@ import Footer from "src/components/landing-page-components/Footer";
 function AboutPage() {
   const professionals = [
     {
-      name: "Frank Nkwain",
+      name: " ",
       role: "Chief Executive Officer",
       image: Frank,
       description: "Oversees company vision, strategy, and overall management.",
     },
     {
-      name: "Lum Beatrice",
+      name: "  ",
       role: "Chief Financial Officer",
       image: lum,
       description:
         "Manages financial planning, reporting, budgeting, and risk management.",
     },
     {
-      name: "Daryl Mbuh",
+      name: "  ",
       role: "Chief Technology Officer",
       image: Daryl,
       description:
         "Leads technology strategy, innovation, and technical teams.",
     },
     {
-      name: "Dammy Brown",
+      name: "  ",
       role: "Chief Operating Officer",
       image: Dammy,
       description:
         "Oversees daily operations, streamlines processes, and improves efficiency.",
     },
     {
-      name: "Lisa Market",
+      name: "  ",
       role: "Chief Marketing Officer",
       image: Market,
       description:
         "Drives marketing strategy, brand development, and customer acquisition.",
     },
     {
-      name: "Adn Sali",
+      name: "  ",
       role: "Product Manager",
       image: Adn,
       description:
         "Defines product roadmap, gathers requirements, and coordinates cross-functional teams.",
     },
     {
-      name: "Fanyi Charllson",
+      name: " ",
       role: "Full Stack Developer",
       image: Charles,
       description:
         "Develops the server-side logic, database management, and API integration.",
     },
     {
-      name: "Randy Owusu",
+      name: "  ",
       role: "Frontend Developer",
       image: randy,
       description:
@@ -150,21 +150,21 @@ function AboutPage() {
               key={idx}
               className="bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden"
             >
-              <img
-                src={person.image}
-                alt={person.name}
-                className="w-full h-48 object-cover object-top rounded-t-2xl"
-              />
-              <div className="p-5">
-                <h3 className="text-xl font-semibold text-indigo-500">
-                  {person.name}
-                </h3>
-                <p className="text-sm text-gray-500 font-medium">
-                  {person.role}
-                </p>
-                <p className="mt-3 text-sm text-gray-500">
-                  {person.description}
-                </p>
+      <div className="w-full h-64 bg-white flex items-center justify-center rounded-t-2xl overflow-hidden">
+  <img
+    src={person.image}
+    alt={person.name}
+    className="w-full h-full object-contain"
+  />
+</div>
+
+
+
+
+              <div className="p-4">
+                <h3 className="text-xl font-bold text-blue-700">{person.name}</h3>
+                <p className="text-sm text-gray-500 font-medium">{person.role}</p>
+                <p className="mt-2 text-sm text-gray-600">{person.description}</p>
               </div>
             </article>
           ))}

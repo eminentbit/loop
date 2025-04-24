@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
+import Spinner from "./Auth/Spinner";
 
 const ProtectiveWrapper = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null); // null = loading
@@ -31,7 +32,12 @@ const ProtectiveWrapper = ({ children }) => {
   }, []);
 
   if (isAuthenticated === null) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        {/* Loading spinner */}
+        <Spinner />
+      </div>
+    );
   }
 
   if (!isAuthenticated) {

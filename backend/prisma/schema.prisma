@@ -85,7 +85,7 @@ model User {
 
   feeds         Feed[]    @relation("UserFeeds")
   comments      Comment[] @relation("UserComments")
-  likedPosts    Feed[]    @relation("PostLikes")
+  likedPosts    Feed[]    @relation("postLikes")
   likedComments Comment[] @relation("CommentLikes")
   reportsMade   Report[]  @relation("UserReports")
 
@@ -238,34 +238,62 @@ model Streak {
 }
 
 model Job {
-  id             String           @id @default(uuid())
-  title          String
-  company        String
-  description    String
-  location       JobLocation
-  type           JobType
-  salary         SalaryRange
-  postedAt       DateTime         @default(now())
-  JobApplication JobApplication[]
+  id                 String           @id @default(uuid())
+  title              String
+  company            String
+  description        String
+  location           JobLocation
+  type               JobType
+  salary             SalaryRange
+  experience         String?
+  skills             String[]
+  companyLogo        String?
+  companyWebsite     String?
+  companyEmail       String?
+  companyPhone       String?
+  companyAddress     String?
+  companySize        String?
+  companyIndustry    String?
+  companyDescription String?
+  isRemote           Boolean          @default(false)
+  requirements       String[]
+  responsibilities   String[]
+  benefits           String[]
+  applicationLink    String?
+  department         String?
+  postedAt           DateTime         @default(now())
+  updatedAt          DateTime?        @updatedAt
+  JobApplication     JobApplication[]
 }
 
 model Feed {
-  id            Int       @id @default(autoincrement())
-  user          User      @relation("UserFeeds", fields: [userId], references: [id])
-  userId        String
-  type          FeedType
-  title         String?
-  content       String?
-  image         String?
-  videoUrl      String?
-  eventDate     DateTime?
-  liveUrl       String?
-  likes         User[]    @relation("PostLikes")
-  comments      Comment[]
-  commentsCount Int       @default(0)
-  reports       Report[]  @relation("FeedReports")
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id              Int       @id @default(autoincrement())
+  user            User      @relation("UserFeeds", fields: [userId], references: [id])
+  userId          String
+  type            FeedType
+  title           String?
+  content         String?
+  image           String?
+  videoUrl        String?
+  eventDate       DateTime?
+  liveUrl         String?
+  likes           User[]    @relation("postLikes")
+  likesCount      Int       @default(0)
+  isPublic        Boolean   @default(true)
+  isDeleted       Boolean   @default(false)
+  isReported      Boolean   @default(false)
+  isFlagged       Boolean   @default(false)
+  isSpam          Boolean   @default(false)
+  isBlocked       Boolean   @default(false)
+  isSuspended     Boolean   @default(false)
+  isBanned        Boolean   @default(false)
+  isDeactivated   Boolean   @default(false)
+  isDeletedByUser Boolean   @default(false)
+  comments        Comment[]
+  commentsCount   Int       @default(0)
+  reports         Report[]  @relation("FeedReports")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 
 model Comment {
@@ -275,6 +303,7 @@ model Comment {
   user          User     @relation("UserComments", fields: [userId], references: [id])
   userId        String
   likes         User[]   @relation("CommentLikes")
+  likedByUser   Boolean  @default(false)
   reported      Boolean  @default(false)
   content       String
   createdAt     DateTime @default(now())
@@ -296,6 +325,9 @@ model Report {
   createdAt   DateTime   @default(now())
   resolved    Boolean    @default(false)
   isDeleted   Boolean    @default(false)
+
+  @@unique([commentId, reporterId])
+  @@unique([feedId, reporterId])
 }
 
 model Notification {

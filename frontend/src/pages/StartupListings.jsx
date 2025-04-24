@@ -51,7 +51,7 @@ function StartupListing({ userRole }) {
                 
                 {/* Use <Link> to navigate to /details/:id */}
                 <Link
-                  to={`/details/${startup.id}`}
+                  to={`/startup-detail/:id`}
                   className="inline-block text-sm bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
                 >
                   View Details
@@ -69,4 +69,4 @@ StartupListing.propTypes = {
   userRole: PropTypes.string.isRequired,
 };
 
-export default StartupListing;
+export default StartupListing;  

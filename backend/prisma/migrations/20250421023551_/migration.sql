@@ -1,0 +1,18 @@
+-- AlterTable
+ALTER TABLE "Job" ADD COLUMN     "applicationLink" TEXT,
+ADD COLUMN     "benefits" TEXT[],
+ADD COLUMN     "companyAddress" TEXT,
+ADD COLUMN     "companyDescription" TEXT,
+ADD COLUMN     "companyEmail" TEXT,
+ADD COLUMN     "companyIndustry" TEXT,
+ADD COLUMN     "companyLogo" TEXT,
+ADD COLUMN     "companyPhone" TEXT,
+ADD COLUMN     "companySize" TEXT,
+ADD COLUMN     "companyWebsite" TEXT,
+ADD COLUMN     "department" TEXT,
+ADD COLUMN     "experience" TEXT,
+ADD COLUMN     "isRemote" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "requirements" TEXT[],
+ADD COLUMN     "responsibilities" TEXT[],
+ADD COLUMN     "skills" TEXT[],
+ADD COLUMN     "updatedAt" TIMESTAMP(3);

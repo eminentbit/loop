@@ -1,58 +1,69 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
+import { Camera, XCircle } from "lucide-react";
 
-const ProfilePictureStep = ({
-  nextStep,
-  prevStep,
-  updateFormData,
-  formData,
-}) => {
-  const [selectedFile, setSelectedFile] = useState(
-    formData.profilePicture || null
-  );
+const ProfilePictureStep = ({ nextStep, prevStep, updateFormData, formData }) => {
+  const [selectedFile, setSelectedFile] = useState(formData.profilePicture || null);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const fileInputRef = useRef(null);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    setSelectedFile(file);
-    updateFormData({ profilePicture: file });
     if (file) {
       const url = URL.createObjectURL(file);
+      setSelectedFile(file);
       setPreviewUrl(url);
-    } else {
-      setPreviewUrl(null);
+      updateFormData({ profilePicture: file });
     }
   };
 
-  // Cleanup the object URL when component unmounts or when previewUrl changes
+  const handleRemove = () => {
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    updateFormData({ profilePicture: null });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = null;
+    }
+  };
+
   useEffect(() => {
     return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
   }, [previewUrl]);
 
   return (
-    <div className="flex flex-col items-center text-center p-8 max-w-md mx-auto bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+    <div className="max-w-sm mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg text-center">
+      <h2 className="text-3xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
         Upload Your Profile Picture
       </h2>
-      <p className="text-gray-500 mb-6">
-        This is optional; you can skip for now.
+      <p className="text-gray-500 dark:text-gray-400 mb-6">
+        Optional: Add a personal touch to your profile
       </p>
 
-      {/* Image preview or placeholder */}
-      <div className="mb-6">
+      <div
+        className="relative mx-auto w-36 h-36 rounded-full border-4 border-dashed border-indigo-300 dark:border-indigo-600 bg-gray-50 dark:bg-gray-700 flex items-center justify-center cursor-pointer hover:border-indigo-400 transition"
+        onClick={() => fileInputRef.current && fileInputRef.current.click()}
+      >
         {previewUrl ? (
-          <img
-            src={previewUrl}
-            alt="Profile Preview"
-            className="w-32 h-32 object-cover rounded-full mx-auto"
-          />
+          <>
+            <img
+              src={previewUrl}
+              alt="Preview"
+              className="absolute inset-0 w-full h-full object-cover rounded-full"
+            />
+            <button
+              type="button"
+              onClick={handleRemove}
+              className="absolute top-0 right-0 m-1 text-red-500 hover:text-red-600 bg-white dark:bg-gray-800 rounded-full"
+            >
+              <XCircle size={20} />
+            </button>
+          </>
         ) : (
-          <div className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center mx-auto">
-            <span className="text-gray-500">No Image</span>
+          <div className="flex flex-col items-center text-indigo-500">
+            <Camera size={48} />
+            <span className="mt-2 text-sm">Click to upload</span>
           </div>
         )}
       </div>
@@ -60,26 +71,23 @@ const ProfilePictureStep = ({
       <input
         type="file"
         accept="image/*"
+        ref={fileInputRef}
         onChange={handleFileChange}
-        className="block w-full mb-4 text-gray-700 py-2 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="hidden"
       />
 
-      {selectedFile && (
-        <p className="text-sm text-green-600 mb-6">
-          File selected: {selectedFile.name}
-        </p>
-      )}
-
-      <div className="flex gap-4">
+      <div className="flex justify-between mt-8">
         <button
+          type="button"
           onClick={prevStep}
-          className="bg-gray-300 text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-400 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="inline-flex items-center gap-2 px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition focus:outline-none focus:ring-2 focus:ring-gray-400"
         >
           Back
         </button>
         <button
+          type="button"
           onClick={nextStep}
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="inline-flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
           {selectedFile ? "Continue" : "Skip"}
         </button>
@@ -92,7 +100,9 @@ ProfilePictureStep.propTypes = {
   nextStep: PropTypes.func.isRequired,
   prevStep: PropTypes.func.isRequired,
   updateFormData: PropTypes.func.isRequired,
-  formData: PropTypes.object.isRequired,
+  formData: PropTypes.shape({
+    profilePicture: PropTypes.instanceOf(File),
+  }).isRequired,
 };
 
 export default ProfilePictureStep;
