@@ -1,6 +1,7 @@
 // jsconfig.json
 {
   "compilerOptions": {
+    "jsx": "react",
     "baseUrl": ".",
     "paths": { /* … */ },
     "types": [
