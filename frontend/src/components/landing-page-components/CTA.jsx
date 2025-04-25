@@ -1,4 +1,6 @@
+import { useNavigate } from "react-router-dom"
 export default function CTA() {
+  const navigate = useNavigate()
     return (
       <section className="py-16 md:py-24 bg-gradient-to-r from-indigo-600 to-indigo-800 text-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -23,7 +25,9 @@ export default function CTA() {
               <p className="text-white/80 text-lg mb-8 max-w-md">
                 Join thousands of professionals who have already found their dream jobs through Loop.
               </p>
-              <button className="px-8 py-3 rounded-full bg-white text-indigo-600 font-medium shadow-lg hover:shadow-indigo-900/20 transition-all duration-200 cursor-pointer">
+              <button className="px-8 py-3 rounded-full bg-white text-indigo-600 font-medium shadow-lg hover:shadow-indigo-900/20 transition-all duration-200 cursor-pointer"
+              onClick={() => navigate("/jobs")}
+              >
                 Get Started Now
               </button>
             </div>

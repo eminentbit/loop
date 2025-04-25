@@ -1,6 +1,8 @@
 import { Search, MapPin, Briefcase } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Hero() {
+  const navigate = useNavigate();
   return (
     <section className="pt-20 pb-16 md:pt-18 md:pb-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -37,17 +39,26 @@ export default function Hero() {
                     className="pl-10 pr-3 py-2 w-full border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
                 </div>
-                <button className="bg-indigo-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors cursor-pointer">
+                <button
+                  className="bg-indigo-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors cursor-pointer"
+                  onClick={() => navigate("/jobs")}
+                >
                   Search Jobs
                 </button>
               </div>
             </div>
 
             <div className="flex flex-wrap gap-4 pt-4">
-              <button className="px-8 py-3 rounded-full bg-indigo-600 text-white font-medium shadow-lg hover:shadow-indigo-200 hover:bg-indigo-700 transition-all duration-200 cursor-pointer">
+              <button
+                className="px-8 py-3 rounded-full bg-indigo-600 text-white font-medium shadow-lg hover:shadow-indigo-200 hover:bg-indigo-700 transition-all duration-200 cursor-pointer"
+                onClick={() => navigate("/jobs")}
+              >
                 Explore Jobs
               </button>
-              <button className="px-8 py-3 rounded-full bg-white border border-gray-200 text-gray-700 font-medium shadow-sm hover:shadow-md hover:border-indigo-200 transition-all duration-200 cursor-pointer">
+              <button
+                className="px-8 py-3 rounded-full bg-white border border-gray-200 text-gray-700 font-medium shadow-sm hover:shadow-md hover:border-indigo-200 transition-all duration-200 cursor-pointer"
+                onClick={() => navigate("/post-job")}
+              >
                 Post a Job
               </button>
             </div>
