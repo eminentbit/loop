@@ -34,7 +34,8 @@ import SkillTest from "@/pages/SkillTest";
 import Candidates from "@/data/candidates";
 import Candidate from "@/pages/Candidates";
 import ContactCandidate from "@/pages/ContactCandidate";
-import ViewReport from "@/pages/ViewReport";  
+import ViewReport from "@/pages/ViewReport"; 
+import CompanyDetailPage from "./pages/CompanyDetials";
 
 const AppRoutes = () => {
   const [role, setRole] = useState();
@@ -198,6 +199,7 @@ const AppRoutes = () => {
           </ProtectiveWrapper>
         }
       />
+      
       <Route
         path="/candidates"
         element={
@@ -276,6 +278,8 @@ const AppRoutes = () => {
       <Route path="/reports/:id" element={<ViewReport userRole={role} />} />
 
       <Route path="/view-report" element={<ViewReport />} />
+      <Route path="/network/company/:id" element={<CompanyDetailPage />} />
+    
       
     </Routes>
   );
