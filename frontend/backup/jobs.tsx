@@ -1,13 +1,87 @@
-import axios from "axios";
-import { Sidebar } from "lucide-react";
+import { useState, useEffect, useRef, useContext } from "react";
+import JobCard from "../src/components/JobsCard";
+import Sidebar from "../src/components/Sidebar";
+import Header from "../src/components/Header";
+import { ChevronDownIcon } from "lucide-react";
 import PropTypes from "prop-types";
-import { useContext, useEffect, useState } from "react";
-import AddJobModal from "src/components/AddJob";
-import { DarkModeContext } from "src/components/DarkModeContext";
-import Dropdown from "src/components/Dropdown";
-import Header from "src/components/Header";
-import JobCard from "src/components/JobsCard";
+import getCookie from "../utils/GetCookie";
+import { DarkModeContext } from "../components/DarkModeContext";
+import axios from "axios";
 
+import AddJobModal from "../components/AddJob";
+import React from "react";
+// 🔽 Dropdown Component
+const Dropdown = ({ label, options, selected, onSelect }) => {
+  const [isOpen, setIsOpen] = useState(() => {
+    const storedValue = localStorage.getItem("sidebarOpen");
+    return storedValue ? JSON.parse(storedValue) : true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
+  }, [isOpen]);
+
+  const { isDarkMode } = useContext(DarkModeContext);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div
+      className={`relative m-0 transition-colors ${
+        isDarkMode ? "text-gray-200" : "text-gray-900"
+      }`}
+      ref={dropdownRef}
+    >
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={`border rounded-full px-4 py-2 text-left focus:outline-none transition-colors ${
+          isDarkMode
+            ? "bg-gray-700 border-gray-600 text-gray-200 hover:bg-gray-600"
+            : "bg-white border-gray-300 text-gray-900 hover:bg-gray-100"
+        }`}
+      >
+        <div className="flex">
+          {selected !== "All" && selected ? selected : label}
+          <ChevronDownIcon />
+        </div>
+      </button>
+
+      {isOpen && (
+        <ul
+          className={`absolute z-10 mt-1 rounded-md shadow-lg transition-colors ${
+            isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"
+          }`}
+        >
+          {options.map((option) => (
+            <li
+              key={option}
+              onClick={() => {
+                onSelect(option);
+                setIsOpen(false);
+              }}
+              className={`px-4 py-2 cursor-pointer transition-colors ${
+                isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
+              }`}
+            >
+              {option}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
+// 🔽 Main Jobs Page Component
 const JobsPage = ({ userRole }) => {
   const [jobs, setJobs] = useState([]);
   const [isSidebarOpen, setSidebarIsOpen] = useState(false);
@@ -37,10 +111,10 @@ const JobsPage = ({ userRole }) => {
           `${import.meta.env.VITE_API_URL}/jobs/`,
           {
             withCredentials: true,
-            // headers: {
-            //   "Content-Type": "application/json",
-            //   "X-CSRFToken": getCookie("csrftoken"),
-            // },
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": getCookie("csrftoken"),
+            },
           }
         );
         const data = await response.data;
@@ -97,10 +171,10 @@ const JobsPage = ({ userRole }) => {
         `${import.meta.env.VITE_API_URL}/jobs/`,
         newJob,
         {
-          // headers: {
-          //   "Content-Type": "application/json",
-          //   "X-CSRFToken": getCookie("csrftoken"),
-          // },
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
           withCredentials: true,
         }
       );
@@ -228,6 +302,13 @@ const JobsPage = ({ userRole }) => {
 
 JobsPage.propTypes = {
   userRole: PropTypes.string.isRequired,
+};
+
+Dropdown.propTypes = {
+  label: PropTypes.string.isRequired,
+  options: PropTypes.arrayOf(PropTypes.string).isRequired,
+  selected: PropTypes.string.isRequired,
+  onSelect: PropTypes.func.isRequired,
 };
 
 export default JobsPage;
