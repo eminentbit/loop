@@ -135,9 +135,9 @@ const Navbar= () => {
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white shadow-lg">
             <Link
-              to="/"
+              to="/jobs"
               className={`block px-3 py-2 rounded-md text-base font-medium ${
-                isActive('/') 
+                isActive('/jobs') 
                   ? 'text-blue-600 bg-blue-50' 
                   : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
               } transition-colors duration-200`}

@@ -130,7 +130,7 @@ const SearchBar  = ({ onSearch, className = '' }) => {
                 <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-1">
                   Skills / Tags
                 </label>
-                <div className="relative">
+                <div className="relative flex items-center">
                   <Tag className="absolute left-3 h-5 w-5 text-gray-400" />
                   <input
                     type="text"
