@@ -60,7 +60,7 @@ function AboutPage() {
       role: "Full Stack Developer",
       image: Charles,
       description:
-        "Develops the server-side logic, database management, and API integration.",
+        "Develops and maintains web applications using a combination of front-end and back-end technologies.",
     },
     {
       name: "  ",

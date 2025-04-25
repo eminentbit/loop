@@ -1,6 +1,8 @@
 import { MapPin, Clock, DollarSign } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function FeaturedJobs() {
+  const navigate = useNavigate();
   const jobs = [
     {
       title: "Senior Frontend Developer",
@@ -52,12 +54,12 @@ export default function FeaturedJobs() {
               Explore our handpicked opportunities from top employers
             </p>
           </div>
-          <a
-            href="#"
+          <Link
+            to="/jobs"
             className="mt-6 md:mt-0 text-indigo-600 font-medium hover:text-indigo-700 transition-colors"
           >
             View all jobs →
-          </a>
+          </Link>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -112,7 +114,9 @@ export default function FeaturedJobs() {
         </div>
 
         <div className="mt-12 text-center">
-          <button className="px-8 py-3 rounded-full bg-indigo-600 text-white font-medium shadow-lg hover:shadow-indigo-200 hover:bg-indigo-700 transition-all duration-200">
+          <button className="px-8 py-3 rounded-full bg-indigo-600 text-white font-medium shadow-lg hover:shadow-indigo-200 hover:bg-indigo-700 transition-all duration-200 cursor-pointer"
+          onClick={() => navigate("/jobs")}
+          >
             Browse All Jobs
           </button>
         </div>

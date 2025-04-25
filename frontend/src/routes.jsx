@@ -2,7 +2,6 @@ import { Route, Routes } from "react-router-dom";
 import SignupWizard from "./pages/SignupWizard";
 import NotFoundPage from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
-import JobsPage from "./pages/Jobs";
 import ProfilePage from "./pages/UserProfile";
 import TestDashboard from "./pages/TestDashboard";
 import Feed from "./pages/Feed";
@@ -77,14 +76,11 @@ const AppRoutes = () => {
           </ProtectiveWrapper>
         }
       />
-      <Route
-        path="/jobs"
-        element={
-          <ProtectiveWrapper>
-            <JobsPage userRole={role} />
-          </ProtectiveWrapper>
-        }
-      />
+      {/* Job Routes */}
+      <Route path="/jobs" element={<JobHomePage />} />
+      <Route path="/post-job" element={<PostJobPage />} />
+      <Route path="/job/:jobId" element={<JobDetailsPage />} />
+
       <Route
         path="/profile"
         element={
@@ -264,7 +260,7 @@ const AppRoutes = () => {
           </ProtectiveWrapper>
         }
       />
-     <Route path="/candidates/:id" element={<Candidate userRole={role} />} />
+      <Route path="/candidates/:id" element={<Candidate userRole={role} />} />
 
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="*" element={<NotFoundPage />} />
@@ -273,13 +269,14 @@ const AppRoutes = () => {
       <Route path="/skill-test" element={<SkillTest />} />
       <Route path="/skill-test/:id" element={<SkillTest />} />
       <Route path="/candidates" element={<Candidates />} />
-      <Route path="/candidates/:id/contact" element={<ContactCandidate userRole= "{role}" />} />
+      <Route
+        path="/candidates/:id/contact"
+        element={<ContactCandidate userRole="{role}" />}
+      />
       <Route path="/candidates/:id" element={<Candidate />} />
       <Route path="/reports/:id" element={<ViewReport userRole={role} />} />
 
       <Route path="/view-report" element={<ViewReport />} />
-      <Route path="/network/company/:id" element={<CompanyDetailPage />} />
-    
       
     </Routes>
   );
