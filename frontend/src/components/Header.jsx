@@ -45,12 +45,12 @@ const Header = ({ className, userRole }) => {
               >
                 Network
               </Link>
-              <Link
+              {/* <Link
                 to="/learning"
                 className="hover:text-blue-600 font-medium transition"
               >
                 Learning
-              </Link>
+              </Link> */}
             </>
           ) : userRole === "recruiter" ? (
             <>

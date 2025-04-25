@@ -7,6 +7,8 @@ import {
   getJobById,
   updateJob,
 } from "../controllers/jobControllers.js";
+import { submitApplication } from "../controllers/applicationController.js";
+import verifyToken from "../middlewares/verifyToken.js";
 const router = Router();
 
 // CREATE a new Job
@@ -23,5 +25,8 @@ router.put("/update/:id", updateJob);
 
 // DELETE a Job by ID
 router.delete("/:id", deleteJob);
+
+// Apply for a Job
+router.post("/apply/:id", verifyToken, submitApplication);
 
 export default router;

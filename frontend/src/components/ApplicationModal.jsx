@@ -1,175 +1,130 @@
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Textarea } from "./ui/textarea";
+import { X } from "lucide-react";
 import PropTypes from "prop-types";
 
-function ApplicationModal({
-  closeModal,
-  submitted,
-  job,
+const ApplicationModal = ({
+  jobTitle,
+  showModal,
+  onClose,
+  onSubmit,
   formRef,
-  handleSubmit,
-  fileErrors,
   submitting,
-  handleFileChange,
-}) {
+  submitted,
+  onFileChange,
+  fileErrors,
+  className,
+}) => {
+  const [formErrors, setFormErrors] = useState({});
+
+  const validateForm = () => {
+    const form = formRef.current;
+    const errors = {};
+
+    if (!form.name.value.trim()) errors.name = "Name is required.";
+    if (!form.email.value.trim()) errors.email = "Email is required.";
+    if (!form.coverLetter.value.trim())
+      errors.coverLetter = "Cover letter is required.";
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    const formData = new FormData(formRef.current);
+    await onSubmit(formData);
+  };
+
   return (
-    <div>
-      <div className="fixed inset-0 backdrop-blur-xs bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
-          {/* Close */}
-          <button
-            onClick={closeModal}
-            className="absolute top-3 right-3 text-gray-600 hover:text-gray-800 text-2xl"
+    <Dialog open={showModal} onOpenChange={onClose} className={className}>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Apply for {jobTitle}</DialogTitle>
+          <Button
+            variant="ghost"
+            className="absolute top-4 right-4"
+            onClick={onClose}
           >
-            &times;
-          </button>
+            <X className="w-5 h-5" />
+          </Button>
+        </DialogHeader>
 
-          {!submitted ? (
-            <>
-              <h3 className="text-xl font-semibold mb-4">
-                Apply for {job.title}
-              </h3>
-
-              {/* Requirements */}
-              <ul className="list-disc list-inside mb-4 text-gray-700 space-y-1">
-                {job.requirements.map((req, i) => (
-                  <li key={i}>{req}</li>
-                ))}
-              </ul>
-
-              <form
-                ref={formRef}
-                onSubmit={handleSubmit}
-                encType="multipart/form-data"
-              >
-                {/* hidden job_title */}
-                <input type="hidden" name="job_title" value={job.title} />
-
-                {/* Name & Email */}
-                <div className="mb-4">
-                  <label
-                    htmlFor="from_name"
-                    className="block text-gray-700 mb-1"
-                  >
-                    Full Name
-                  </label>
-                  <input
-                    id="from_name"
-                    name="from_name"
-                    type="text"
-                    required
-                    className="w-full border border-gray-300 rounded-lg p-2"
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <label
-                    htmlFor="from_email"
-                    className="block text-gray-700 mb-1"
-                  >
-                    Email Address
-                  </label>
-                  <input
-                    id="from_email"
-                    name="from_email"
-                    type="email"
-                    required
-                    className="w-full border border-gray-300 rounded-lg p-2"
-                  />
-                </div>
-
-                {/* CV Upload */}
-                <div className="mb-4">
-                  <label htmlFor="cv" className="block text-gray-700 mb-1">
-                    Upload CV (PDF/DOC, max 10 MB)
-                  </label>
-                  <input
-                    id="cv"
-                    name="cv"
-                    type="file"
-                    accept=".pdf,.doc,.docx"
-                    onChange={handleFileChange}
-                    required
-                    className="w-full"
-                  />
-                  {fileErrors.cv && (
-                    <p className="text-red-500 text-sm mt-1">{fileErrors.cv}</p>
-                  )}
-                </div>
-
-                {/* Cover Letter Upload */}
-                <div className="mb-4">
-                  <label
-                    htmlFor="cover_letter"
-                    className="block text-gray-700 mb-1"
-                  >
-                    Upload Cover Letter (PDF/DOC, max 10 MB)
-                  </label>
-                  <input
-                    id="cover_letter"
-                    name="cover_letter"
-                    type="file"
-                    accept=".pdf,.doc,.docx"
-                    onChange={handleFileChange}
-                    required
-                    className="w-full"
-                  />
-                  {fileErrors.cover_letter && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {fileErrors.cover_letter}
-                    </p>
-                  )}
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={
-                    submitting ||
-                    Boolean(fileErrors.cv) ||
-                    Boolean(fileErrors.cover_letter)
-                  }
-                  className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2 px-4 rounded-lg"
-                >
-                  {submitting ? "Submitting…" : "Submit Application"}
-                </button>
-              </form>
-            </>
-          ) : (
-            <div className="text-center">
-              <h3 className="text-xl font-semibold mb-2">Thank you!</h3>
-              <p className="mb-4">
-                We&apos;ve received your application. We&apos;ll get back to you
-                soon.
-              </p>
-              <button
-                onClick={closeModal}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg"
-              >
-                Close
-              </button>
+        {!submitted ? (
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="name">Name</Label>
+              <Input type="text" name="name" id="name" required />
+              {formErrors.name && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>
+              )}
             </div>
-          )}
-        </div>
-      </div>
-    </div>
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input type="email" name="email" id="email" required />
+              {formErrors.email && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.email}</p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="coverLetter">Cover Letter</Label>
+              <Textarea name="coverLetter" id="coverLetter" rows={5} required />
+              {formErrors.coverLetter && (
+                <p className="text-red-500 text-sm mt-1">
+                  {formErrors.coverLetter}
+                </p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="resume">Resume (PDF, max 5MB)</Label>
+              <Input
+                type="file"
+                id="resume"
+                accept="application/pdf"
+                onChange={onFileChange}
+              />
+              {fileErrors && (
+                <p className="text-red-500 text-sm mt-1">{fileErrors}</p>
+              )}
+            </div>
+            <Button type="submit" disabled={submitting} className="w-full">
+              {submitting ? "Submitting..." : "Submit Application"}
+            </Button>
+          </form>
+        ) : (
+          <div className="text-center space-y-4">
+            <h3 className="text-lg font-semibold">Application Submitted!</h3>
+            <p>Thank you for applying. We&apos;ll get back to you soon.</p>
+            <Button onClick={onClose}>Close</Button>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
   );
-}
+};
 
 ApplicationModal.propTypes = {
-  closeModal: PropTypes.func.isRequired,
-  submitted: PropTypes.bool.isRequired,
-  job: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    requirements: PropTypes.arrayOf(PropTypes.string).isRequired,
-  }).isRequired,
-  formRef: PropTypes.shape({
-    current: PropTypes.instanceOf(Element),
-  }).isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  fileErrors: PropTypes.shape({
-    cv: PropTypes.string,
-    cover_letter: PropTypes.string,
-  }).isRequired,
+  jobTitle: PropTypes.string.isRequired,
+  showModal: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  formRef: PropTypes.object.isRequired,
   submitting: PropTypes.bool.isRequired,
-  handleFileChange: PropTypes.func.isRequired,
+  submitted: PropTypes.bool.isRequired,
+  onFileChange: PropTypes.func.isRequired,
+  fileErrors: PropTypes.string,
+  className: PropTypes.string,
 };
 
 export default ApplicationModal;

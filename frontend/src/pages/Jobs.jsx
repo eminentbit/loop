@@ -31,25 +31,24 @@ const JobsPage = ({ userRole }) => {
   });
 
   // 🔁 Fetch jobs from API
+  const fetchJobs = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/jobs/`,
+        {
+          withCredentials: true,
+        }
+      );
+      // Ensure we get an array of jobs
+      const data = response.data;
+      console.log("Fetched jobs:", data);
+      const jobsArray = Array.isArray(data) ? data : data.jobs || [];
+      setJobs(jobsArray);
+    } catch (error) {
+      console.error("Failed to fetch jobs:", error);
+    }
+  };
   useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/jobs/`,
-          {
-            withCredentials: true,
-          }
-        );
-        // Ensure we get an array of jobs
-        const data = response.data;
-        console.log("Fetched jobs:", data);
-        const jobsArray = Array.isArray(data) ? data : data.jobs || [];
-        setJobs(jobsArray);
-      } catch (error) {
-        console.error("Failed to fetch jobs:", error);
-      }
-    };
-
     fetchJobs();
   }, []);
 
@@ -116,8 +115,7 @@ const JobsPage = ({ userRole }) => {
     console.log("Submitting job:", newJob);
 
     // Refresh jobs (or optimistically update jobs state)
-    // const updatedJobs = await fetchUpdatedJobs();
-    // setJobs(updatedJobs);
+    await fetchJobs();
   };
 
   return (

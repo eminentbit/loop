@@ -355,8 +355,12 @@ model JobApplication {
   jobId                String
   user                 User      @relation(fields: [userId], references: [id])
   userId               String
+  fullName             String
+  email                String    @map("email")
   status               JobStatus @default(PENDING)
   resume               String?
+  message              String?
+  cv                   String?
   coverLetter          String?
   appliedAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt

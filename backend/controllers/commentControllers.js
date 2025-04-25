@@ -7,10 +7,17 @@ export const listComments = async (req, res) => {
 
   try {
     const comments = await prisma.comment.findMany({
-      where: { feedId: parseInt(postId) },
-      orderBy: { createdAt: "asc", isDeleted: false },
+      where: {
+        feedId: parseInt(postId),
+        isDeleted: false, // move this here
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
       include: {
-        likes: { select: { id: true } },
+        likes: {
+          select: { id: true },
+        },
         user: {
           select: {
             fullName: true,

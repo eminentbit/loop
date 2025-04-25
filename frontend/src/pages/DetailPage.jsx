@@ -1,46 +1,46 @@
-// src/components/JobDetails.jsx
 import { useState, useRef, useEffect } from "react";
-import emailjs from "emailjs-com";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import ApplicationModal from "src/components/ApplicationModal";
+// import ApplicationModal from "src/components/ApplicationModal";
 import { capitalizeFirstLetter } from "src/utils/Capitalize";
+import { Dialog, DialogContent, DialogTitle } from "@radix-ui/react-dialog";
+import { DialogHeader } from "src/components/ui/dialog";
+import { Button } from "src/components/ui/button";
+import { Label } from "recharts";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { X } from "lucide-react";
 
 const JobDetails = () => {
   const { jobId } = useParams();
   const [job, setJob] = useState(null);
-  const formRef = useRef();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [fileErrors, setFileErrors] = useState({ cv: "", cover_letter: "" });
 
+  const formRef = useRef();
+
   useEffect(() => {
     const fetchJob = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/jobs/${jobId.toString()}/`,
+          `${import.meta.env.VITE_API_URL}/jobs/${jobId}/`,
           { withCredentials: true }
         );
-        if (response.status === 200) {
-          setJob(response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching job details:", error);
+        setJob(response.data);
+      } catch (err) {
+        console.log(err);
+        setError("Unable to load job details. Please try again later.");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchJob();
-  });
-
-  // if someone navigates to an invalid ID
-  if (!job) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <p className="text-gray-700 text-xl">Job not found.</p>
-      </div>
-    );
-  }
+  }, [jobId]);
 
   const openModal = () => setShowModal(true);
   const closeModal = () => {
@@ -54,104 +54,184 @@ const JobDetails = () => {
     const { name, files } = e.target;
     const file = files[0];
     if (file && file.size > 10 * 1024 * 1024) {
-      setFileErrors((errs) => ({
-        ...errs,
+      setFileErrors((prev) => ({
+        ...prev,
         [name]: "File must be under 10 MB.",
       }));
     } else {
-      setFileErrors((errs) => ({ ...errs, [name]: "" }));
+      setFileErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // prevent send if file errors exist
-    if (fileErrors.cv || fileErrors.cover_letter) {
-      alert("Please fix file size errors before submitting.");
-      return;
-    }
+    if (fileErrors.cv || fileErrors.cover_letter)
+      return alert("Fix file errors before submitting.");
 
     setSubmitting(true);
-    emailjs
-      .sendForm(
-        "YOUR_SERVICE_ID", // ← replace with your EmailJS service ID
-        "YOUR_TEMPLATE_ID", // ← replace with your EmailJS template ID
-        formRef.current,
-        "YOUR_USER_ID" // ← replace with your EmailJS user ID
-      )
-      .then(() => {
-        setSubmitting(false);
-        setSubmitted(true);
-      })
-      .catch((err) => {
-        console.error("EmailJS error:", err);
-        setSubmitting(false);
-        alert("Something went wrong. Please try again.");
-      });
+    const formData = new FormData(formRef.current);
+
+    try {
+      console.log(formData);
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/application/jobs/${jobId}/`,
+        formData,
+        { withCredentials: true }
+      );
+      if (response.status === 200) setSubmitted(true);
+    } catch (err) {
+      alert(
+        err?.response?.data?.error || "Something went wrong. Please try again."
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <p className="text-gray-600 text-lg font-medium">
+          Loading job details...
+        </p>
+      </div>
+    );
+  }
+
+  if (error || !job) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <p className="text-red-500 text-lg font-medium">
+          {error || "Job not found."}
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-100 p-6 flex justify-center items-start">
-      <div className="bg-white rounded-2xl shadow-lg p-8 max-w-3xl w-full">
-        {/* Header */}
-        <div className="mb-6 border-b pb-4">
-          <h1 className="text-3xl font-bold text-gray-800">{job.title}</h1>
-          <p className="text-gray-600 text-sm mt-1">
+    <div className="min-h-screen bg-gray-100 px-4 py-10 flex justify-center">
+      <div className="bg-white rounded-2xl shadow-lg p-10 max-w-4xl w-full space-y-8">
+        <header className="border-b pb-6">
+          <h1 className="text-4xl font-bold text-gray-900">{job.title}</h1>
+          <p className="text-gray-700">
             at <span className="font-semibold">{job.company}</span>
           </p>
-          <p className="text-gray-500 text-sm">
+          <p className="text-sm text-gray-500">
             {capitalizeFirstLetter(job.location)}
           </p>
-        </div>
+        </header>
 
-        {/* Description */}
-        <section className="mb-6">
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">
+        <section>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-3">
             Job Description
           </h2>
-          <p className="text-gray-600 leading-relaxed">{job.description}</p>
+          <p className="text-gray-700 whitespace-pre-line leading-relaxed">
+            {job.description}
+          </p>
         </section>
 
-        {/* Requirements */}
-        <section className="mb-6">
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">
-            Requirements
-          </h2>
-          <ul className="list-disc list-inside text-gray-600 space-y-1">
-            {job.requirements.map((req, i) => (
-              <li key={i}>{req}</li>
-            ))}
-          </ul>
-        </section>
+        {job.requirements?.length > 0 && (
+          <section>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-3">
+              Requirements
+            </h2>
+            <ul className="list-disc pl-5 text-gray-700 space-y-2">
+              {job.requirements.map((req, index) => (
+                <li key={index}>{req}</li>
+              ))}
+            </ul>
+          </section>
+        )}
 
-        {/* Apply Button */}
-        <div className="mt-8">
+        <div className="pt-4 border-t">
           <button
             onClick={openModal}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl transition duration-300 shadow-md hover:shadow-lg"
           >
             Apply Now
           </button>
         </div>
       </div>
 
-      {/* Modal */}
       {showModal && (
-        <ApplicationModal
-          job={job}
-          fileErrors={fileErrors}
-          formRef={formRef}
-          setFileErrors={setFileErrors}
-          setSubmitting={setSubmitting}
-          setSubmitted={setSubmitted}
-          setShowModal={setShowModal}
-          submitting={submitting}
-          submitted={submitted}
-          closeModal={closeModal}
-          handleFileChange={handleFileChange}
-          handleSubmit={handleSubmit}
-        />
+        <div className="backdrop-blur-sm fixed inset-0 flex items-center justify-center z-50">
+          <Dialog open={showModal} onOpenChange={closeModal}>
+            <DialogContent className="max-w-lg">
+              <DialogHeader>
+                <DialogTitle>Apply for {job.title}</DialogTitle>
+                <Button onClick={closeModal} className="absolute top-3 right-3">
+                  <X className="w-5 h-5" />
+                </Button>
+              </DialogHeader>
+              {submitted ? (
+                <p className="text-green-600 text-center">
+                  Application submitted!
+                </p>
+              ) : (
+                <form
+                  ref={formRef}
+                  onSubmit={handleSubmit}
+                  encType="multipart/form-data"
+                  className="space-y-4 pt-4"
+                >
+                  <div>
+                    <Label htmlFor="fullName">Full Name</Label>
+                    <Input type="text" name="fullName" id="fullName" required />
+                  </div>{" "}
+                  <div>
+                    <Label htmlFor="email">Email</Label>
+                    <Input type="email" name="email" id="email" required />{" "}
+                  </div>
+                  <div>
+                    <Label htmlFor="cv">CV (PDF, max 10MB)</Label>
+                    <Input
+                      type="file"
+                      name="cv"
+                      id="cv"
+                      accept=".pdf"
+                      required
+                      onChange={handleFileChange}
+                    />
+                    {fileErrors.cv && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {fileErrors.cv}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <Label htmlFor="cover_letter">
+                      Cover Letter (PDF, max 10MB)
+                    </Label>
+                    <Input
+                      type="file"
+                      name="cover_letter"
+                      id="cover_letter"
+                      accept=".pdf"
+                      required
+                      onChange={handleFileChange}
+                    />
+                    {fileErrors.cover_letter && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {fileErrors.cover_letter}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <Label htmlFor="message">Message (optional)</Label>
+                    <Textarea name="message" id="message" rows={4} />
+                  </div>
+                  <Button
+                    type="submit"
+                    disabled={submitting}
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                  >
+                    {submitting ? "Submitting..." : "Submit Application"}
+                  </Button>
+                </form>
+              )}
+            </DialogContent>
+          </Dialog>
+        </div>
       )}
     </div>
   );

@@ -33,13 +33,12 @@ function LearningPage({ userRole }) {
   useEffect(() => {
     async function fetchDashboard() {
       try {
-        const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:8000/api/learning/", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/courses/dashboard`,
+          {
+            credentials: "include",
+          }
+        );
         if (!res.ok) throw new Error(`Server responded ${res.status}`);
         const data = await res.json();
 

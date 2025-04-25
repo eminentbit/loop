@@ -1,5 +1,7 @@
 import { Router } from "express";
 import prisma from "../lib/prisma.js";
+import verifyToken from "../middlewares/verifyToken.js";
+import { getDashboard } from "../controllers/courseController.js";
 const router = Router();
 
 // CREATE Course
@@ -66,5 +68,7 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ message: "Error deleting course", error });
   }
 });
+
+router.get("/dashboard", verifyToken, getDashboard);
 
 export default router;

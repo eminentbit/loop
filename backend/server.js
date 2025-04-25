@@ -1,4 +1,4 @@
-import express from "express";
+import express, { application } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
@@ -11,6 +11,7 @@ import verifyToken from "./middlewares/verifyToken.js";
 import feedRoutes from "./routes/feedRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import jobRoutes from "./routes/jobRoutes.js";
+import applicationRoutes from "./routes/applicationRoutes.js";
 
 dotenv.config();
 const PORT = process.env.PORT || 8000;
@@ -31,10 +32,11 @@ app.use(cookieParser()); // allow cookie parsing
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/events", verifyToken, eventRoutes);
-app.use("/api/courses", verifyToken, courseRoutes);
-app.use("/api/enrollments", verifyToken, enrollmentRoutes);
+app.use("/api/courses", courseRoutes);
+app.use("/api/enrollments", enrollmentRoutes);
 app.use("/api/streaks", verifyToken, streakRoutes);
 app.use("/api/feed/posts", feedRoutes);
 app.use("/api/feed/comments", commentRoutes);
 app.use("/api/jobs", jobRoutes);
+app.use("/api/application", applicationRoutes);
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

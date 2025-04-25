@@ -1,6 +1,6 @@
 // src/pages/StartupListing.jsx
 import { useContext, useState, useEffect } from "react";
-import { Link } from "react-router-dom";               // ← import Link
+import { Link } from "react-router-dom"; // ← import Link
 import { DarkModeContext } from "../components/DarkModeContext";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
@@ -22,7 +22,9 @@ function StartupListing({ userRole }) {
 
   return (
     <div
-      className={`${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"} min-h-screen`}
+      className={`${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
+      } min-h-screen`}
     >
       <div className="flex">
         <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} userRole={userRole} />
@@ -48,10 +50,10 @@ function StartupListing({ userRole }) {
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                   <strong>Funding Stage:</strong> {startup.fundingStage}
                 </p>
-                
+
                 {/* Use <Link> to navigate to /details/:id */}
                 <Link
-                  to={`/startup-detail/:id`}
+                  to={`/startup-detail/${startup.id}`}
                   className="inline-block text-sm bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
                 >
                   View Details
@@ -69,4 +71,4 @@ StartupListing.propTypes = {
   userRole: PropTypes.string.isRequired,
 };
 
-export default StartupListing;  
+export default StartupListing;
