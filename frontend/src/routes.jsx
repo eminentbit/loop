@@ -25,6 +25,7 @@ import StartupListing from "@/pages/StartupListings";
 import ForgotPassword from "@/pages/ForgetPassword";
 import ProtectiveWrapper from "@/components/ProtectiveWrapper";
 import SignInModal from "@/components/SignInModal";
+import JobHomePage from "./pages/job.pages/JobHomePage";
 import About from "@/pages/About";
 import ContactPage from "@/pages/Contact";
 import StartupDetail from "@/pages/StartupDetial";
@@ -36,8 +37,7 @@ import ContactCandidate from "@/pages/ContactCandidate";
 import ViewReport from "@/pages/ViewReport";
 import PostJobPage from "./pages/job.pages/PostJobPage";
 import JobDetailsPage from "./pages/job.pages/JobDetailsPage";
-import JobHomePage from "./pages/job.pages/JobHomePage";
-// import CompanyDetailPage from "./pages/CompanyDetials";
+import CompanyDetailPage from "./pages/CompanyDetials";
 
 const AppRoutes = () => {
   const [role, setRole] = useState();
@@ -280,6 +280,7 @@ const AppRoutes = () => {
       <Route path="/reports/:id" element={<ViewReport userRole={role} />} />
 
       <Route path="/view-report" element={<ViewReport />} />
+      <Route path="/network/company/:id" element={<CompanyDetailPage />} />
     </Routes>
   );
 };
