@@ -42,7 +42,7 @@ const Navbar= () => {
             <Link 
               to="/jobs" 
               className={`px-3 py-2 rounded-md text-sm font-medium ${
-                isActive('/') 
+                isActive('/jobs') 
                   ? 'text-blue-600 bg-blue-50' 
                   : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
               } transition-colors duration-200`}
