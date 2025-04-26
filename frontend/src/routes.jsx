@@ -38,6 +38,7 @@ import ViewReport from "@/pages/ViewReport";
 import PostJobPage from "./pages/job.pages/PostJobPage";
 import JobDetailsPage from "./pages/job.pages/JobDetailsPage";
 import CompanyDetailPage from "./pages/CompanyDetials";
+import Certificate from "@/pages/Certificates";
 
 const AppRoutes = () => {
   const [role, setRole] = useState();
@@ -281,6 +282,7 @@ const AppRoutes = () => {
 
       <Route path="/view-report" element={<ViewReport />} />
       <Route path="/network/company/:id" element={<CompanyDetailPage />} />
+      <Route path="/certificate" element={<Certificate />} />
     </Routes>
   );
 };
