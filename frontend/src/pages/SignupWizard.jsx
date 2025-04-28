@@ -81,7 +81,7 @@ const SignupWizard = () => {
       });
 
       console.log("Form submitted successfully:", response.data);
-      navigate("/dashboard");
+      navigate("/jobs");
     } catch (error) {
       console.error(
         "Error during signup:",

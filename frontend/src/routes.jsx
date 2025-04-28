@@ -39,6 +39,7 @@ import PostJobPage from "./pages/job.pages/PostJobPage";
 import JobDetailsPage from "./pages/job.pages/JobDetailsPage";
 import CompanyDetailPage from "./pages/CompanyDetials";
 import Certificate from "@/pages/Certificates";
+import JobFeed from "./components/job.feed.compnent/job.feed";
 
 const AppRoutes = () => {
   const [role, setRole] = useState();
@@ -84,6 +85,9 @@ const AppRoutes = () => {
       <Route path="/jobs" element={<JobHomePage />} />
       <Route path="/post-job" element={<PostJobPage />} />
       <Route path="/job/:jobId" element={<JobDetailsPage />} />
+
+      {/* feed */}
+      <Route path="/job-feeds" element={<JobFeed />} />
 
       <Route
         path="/profile"

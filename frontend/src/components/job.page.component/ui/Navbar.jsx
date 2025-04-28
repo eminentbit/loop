@@ -1,93 +1,108 @@
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Briefcase, User as UserIcon, Users } from 'lucide-react';
-import { useAuth } from '../../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X, Briefcase, User as UserIcon, Users } from "lucide-react";
+import { useAuth } from "../../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
-const Navbar= () => {
+const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-  
+
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
-  
+
   const isActive = (path) => {
     return location.pathname === path;
   };
-  
+
   return (
     <nav className="bg-white shadow fixed w-full z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-            <div
-            className="h-10 w-20 flex items-center justify-center mr-2 cursor-pointer"
-            onClick={() => navigate("/")}
-          >
-            <img src="/landing.page.images/image.png" alt="Loop" className="bg-transparent" />
-          </div>
+              <div
+                className="h-10 w-20 flex items-center justify-center mr-2 cursor-pointer"
+                onClick={() => navigate("/")}
+              >
+                <img
+                  src="/landing.page.images/image.png"
+                  alt="Loop"
+                  className="bg-transparent"
+                />
+              </div>
             </div>
           </div>
-          
+
           {/* Desktop navigation */}
           <div className="hidden md:flex md:items-center md:space-x-4">
-            <Link 
-              to="/jobs" 
+            <Link
+              to="/jobs"
               className={`px-3 py-2 rounded-md text-sm font-medium ${
-                isActive('/jobs') 
-                  ? 'text-blue-600 bg-blue-50' 
-                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                isActive("/jobs")
+                  ? "text-blue-600 bg-blue-50"
+                  : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
               } transition-colors duration-200`}
             >
               Jobs
             </Link>
-            
-            <Link 
-              to="/post-job" 
+
+            <Link
+              to="/job-feeds"
+              className={`block px-3 py-2 rounded-md text-base font-medium ${
+                isActive("/job-feeds")
+                  ? "text-blue-600 bg-blue-50"
+                  : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+              } transition-colors duration-200`}
+              onClick={closeMenu}
+            >
+              <div className="flex items-center">
+                Feed
+              </div>
+            </Link>
+
+            <Link
+              to="/post-job"
               className={`px-3 py-2 rounded-md text-sm font-medium ${
-                isActive('/post-job') 
-                  ? 'text-blue-600 bg-blue-50' 
-                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                isActive("/post-job")
+                  ? "text-blue-600 bg-blue-50"
+                  : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
               } transition-colors duration-200`}
             >
               Post a Job
             </Link>
-            
-            <Link 
-              to="/following" 
+
+            {/* <Link
+              to="/following"
               className={`px-3 py-2 rounded-md text-sm font-medium ${
-                isActive('/following') 
-                  ? 'text-blue-600 bg-blue-50' 
-                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                isActive("/following")
+                  ? "text-blue-600 bg-blue-50"
+                  : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
               } transition-colors duration-200`}
             >
               Following
-            </Link>
-            
+            </Link> */}
+
             {user ? (
               <div className="flex items-center ml-4">
-                <Link 
-                  to={`/profile/${user.id}`} 
-                  className="flex items-center"
-                >
-                  <img 
-                    src={user.avatar} 
-                    alt={user.name} 
+                <Link to={`/profile/${user.id}`} className="flex items-center">
+                  <img
+                    src={user.avatar}
+                    alt={user.name}
                     className="h-8 w-8 rounded-full object-cover border-2 border-blue-500 transition-transform hover:scale-105"
                   />
                   <span className="ml-2 text-sm font-medium text-gray-700 hover:text-blue-600">
                     {user.name}
                   </span>
                 </Link>
-                <button 
+                <button
                   onClick={logout}
                   className="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 transition-colors duration-200"
                 >
@@ -96,14 +111,14 @@ const Navbar= () => {
               </div>
             ) : (
               <div className="flex items-center space-x-2">
-                <Link 
-                  to="/login" 
+                <Link
+                  to="/signin"
                   className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors duration-200"
                 >
                   Login
                 </Link>
-                <Link 
-                  to="/register" 
+                <Link
+                  to="/signup"
                   className="px-4 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
                 >
                   Register
@@ -111,7 +126,7 @@ const Navbar= () => {
               </div>
             )}
           </div>
-          
+
           {/* Mobile menu button */}
           <div className="flex md:hidden">
             <button
@@ -137,9 +152,9 @@ const Navbar= () => {
             <Link
               to="/jobs"
               className={`block px-3 py-2 rounded-md text-base font-medium ${
-                isActive('/jobs') 
-                  ? 'text-blue-600 bg-blue-50' 
-                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                isActive("/jobs")
+                  ? "text-blue-600 bg-blue-50"
+                  : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
               } transition-colors duration-200`}
               onClick={closeMenu}
             >
@@ -148,13 +163,28 @@ const Navbar= () => {
                 Jobs
               </div>
             </Link>
-            
+
+            <Link
+              to="/job-feeds"
+              className={`block px-3 py-2 rounded-md text-base font-medium ${
+                isActive("/job-feeds")
+                  ? "text-blue-600 bg-blue-50"
+                  : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+              } transition-colors duration-200`}
+              onClick={closeMenu}
+            >
+              <div className="flex items-center">
+                <Users className="h-5 w-5 mr-2" />
+                Feed
+              </div>
+            </Link>
+
             <Link
               to="/post-job"
               className={`block px-3 py-2 rounded-md text-base font-medium ${
-                isActive('/post-job') 
-                  ? 'text-blue-600 bg-blue-50' 
-                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                isActive("/post-job")
+                  ? "text-blue-600 bg-blue-50"
+                  : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
               } transition-colors duration-200`}
               onClick={closeMenu}
             >
@@ -163,13 +193,13 @@ const Navbar= () => {
                 Post a Job
               </div>
             </Link>
-            
-            <Link
+
+            {/* <Link
               to="/following"
               className={`block px-3 py-2 rounded-md text-base font-medium ${
-                isActive('/following') 
-                  ? 'text-blue-600 bg-blue-50' 
-                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                isActive("/following")
+                  ? "text-blue-600 bg-blue-50"
+                  : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
               } transition-colors duration-200`}
               onClick={closeMenu}
             >
@@ -177,16 +207,16 @@ const Navbar= () => {
                 <Users className="h-5 w-5 mr-2" />
                 Following
               </div>
-            </Link>
-            
+            </Link> */}
+
             {user ? (
               <>
                 <Link
                   to={`/profile/${user.id}`}
                   className={`block px-3 py-2 rounded-md text-base font-medium ${
-                    isActive(`/profile/${user.id}`) 
-                      ? 'text-blue-600 bg-blue-50' 
-                      : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                    isActive(`/profile/${user.id}`)
+                      ? "text-blue-600 bg-blue-50"
+                      : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
                   } transition-colors duration-200`}
                   onClick={closeMenu}
                 >
@@ -208,14 +238,14 @@ const Navbar= () => {
             ) : (
               <div className="flex flex-col space-y-2 px-3 py-2">
                 <Link
-                  to="/login"
+                  to="/signin"
                   className="px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors duration-200"
                   onClick={closeMenu}
                 >
                   Login
                 </Link>
                 <Link
-                  to="/register"
+                  to="/signup"
                   className="px-3 py-2 rounded-md text-base font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
                   onClick={closeMenu}
                 >
