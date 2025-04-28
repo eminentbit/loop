@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef, useContext } from "react";
-import JobCard from "../src/components/JobsCard";
-import Sidebar from "../src/components/Sidebar";
-import Header from "../src/components/Header";
+import JobCard from "../components/JobsCard";
+import Sidebar from "../components/Sidebar";
+import Header from "../components/Header";
 import { ChevronDownIcon } from "lucide-react";
 import PropTypes from "prop-types";
 import getCookie from "../utils/GetCookie";
-import { DarkModeContext } from "../components/DarkModeContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 import axios from "axios";
 
 import AddJobModal from "../components/AddJob";
@@ -107,16 +107,13 @@ const JobsPage = ({ userRole }) => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/jobs/`,
-          {
-            withCredentials: true,
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": getCookie("csrftoken"),
-            },
-          }
-        );
+        const response = await axios.get(`http://localhost:3000.api/jobs/`, {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+        });
         const data = await response.data;
         console.log("Fetched jobs:", data);
         setJobs(data);
@@ -131,7 +128,10 @@ const JobsPage = ({ userRole }) => {
   // Filter options
   const locations = ["All", "Remote", "Hybrid", "On-site"];
   const jobTypes = ["All", "Full-time", "Contract"];
-  const companies = ["All", ...new Set(jobs.map((job) => job.company))];
+  const companies = [
+    "All",
+    ...Array.from(new Set(jobs.map((job) => job.company))),
+  ];
   const salaryRanges = [
     "All",
     "$60k - $80k",

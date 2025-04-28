@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect, useRef } from "react";
-import { DarkModeContext } from "../components/DarkModeContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import PropTypes from "prop-types";
@@ -35,7 +35,8 @@ function TeamCollaboration({ userRole }) {
 
   useEffect(() => {
     // Scroll to bottom on new message
-    if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    if (chatEndRef.current)
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages]);
 
   const filteredMembers = search
@@ -161,7 +162,9 @@ function TeamCollaboration({ userRole }) {
             >
               <div className="flex items-center gap-2 px-6 py-4 border-b border-gray-200 dark:border-gray-800">
                 <MessageSquare className="text-blue-500" size={22} />
-                <h2 className="text-xl font-semibold tracking-tight">Project Chat</h2>
+                <h2 className="text-xl font-semibold tracking-tight">
+                  Project Chat
+                </h2>
               </div>
               <div className="flex-1 p-6 overflow-y-auto bg-transparent">
                 <div className="flex flex-col gap-5">

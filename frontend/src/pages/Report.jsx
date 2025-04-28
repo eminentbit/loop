@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import { DarkModeContext } from "../components/DarkModeContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import PropTypes from "prop-types";
@@ -26,7 +26,7 @@ function Report({ userRole }) {
       tags: ["Hiring", "Recruitment", "Engineering"],
       attachments: [
         { name: "Full Report.pdf", url: "#" },
-        { name: "Summary.xlsx", url: "#" }
+        { name: "Summary.xlsx", url: "#" },
       ],
       content:
         "This report provides a detailed summary of hiring trends and recruitment outcomes during the first quarter of 2023. Key departments involved include Engineering, Marketing, and HR.",
@@ -37,9 +37,7 @@ function Report({ userRole }) {
       date: "March 2023",
       author: "Bob Lee",
       tags: ["Investors", "Funding", "Presentations"],
-      attachments: [
-        { name: "Investor Deck.pptx", url: "#" }
-      ],
+      attachments: [{ name: "Investor Deck.pptx", url: "#" }],
       content:
         "In March 2023, the company engaged with 15 investors, conducted 6 demo presentations, and received feedback on funding rounds, product-market fit, and future projections.",
     },
@@ -72,7 +70,11 @@ function Report({ userRole }) {
       <Header />
       <div className="flex">
         {/* Sidebar with fixed width */}
-        <div className={`transition-all duration-300 ${isOpen ? "w-64" : "w-16"} shrink-0`}>
+        <div
+          className={`transition-all duration-300 ${
+            isOpen ? "w-64" : "w-16"
+          } shrink-0`}
+        >
           <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} userRole={userRole} />
         </div>
 
@@ -87,9 +89,7 @@ function Report({ userRole }) {
                   key={report.id}
                   className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700 rounded-2xl p-6"
                 >
-                  <h2 className="text-xl font-semibold mb-1">
-                    {report.title}
-                  </h2>
+                  <h2 className="text-xl font-semibold mb-1">{report.title}</h2>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
                     {report.date}
                   </p>
@@ -97,12 +97,11 @@ function Report({ userRole }) {
                     {report.description}
                   </p>
                   <button
-  onClick={() => navigate(`/reports/${report.id}`)}
-  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm transition-colors"
->
-  View Report
-</button>
-
+                    onClick={() => navigate(`/reports/${report.id}`)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm transition-colors"
+                  >
+                    View Report
+                  </button>
                 </div>
               ))}
             </div>

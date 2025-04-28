@@ -1,9 +1,16 @@
 import { useContext, useState, useEffect } from "react";
-import { DarkModeContext } from "../components/DarkModeContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import PropTypes from "prop-types";
-import { Bell, Eye, Mail, Phone, MessageCircle, Settings as Cog } from "lucide-react";
+import {
+  Bell,
+  Eye,
+  Mail,
+  Phone,
+  MessageCircle,
+  Settings as Cog,
+} from "lucide-react";
 
 function Settings({ userRole }) {
   const { darkMode } = useContext(DarkModeContext);
@@ -65,7 +72,9 @@ function Settings({ userRole }) {
           {/* Section Header */}
           <div className="flex items-center gap-3 mb-6 mt-2">
             <Cog size={28} className="text-blue-600 dark:text-blue-400" />
-            <h1 className="text-3xl font-bold tracking-tight">Investor Settings</h1>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Investor Settings
+            </h1>
           </div>
           {/* Settings summary bar */}
           <div
@@ -79,17 +88,27 @@ function Settings({ userRole }) {
             <span className="flex items-center gap-2 text-sm">
               <Bell size={16} className="text-blue-500" />
               Notifications:{" "}
-              <span className={`font-semibold ${notifyInvestorUpdates ? "text-green-600 dark:text-green-400" : "text-gray-500"}`}>
+              <span
+                className={`font-semibold ${
+                  notifyInvestorUpdates
+                    ? "text-green-600 dark:text-green-400"
+                    : "text-gray-500"
+                }`}
+              >
                 {notifyInvestorUpdates ? "Enabled" : "Disabled"}
               </span>
             </span>
             <span className="flex items-center gap-2 text-sm">
               <Eye size={16} className="text-blue-500" />
-              Visibility: <span className="font-semibold">{visibilityLabel}</span>
+              Visibility:{" "}
+              <span className="font-semibold">{visibilityLabel}</span>
             </span>
             <span className="flex items-center gap-2 text-sm">
               {contactIcons[contactMethod]}
-              Contact: <span className="font-semibold capitalize">{contactMethod.replace("-", " ")}</span>
+              Contact:{" "}
+              <span className="font-semibold capitalize">
+                {contactMethod.replace("-", " ")}
+              </span>
             </span>
           </div>
 
@@ -100,13 +119,21 @@ function Settings({ userRole }) {
           >
             {/* Notification Toggle */}
             <div className="flex justify-between items-center">
-              <label htmlFor="notify-toggle" className="text-lg font-medium flex items-center gap-2">
-                <Bell className="text-blue-500" size={20} /> Notify about investor updates
+              <label
+                htmlFor="notify-toggle"
+                className="text-lg font-medium flex items-center gap-2"
+              >
+                <Bell className="text-blue-500" size={20} /> Notify about
+                investor updates
               </label>
               <button
                 type="button"
                 aria-pressed={notifyInvestorUpdates}
-                aria-label={notifyInvestorUpdates ? "Disable notifications" : "Enable notifications"}
+                aria-label={
+                  notifyInvestorUpdates
+                    ? "Disable notifications"
+                    : "Enable notifications"
+                }
                 onClick={() => setNotifyInvestorUpdates((v) => !v)}
                 className={`w-12 h-7 inline-flex items-center rounded-full transition bg-gray-300 dark:bg-gray-700 duration-200 focus:outline-none border-2 border-transparent focus:ring-2 focus:ring-blue-400
                   ${notifyInvestorUpdates ? "bg-blue-600 dark:bg-blue-500" : ""}
@@ -122,8 +149,12 @@ function Settings({ userRole }) {
 
             {/* Visibility Option */}
             <div>
-              <label htmlFor="visibility" className="text-lg font-medium mb-2 flex items-center gap-2">
-                <Eye className="text-blue-500" size={20} /> Investor profile visibility
+              <label
+                htmlFor="visibility"
+                className="text-lg font-medium mb-2 flex items-center gap-2"
+              >
+                <Eye className="text-blue-500" size={20} /> Investor profile
+                visibility
               </label>
               <select
                 id="visibility"
@@ -140,7 +171,8 @@ function Settings({ userRole }) {
             {/* Contact Method */}
             <div>
               <span className="text-lg font-medium mb-2 flex items-center gap-2">
-                <Mail className="text-blue-500" size={20} /> Preferred contact method
+                <Mail className="text-blue-500" size={20} /> Preferred contact
+                method
               </span>
               <div className="flex flex-col md:flex-row gap-3">
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -186,9 +218,24 @@ function Settings({ userRole }) {
                 `}
               >
                 {saving ? (
-                  <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="white" strokeWidth="4" />
-                    <path className="opacity-75" fill="white" d="M4 12a8 8 0 018-8v8H4z" />
+                  <svg
+                    className="animate-spin h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="white"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="white"
+                      d="M4 12a8 8 0 018-8v8H4z"
+                    />
                   </svg>
                 ) : (
                   <Cog size={18} />

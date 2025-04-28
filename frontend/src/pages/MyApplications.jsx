@@ -3,7 +3,7 @@ import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import kApplications from "@/data/applications";
 import { FaSearch, FaEnvelope, FaTimesCircle } from "react-icons/fa";
-import { DarkModeContext } from "@/components/DarkModeContext";
+import { DarkModeContext } from "@/context/DarkModeContext";
 import PropTypes from "prop-types";
 
 const MyApplications = ({ userRole }) => {

@@ -1,7 +1,14 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
-import { DarkModeContext } from "../components/DarkModeContext";
-import { ArrowLeft, DownloadCloud, FileText, User, Tag, MessageCircle } from "lucide-react";
+import { DarkModeContext } from "../context/DarkModeContext";
+import {
+  ArrowLeft,
+  DownloadCloud,
+  FileText,
+  User,
+  Tag,
+  MessageCircle,
+} from "lucide-react";
 
 const mockReports = [
   {
@@ -12,7 +19,7 @@ const mockReports = [
     tags: ["Hiring", "Recruitment", "Engineering"],
     attachments: [
       { name: "Full Report.pdf", url: "#" },
-      { name: "Summary.xlsx", url: "#" }
+      { name: "Summary.xlsx", url: "#" },
     ],
     content:
       "This report provides a detailed summary of hiring trends and recruitment outcomes during the first quarter of 2023. Key departments involved include Engineering, Marketing, and HR.",
@@ -23,9 +30,7 @@ const mockReports = [
     date: "March 2023",
     author: "Bob Lee",
     tags: ["Investors", "Funding", "Presentations"],
-    attachments: [
-      { name: "Investor Deck.pptx", url: "#" }
-    ],
+    attachments: [{ name: "Investor Deck.pptx", url: "#" }],
     content:
       "In March 2023, the company engaged with 15 investors, conducted 6 demo presentations, and received feedback on funding rounds, product-market fit, and future projections.",
   },
@@ -57,7 +62,11 @@ function ViewReport() {
     if (comment.trim()) {
       setComments([
         ...comments,
-        { user: "You", text: comment, date: new Date().toISOString().slice(0, 10) },
+        {
+          user: "You",
+          text: comment,
+          date: new Date().toISOString().slice(0, 10),
+        },
       ]);
       setComment("");
     }
@@ -79,14 +88,20 @@ function ViewReport() {
         <nav className="text-xs mb-6" aria-label="Breadcrumb">
           <ol className="flex gap-2 text-gray-500 dark:text-gray-400">
             <li>
-              <button onClick={() => navigate("/")} className="hover:underline">Dashboard</button>
+              <button onClick={() => navigate("/")} className="hover:underline">
+                Dashboard
+              </button>
               <span className="mx-1">/</span>
             </li>
             <li>
-              <button onClick={() => navigate(-1)} className="hover:underline">Reports</button>
+              <button onClick={() => navigate(-1)} className="hover:underline">
+                Reports
+              </button>
               <span className="mx-1">/</span>
             </li>
-            <li className="text-gray-700 dark:text-gray-200">{report ? report.title : "Not found"}</li>
+            <li className="text-gray-700 dark:text-gray-200">
+              {report ? report.title : "Not found"}
+            </li>
           </ol>
         </nav>
 
@@ -105,7 +120,11 @@ function ViewReport() {
 
         {/* Report Card */}
         {report ? (
-          <div className={`bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 animate-fadeIn`} tabIndex="0" aria-label="Report details">
+          <div
+            className={`bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 animate-fadeIn`}
+            tabIndex="0"
+            aria-label="Report details"
+          >
             <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-2">
               <h1 className="text-2xl font-bold">{report.title}</h1>
               <span className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
@@ -121,21 +140,29 @@ function ViewReport() {
                 <span className="inline-flex items-center gap-1">
                   <Tag size={16} className="text-blue-500" />
                   {report.tags.map((tag) => (
-                    <span key={tag} className="px-2 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200 rounded-full text-xs mr-1">
+                    <span
+                      key={tag}
+                      className="px-2 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200 rounded-full text-xs mr-1"
+                    >
                       {tag}
                     </span>
                   ))}
                 </span>
               )}
             </div>
-            <p className="mb-5 text-base text-gray-700 dark:text-gray-300 leading-relaxed">{report.content}</p>
+            <p className="mb-5 text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+              {report.content}
+            </p>
             {report.attachments.length > 0 && (
               <div className="mb-4">
                 <h2 className="text-sm font-semibold mb-2">Attachments:</h2>
                 <ul className="list-disc ml-6">
                   {report.attachments.map((a) => (
                     <li key={a.name} className="mb-1">
-                      <a href={a.url} className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-2">
+                      <a
+                        href={a.url}
+                        className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-2"
+                      >
                         <DownloadCloud size={16} /> {a.name}
                       </a>
                     </li>
@@ -159,24 +186,39 @@ function ViewReport() {
 
         {/* Comments Section */}
         {report && (
-          <section className="mt-10 bg-white dark:bg-gray-800 rounded-xl shadow p-6 border border-gray-100 dark:border-gray-700 animate-fadeIn" aria-label="Comments">
+          <section
+            className="mt-10 bg-white dark:bg-gray-800 rounded-xl shadow p-6 border border-gray-100 dark:border-gray-700 animate-fadeIn"
+            aria-label="Comments"
+          >
             <h2 className="text-lg font-semibold flex items-center gap-2 mb-4">
               <MessageCircle size={20} /> Comments
             </h2>
             <ul className="mb-4 max-h-40 overflow-y-auto pr-2">
               {comments.length === 0 ? (
-                <li className="text-gray-500 dark:text-gray-400 text-sm">No comments yet.</li>
+                <li className="text-gray-500 dark:text-gray-400 text-sm">
+                  No comments yet.
+                </li>
               ) : (
                 comments.map((c, i) => (
-                  <li key={i} className="mb-2 border-l-4 border-blue-200 dark:border-blue-700 pl-3">
-                    <span className="font-semibold text-blue-700 dark:text-blue-300">{c.user}</span>
+                  <li
+                    key={i}
+                    className="mb-2 border-l-4 border-blue-200 dark:border-blue-700 pl-3"
+                  >
+                    <span className="font-semibold text-blue-700 dark:text-blue-300">
+                      {c.user}
+                    </span>
                     <span className="ml-2 text-xs text-gray-400">{c.date}</span>
-                    <div className="text-gray-700 dark:text-gray-300">{c.text}</div>
+                    <div className="text-gray-700 dark:text-gray-300">
+                      {c.text}
+                    </div>
                   </li>
                 ))
               )}
             </ul>
-            <form onSubmit={handleComment} className="flex flex-col md:flex-row gap-2">
+            <form
+              onSubmit={handleComment}
+              className="flex flex-col md:flex-row gap-2"
+            >
               <input
                 type="text"
                 className="flex-1 rounded px-3 py-2 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-900 dark:text-white"

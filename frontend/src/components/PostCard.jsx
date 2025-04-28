@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { DarkModeContext } from "./DarkModeContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 import { MessageCircle } from "lucide-react";
 import axios from "axios";
 import LikeButton from "./LikeButton";

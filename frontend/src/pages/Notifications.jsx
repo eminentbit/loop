@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import { DarkModeContext } from "@/components/DarkModeContext";
+import { DarkModeContext } from "@/context/DarkModeContext";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import {

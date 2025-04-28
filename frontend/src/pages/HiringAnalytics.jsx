@@ -2,7 +2,7 @@ import { useState, useContext, useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
 import { motion } from "framer-motion";
 import { FaDownload } from "react-icons/fa";
-import { DarkModeContext } from "../components/DarkModeContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import HiringTrendsChart from "../components/Chart";
@@ -48,7 +48,11 @@ const HiringAnalytics = ({ userRole }) => {
 
   return (
     <div className="min-h-screen flex bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-300">
-      <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} userRole={userRole} />
+      <Sidebar
+        isOpen={sidebarOpen}
+        setIsOpen={setSidebarOpen}
+        userRole={userRole}
+      />
       <div className="flex-1 flex flex-col">
         <Header userRole={userRole} />
         <main

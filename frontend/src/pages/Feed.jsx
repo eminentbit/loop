@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { DarkModeContext } from "../components/DarkModeContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 import PostCard from "../components/PostCard";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";

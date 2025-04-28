@@ -1,6 +1,6 @@
 import { useState, useContext, useRef } from "react";
 import { Camera, Video, FileText, Calendar, Send } from "lucide-react";
-import { DarkModeContext } from "./DarkModeContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 import ConfirmationModal from "./ConfirmationModal"; // Create this separately
 // import getCookie from "../utils/GetCookie";
 import PropTypes from "prop-types";

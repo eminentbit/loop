@@ -4,7 +4,7 @@ import Recommendations from "./Recommendations";
 import ActivityFeed from "./ActivityFeed";
 import Header from "./Header";
 import PropTypes from "prop-types";
-import { DarkModeContext } from "./DarkModeContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 
 const MainContent = ({ userRole }) => {
   const { isDarkMode } = useContext(DarkModeContext);
@@ -12,8 +12,11 @@ const MainContent = ({ userRole }) => {
   return (
     <main
       className={`p-6 pl-0 flex-1 ml-auto transition-colors duration-300 ease-in-out overflow-y-scroll min-h-screen
-        ${isDarkMode ? "bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700 text-gray-100" 
-                     : "bg-gradient-to-b from-white via-gray-100 to-gray-50 text-gray-900"}
+        ${
+          isDarkMode
+            ? "bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700 text-gray-100"
+            : "bg-gradient-to-b from-white via-gray-100 to-gray-50 text-gray-900"
+        }
       `}
     >
       <Header userRole={userRole} />

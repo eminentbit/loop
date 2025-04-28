@@ -3,7 +3,7 @@ import { Sidebar } from "lucide-react";
 import PropTypes from "prop-types";
 import { useContext, useEffect, useState } from "react";
 import AddJobModal from "src/components/AddJob";
-import { DarkModeContext } from "src/components/DarkModeContext";
+import { DarkModeContext } from "src/context/DarkModeContext";
 import Dropdown from "src/components/Dropdown";
 import Header from "src/components/Header";
 import JobCard from "src/components/JobsCard";

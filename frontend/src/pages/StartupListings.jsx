@@ -1,7 +1,7 @@
 // src/pages/StartupListing.jsx
 import { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom"; // ← import Link
-import { DarkModeContext } from "../components/DarkModeContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import PropTypes from "prop-types";

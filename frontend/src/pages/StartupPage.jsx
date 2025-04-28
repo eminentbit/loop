@@ -5,7 +5,7 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { ChevronDownIcon } from "lucide-react";
 import PropTypes from "prop-types";
-import { DarkModeContext } from "../components/DarkModeContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 import startups from "../data/startups";
 
 // Dropdown component
@@ -159,7 +159,6 @@ const StartupsPage = ({ userRole }) => {
                 }`}
               />
             </Link>
-            
           ))}
         </div>
       </div>

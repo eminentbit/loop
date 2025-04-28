@@ -81,7 +81,12 @@ const SignupWizard = () => {
       });
 
       console.log("Form submitted successfully:", response.data);
-      navigate("/jobs");
+      sessionStorage.setItem("tempUser", formData);
+      if (response.data.redirectTo) {
+        navigate(response.data.redirectTo);
+      } else {
+        navigate("/jobs");
+      }
     } catch (error) {
       console.error(
         "Error during signup:",

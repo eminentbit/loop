@@ -1,12 +1,36 @@
-import { useState, useContext, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { HiChevronLeft } from 'react-icons/hi';
-import { DarkModeContext } from '@/components/DarkModeContext';
+import { useState, useContext, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { HiChevronLeft } from "react-icons/hi";
+import { DarkModeContext } from "@/context/DarkModeContext";
 
 const companies = [
-  { id: '1', name: 'TechCorp', logo: '/logos/techcorp.png', desc: 'Leading tech innovator', industry: 'Software', location: 'New York', connectionStrength: 90 },
-  { id: '2', name: 'InnovateLabs', logo: '/logos/innovatelabs.png', desc: 'Research and development', industry: 'Finance', location: 'London', connectionStrength: 75 },
-  { id: '3', name: 'FutureWorks', logo: '/logos/futureworks.png', desc: 'Next-gen manufacturing', industry: 'Healthcare', location: 'Berlin', connectionStrength: 50 },
+  {
+    id: "1",
+    name: "TechCorp",
+    logo: "/logos/techcorp.png",
+    desc: "Leading tech innovator",
+    industry: "Software",
+    location: "New York",
+    connectionStrength: 90,
+  },
+  {
+    id: "2",
+    name: "InnovateLabs",
+    logo: "/logos/innovatelabs.png",
+    desc: "Research and development",
+    industry: "Finance",
+    location: "London",
+    connectionStrength: 75,
+  },
+  {
+    id: "3",
+    name: "FutureWorks",
+    logo: "/logos/futureworks.png",
+    desc: "Next-gen manufacturing",
+    industry: "Healthcare",
+    location: "Berlin",
+    connectionStrength: 50,
+  },
 ];
 
 export default function CompanyDetailPage() {
@@ -20,31 +44,35 @@ export default function CompanyDetailPage() {
 
   // Load company data
   useEffect(() => {
-    const found = companies.find(c => c.id === id);
+    const found = companies.find((c) => c.id === id);
     setCompany(found || null);
   }, [id]);
 
   // Initialize follow state from localStorage
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem('followedCompanies') || '{}');
+    const stored = JSON.parse(
+      localStorage.getItem("followedCompanies") || "{}"
+    );
     setIsFollowing(Boolean(stored[id]));
   }, [id]);
 
   // Persist dark mode
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDarkMode);
+    document.documentElement.classList.toggle("dark", isDarkMode);
   }, [isDarkMode]);
 
   // Toggle follow/unfollow and sync to localStorage
   const handleFollowToggle = () => {
-    setIsFollowing(prev => {
-      const followed = JSON.parse(localStorage.getItem('followedCompanies') || '{}');
+    setIsFollowing((prev) => {
+      const followed = JSON.parse(
+        localStorage.getItem("followedCompanies") || "{}"
+      );
       if (prev) {
         delete followed[id];
       } else {
         followed[id] = true;
       }
-      localStorage.setItem('followedCompanies', JSON.stringify(followed));
+      localStorage.setItem("followedCompanies", JSON.stringify(followed));
       return !prev;
     });
   };
@@ -75,7 +103,7 @@ export default function CompanyDetailPage() {
           <h1 className="text-lg font-semibold">{company.name}</h1>
         </div>
         <button onClick={toggleDarkMode} className="focus:outline-none">
-          {isDarkMode ? '☀️' : '🌙'}
+          {isDarkMode ? "☀️" : "🌙"}
         </button>
       </div>
 
@@ -120,10 +148,12 @@ export default function CompanyDetailPage() {
         <button
           onClick={handleFollowToggle}
           className={`px-6 py-2 rounded-lg text-white transition-colors duration-200 ${
-            isFollowing ? 'bg-gray-500 hover:bg-gray-600' : 'bg-blue-500 hover:bg-blue-600'
+            isFollowing
+              ? "bg-gray-500 hover:bg-gray-600"
+              : "bg-blue-500 hover:bg-blue-600"
           }`}
         >
-          {isFollowing ? 'Following' : 'Follow'}
+          {isFollowing ? "Following" : "Follow"}
         </button>
       </main>
     </div>

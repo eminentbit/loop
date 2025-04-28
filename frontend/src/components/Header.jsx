@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { Bell, ChevronDown, Search, Sun, Moon } from "lucide-react";
 import { Link } from "react-router-dom";
 import ProfilePic from "../assets/profile-pic.png";
-import { DarkModeContext } from "./DarkModeContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 import PropTypes from "prop-types";
 import Logo from "./Logo";
 

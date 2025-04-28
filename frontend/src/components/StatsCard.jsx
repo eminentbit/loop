@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import PropTypes from "prop-types";
-import { DarkModeContext } from "./DarkModeContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 
 const StatsCard = ({ title, value }) => {
   const { isDarkMode } = useContext(DarkModeContext);

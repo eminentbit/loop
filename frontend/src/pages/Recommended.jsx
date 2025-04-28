@@ -6,7 +6,7 @@ import Header from "../components/Header";
 import jobs from "../data/recommended";
 
 import PropTypes from "prop-types";
-import { DarkModeContext } from "../components/DarkModeContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 
 const RecomendedPage = ({ className, userRole }) => {
   const { isDarkMode } = useContext(DarkModeContext);
@@ -69,4 +69,3 @@ RecomendedPage.propTypes = {
 };
 
 export default RecomendedPage;
-

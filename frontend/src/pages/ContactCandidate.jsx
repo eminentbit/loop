@@ -1,6 +1,6 @@
-import  { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
-import { DarkModeContext } from "../components/DarkModeContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import PropTypes from "prop-types";
@@ -46,32 +46,49 @@ const ContactCandidate = ({ userRole }) => {
   };
 
   return (
-    <div className={`min-h-screen flex transition-colors duration-300 ease-in-out ${
-      darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'
-    }`}>
-      <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} userRole={userRole} />
+    <div
+      className={`min-h-screen flex transition-colors duration-300 ease-in-out ${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
+      }`}
+    >
+      <Sidebar
+        isOpen={sidebarOpen}
+        setIsOpen={setSidebarOpen}
+        userRole={userRole}
+      />
       <div className="flex-1 flex flex-col">
         <Header />
-        <main className={`flex-1 flex items-center justify-center p-6 transition-colors duration-300 ${
-          darkMode ? 'bg-gray-900' : 'bg-gray-50'
-        }`}>
-          <div className={`w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-2xl border transition-colors duration-300 ${
-            darkMode ? 'border-gray-700' : 'border-gray-200'
-          }`}>
+        <main
+          className={`flex-1 flex items-center justify-center p-6 transition-colors duration-300 ${
+            darkMode ? "bg-gray-900" : "bg-gray-50"
+          }`}
+        >
+          <div
+            className={`w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-2xl border transition-colors duration-300 ${
+              darkMode ? "border-gray-700" : "border-gray-200"
+            }`}
+          >
             {!candidate ? (
               <div className="text-center py-10">
                 <p className="text-xl font-medium mb-4">Candidate not found.</p>
-                <Link to="/candidates" className="text-blue-600 hover:underline">
+                <Link
+                  to="/candidates"
+                  className="text-blue-600 hover:underline"
+                >
                   &larr; Back to Candidate Pool
                 </Link>
               </div>
             ) : (
               <>
-                <h2 className="text-3xl font-bold text-center mb-6">Contact {candidate.name}</h2>
+                <h2 className="text-3xl font-bold text-center mb-6">
+                  Contact {candidate.name}
+                </h2>
                 {submitted ? (
                   <div className="text-center space-y-4">
                     <div className="inline-block px-6 py-4 bg-green-100 dark:bg-green-900 border border-green-200 dark:border-green-700 rounded-lg">
-                      <p className="font-medium text-green-800 dark:text-green-100">Your message has been sent successfully!</p>
+                      <p className="font-medium text-green-800 dark:text-green-100">
+                        Your message has been sent successfully!
+                      </p>
                     </div>
                     <Link
                       to={`/candidates/${candidate.id}`}
@@ -83,7 +100,9 @@ const ContactCandidate = ({ userRole }) => {
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
-                      <label className="block mb-1 font-medium">Your Name</label>
+                      <label className="block mb-1 font-medium">
+                        Your Name
+                      </label>
                       <input
                         type="text"
                         required
@@ -93,7 +112,9 @@ const ContactCandidate = ({ userRole }) => {
                     </div>
 
                     <div>
-                      <label className="block mb-1 font-medium">Your Email</label>
+                      <label className="block mb-1 font-medium">
+                        Your Email
+                      </label>
                       <input
                         type="email"
                         required

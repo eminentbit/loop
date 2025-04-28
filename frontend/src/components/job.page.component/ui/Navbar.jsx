@@ -1,14 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Briefcase, User as UserIcon, Users } from "lucide-react";
-import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import Logout from "src/components/Logout";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const [user, setUser] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (sessionStorage.getItem("user")) {
+      setUser(JSON.parse(sessionStorage.getItem("user")));
+    }
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -53,7 +59,6 @@ const Navbar = () => {
             >
               Jobs
             </Link>
-
             <Link
               to="/job-feeds"
               className={`block px-3 py-2 rounded-md text-base font-medium ${
@@ -63,11 +68,8 @@ const Navbar = () => {
               } transition-colors duration-200`}
               onClick={closeMenu}
             >
-              <div className="flex items-center">
-                Feed
-              </div>
+              <div className="flex items-center">Feed</div>
             </Link>
-
             <Link
               to="/post-job"
               className={`px-3 py-2 rounded-md text-sm font-medium ${
@@ -78,36 +80,40 @@ const Navbar = () => {
             >
               Post a Job
             </Link>
-
-            {/* <Link
-              to="/following"
+            <Link
+              to="/network"
               className={`px-3 py-2 rounded-md text-sm font-medium ${
-                isActive("/following")
+                isActive("/network")
                   ? "text-blue-600 bg-blue-50"
                   : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
               } transition-colors duration-200`}
             >
               Following
-            </Link> */}
-
+            </Link>{" "}
             {user ? (
               <div className="flex items-center ml-4">
-                <Link to={`/profile/${user.id}`} className="flex items-center">
-                  <img
-                    src={user.avatar}
-                    alt={user.name}
-                    className="h-8 w-8 rounded-full object-cover border-2 border-blue-500 transition-transform hover:scale-105"
-                  />
-                  <span className="ml-2 text-sm font-medium text-gray-700 hover:text-blue-600">
-                    {user.name}
-                  </span>
+                <Link to={`/profile`} className="flex items-center">
+                  {user.profile ? (
+                    <img
+                      src={user.profile}
+                      alt={user.name}
+                      className="h-8 w-8 rounded-full object-cover border-2 border-blue-500 transition-transform hover:scale-105"
+                      title={user.fullName}
+                    />
+                  ) : (
+                    <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium">
+                      {user.fullName
+                        .split(" ")
+                        .slice(0, 2)
+                        .map((name) => name[0])
+                        .join("")}
+                    </div>
+                  )}
+                  {/* <span className="ml-2 text-sm font-medium text-gray-700 hover:text-blue-600">
+                    {user.fullName}
+                  </span> */}
                 </Link>
-                <button
-                  onClick={logout}
-                  className="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 transition-colors duration-200"
-                >
-                  Logout
-                </button>
+                <Logout />
               </div>
             ) : (
               <div className="flex items-center space-x-2">
@@ -133,6 +139,7 @@ const Navbar = () => {
               onClick={toggleMenu}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50 focus:outline-none"
               aria-expanded="false"
+              aria-label="Toggle menu"
             >
               <span className="sr-only">Open main menu</span>
               {isMenuOpen ? (
@@ -194,21 +201,6 @@ const Navbar = () => {
               </div>
             </Link>
 
-            {/* <Link
-              to="/following"
-              className={`block px-3 py-2 rounded-md text-base font-medium ${
-                isActive("/following")
-                  ? "text-blue-600 bg-blue-50"
-                  : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
-              } transition-colors duration-200`}
-              onClick={closeMenu}
-            >
-              <div className="flex items-center">
-                <Users className="h-5 w-5 mr-2" />
-                Following
-              </div>
-            </Link> */}
-
             {user ? (
               <>
                 <Link
@@ -225,15 +217,7 @@ const Navbar = () => {
                     Profile
                   </div>
                 </Link>
-                <button
-                  onClick={() => {
-                    logout();
-                    closeMenu();
-                  }}
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 transition-colors duration-200"
-                >
-                  Logout
-                </button>
+                <Logout />
               </>
             ) : (
               <div className="flex flex-col space-y-2 px-3 py-2">

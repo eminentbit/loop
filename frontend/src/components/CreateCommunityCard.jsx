@@ -1,7 +1,7 @@
 // components/CreateCommunityCard.js
 import { useContext } from "react";
 import PropTypes from "prop-types";
-import { DarkModeContext } from "@/components/DarkModeContext";
+import { DarkModeContext } from "@/context/DarkModeContext";
 
 const CreateCommunityCard = ({ onCreate }) => {
   const { isDarkMode } = useContext(DarkModeContext);

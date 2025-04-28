@@ -1,8 +1,9 @@
 import PropTypes from "prop-types";
 import { Link, useNavigate } from "react-router-dom";
-import { FaGoogle, FaGithub, FaFacebook } from "react-icons/fa";
 import axios from "axios";
 import { ArrowLeft } from "lucide-react";
+import GoogleLogin from "./GoogleLogin";
+import FacebookLogin from "./FacebookLogin";
 
 function SignInModal({ setIsModalOpen, onClose }) {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ function SignInModal({ setIsModalOpen, onClose }) {
       if (setIsModalOpen) {
         setIsModalOpen(false);
       }
-      navigate("/feed");
+      navigate("/job-feeds");
     } catch (error) {
       if (error.response) {
         // Server responded with a status other than 2xx
@@ -82,18 +83,8 @@ function SignInModal({ setIsModalOpen, onClose }) {
 
         {/* OAuth Sign-in Options */}
         <div className="flex flex-col gap-3">
-          <button className="flex items-center justify-center gap-2 border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-100 transition">
-            <FaGoogle className="text-red-500" />
-            Continue with Google
-          </button>
-          <button className="flex items-center justify-center gap-2 border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-100 transition">
-            <FaGithub className="text-gray-700" />
-            Continue with GitHub
-          </button>
-          <button className="flex items-center justify-center gap-2 border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-100 transition">
-            <FaFacebook className="text-indigo-600" />
-            Continue with Facebook
-          </button>
+          <GoogleLogin />
+          <FacebookLogin />
         </div>
 
         {/* Divider */}

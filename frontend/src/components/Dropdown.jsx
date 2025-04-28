@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { DarkModeContext } from "./DarkModeContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 import { ChevronDownIcon } from "lucide-react";
 import PropTypes from "prop-types";
 

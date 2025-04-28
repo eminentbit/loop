@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-import { DarkModeContext } from "@/components/DarkModeContext";
+import { DarkModeContext } from "@/context/DarkModeContext";
 // import "react-circular-progressbar/dist/styles.css";
 
 function LearningPage({ userRole }) {

@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import CreateCommunityModal from "../components/CommunityCreationModal";
 import CommunityCard from "../components/CommunityCard";
 import CreateCommunityCard from "../components/CreateCommunityCard";
-import { DarkModeContext } from "@/components/DarkModeContext";
+import { DarkModeContext } from "@/context/DarkModeContext";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import PropTypes from "prop-types";

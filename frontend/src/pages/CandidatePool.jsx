@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { DarkModeContext } from "../components/DarkModeContext";
+import { DarkModeContext } from "@/context/DarkModeContext";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import PropTypes from "prop-types";
@@ -26,7 +26,8 @@ function CandidatePool({ userRole }) {
   }, []);
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ease-in-out
+    <div
+      className={`min-h-screen transition-colors duration-300 ease-in-out
       ${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"}
       ${isOpen ? "ml-64" : "ml-16"}`}
     >
@@ -34,7 +35,8 @@ function CandidatePool({ userRole }) {
       <div className="flex">
         <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} userRole={userRole} />
 
-        <main className={`flex-1 px-6 py-8 transition-colors duration-300 ease-in-out
+        <main
+          className={`flex-1 px-6 py-8 transition-colors duration-300 ease-in-out
           ${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"}`}
         >
           <div className="mb-8">
@@ -44,9 +46,10 @@ function CandidatePool({ userRole }) {
                 type="text"
                 placeholder="Search candidates..."
                 className={`w-full px-4 py-2 rounded-md shadow-sm transition focus:ring-2 focus:ring-blue-500 focus:outline-none border
-                  ${darkMode
-                    ? "bg-gray-800 border-gray-700 text-white placeholder-gray-400"
-                    : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+                  ${
+                    darkMode
+                      ? "bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+                      : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
                   }`}
               />
             </div>
@@ -57,22 +60,31 @@ function CandidatePool({ userRole }) {
               <div
                 key={c.id}
                 className={`rounded-2xl p-6 transition-shadow duration-300 border hover:shadow-xl
-                  ${darkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"}`}
+                  ${
+                    darkMode
+                      ? "bg-gray-800 border-gray-700"
+                      : "bg-white border-gray-200"
+                  }`}
               >
                 <div className="flex items-center mb-4">
                   <img
                     src={c.profilePicture}
                     alt={c.name}
-                    onError={(e) => (e.target.src = "https://via.placeholder.com/150")}
+                    onError={(e) =>
+                      (e.target.src = "https://via.placeholder.com/150")
+                    }
                     className="w-16 h-16 rounded-full object-cover mr-4 border-2 border-blue-500"
                   />
                   <div>
-                    <h2 className={`text-xl font-semibold leading-snug
+                    <h2
+                      className={`text-xl font-semibold leading-snug
                       ${darkMode ? "text-blue-400" : "text-blue-700"}`}
                     >
                       {c.name}
                     </h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{c.role}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {c.role}
+                    </p>
                   </div>
                 </div>
 

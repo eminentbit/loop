@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import { useContext } from "react";
-import { DarkModeContext } from "./DarkModeContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 
 const activityData = {
   community: [

@@ -28,6 +28,13 @@ const ProtectiveWrapper = ({ children }) => {
       }
     };
 
+    const storedSession = sessionStorage.getItem("user");
+
+    if (storedSession) {
+      setIsAuthenticated(true);
+      return;
+    }
+
     checkSession();
   }, []);
 

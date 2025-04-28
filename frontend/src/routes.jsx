@@ -23,7 +23,7 @@ import Settings from "@/pages/Setting";
 import Report from "@/pages/Report";
 import StartupListing from "@/pages/StartupListings";
 import ForgotPassword from "@/pages/ForgetPassword";
-import ProtectiveWrapper from "@/components/ProtectiveWrapper";
+import ProtectiveWrapper from "./components/ProtectiveWrapper";
 import SignInModal from "@/components/SignInModal";
 import JobHomePage from "./pages/job.pages/JobHomePage";
 import About from "@/pages/About";
@@ -31,8 +31,7 @@ import ContactPage from "@/pages/Contact";
 import StartupDetail from "@/pages/StartupDetial";
 import LandingPage from "@/pages/LandingPage";
 import SkillTest from "@/pages/SkillTest";
-import Candidates from "@/data/candidates";
-import Candidate from "@/pages/Candidates";
+import Candidates from "./pages/Candidates";
 import ContactCandidate from "@/pages/ContactCandidate";
 import ViewReport from "@/pages/ViewReport";
 import PostJobPage from "./pages/job.pages/PostJobPage";
@@ -40,32 +39,39 @@ import JobDetailsPage from "./pages/job.pages/JobDetailsPage";
 import CompanyDetailPage from "./pages/CompanyDetials";
 import Certificate from "@/pages/Certificates";
 import JobFeed from "./components/job.feed.compnent/job.feed";
+import VerifyEmail from "./pages/VerifyEmail";
+import CheckEmailPage from "./pages/CheckEmailPage";
 
 const AppRoutes = () => {
   const [role, setRole] = useState();
 
   useEffect(() => {
-    const checkRole = async () => {
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/auth/check-auth/`,
-          {
-            credentials: "include",
-            headers: {
-              // "Content-Type": "application/json",
-              // "X-CSRFToken": getCookie("csrftoken"),
-            },
-          }
-        );
-        const data = await response.json();
-        setRole(data.user.role);
-        console.log(data);
-      } catch (error) {
-        console.error("Session check failed", error);
-      }
-    };
+    // Check if user data exists in sessionStorage
+    const storedUser = sessionStorage.getItem("user");
 
-    checkRole();
+    if (storedUser) {
+      // If user data exists, set it from sessionStorage
+      const parsedUser = JSON.parse(storedUser);
+      setRole(parsedUser.role);
+    } else {
+      // If user data doesn't exist, fetch from the API
+      const checkRole = async () => {
+        try {
+          const response = await fetch(
+            `${import.meta.env.VITE_API_URL}/auth/check-auth/`,
+            {
+              credentials: "include",
+            }
+          );
+          const data = await response.json();
+          setRole(data.user.role);
+          sessionStorage.setItem("user", JSON.stringify(data.user));
+        } catch (error) {
+          console.error("Session check failed", error);
+        }
+      };
+      checkRole();
+    }
   }, []);
 
   return (
@@ -88,6 +94,8 @@ const AppRoutes = () => {
 
       {/* feed */}
       <Route path="/job-feeds" element={<JobFeed />} />
+
+      <Route path="/check-email" element={<CheckEmailPage />} />
 
       <Route
         path="/profile"
@@ -113,14 +121,7 @@ const AppRoutes = () => {
           </ProtectiveWrapper>
         }
       />
-      <Route
-        path="/network"
-        element={
-          <ProtectiveWrapper>
-            <NetworkPage userRole={role} />
-          </ProtectiveWrapper>
-        }
-      />
+      <Route path="/network" element={<NetworkPage userRole={role} />} />
       <Route
         path="/details"
         element={
@@ -268,7 +269,9 @@ const AppRoutes = () => {
           </ProtectiveWrapper>
         }
       />
-      <Route path="/candidates/:id" element={<Candidate userRole={role} />} />
+      <Route path="/candidates/:id" element={<Candidates userRole={role} />} />
+
+      <Route path="/verify-email" element={<VerifyEmail />} />
 
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="*" element={<NotFoundPage />} />
@@ -281,7 +284,7 @@ const AppRoutes = () => {
         path="/candidates/:id/contact"
         element={<ContactCandidate userRole={role} />}
       />
-      <Route path="/candidates/:id" element={<Candidate />} />
+      <Route path="/candidates/:id" element={<Candidates />} />
       <Route path="/reports/:id" element={<ViewReport userRole={role} />} />
 
       <Route path="/view-report" element={<ViewReport />} />

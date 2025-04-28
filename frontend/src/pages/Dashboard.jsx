@@ -3,7 +3,7 @@ import Sidebar from "../components/Sidebar";
 import Dashboard from "../components/MainContent";
 import PropTypes from "prop-types";
 import { useContext, useState, useEffect } from "react";
-import { DarkModeContext } from "../components/DarkModeContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 // import Footer from "../components/Footer";
 
 const DashboardPage = ({ userRole }) => {
@@ -31,7 +31,6 @@ const DashboardPage = ({ userRole }) => {
     </div>
   );
 };
-
 
 Dashboard.propTypes = {
   userRole: PropTypes.string.isRequired,
