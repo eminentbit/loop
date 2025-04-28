@@ -166,138 +166,139 @@ const JobsPage = ({ userRole }) => {
   // Handle recruiter's job submission
   const handleJobSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/jobs/`,
-        newJob,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCookie("csrftoken"),
-          },
-          withCredentials: true,
-        }
-      );
+    //   try {
+    //     // const response = await axios.post(
+    //     //   // `${import.meta.env.VITE_API_URL}/jobs/`,
+    //     //   newJob,
+    //     //   {
+    //     //     headers: {
+    //     //       "Content-Type": "application/json",
+    //     //       "X-CSRFToken": getCookie("csrftoken"),
+    //     //     },
+    //     //     withCredentials: true,
+    //     //   }
+    //     );
 
-      console.log("Job submitted successfully:", response.data);
-      setJobs((prevJobs) => [...prevJobs, response.data]);
-      setNewJob({
-        title: "",
-        company: "",
-        location: "",
-        type: "",
-        description: "",
-        salary: "",
-      });
-    } catch (error) {
-      console.log(error);
-    }
-    console.log("Submitting job:", newJob);
+    //     console.log("Job submitted successfully:", response.data);
+    //     setJobs((prevJobs) => [...prevJobs, response.data]);
+    //     setNewJob({
+    //       title: "",
+    //       company: "",
+    //       location: "",
+    //       type: "",
+    //       description: "",
+    //       salary: "",
+    //     });
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    //   console.log("Submitting job:", newJob);
 
-    // Refresh jobs (or optimistically update jobs state)
-    // const updatedJobs = await fetchUpdatedJobs();
-    // setJobs(updatedJobs);
-  };
+    //   // Refresh jobs (or optimistically update jobs state)
+    //   // const updatedJobs = await fetchUpdatedJobs();
+    //   // setJobs(updatedJobs);
+    // };
 
-  return (
-    <div
-      className={`flex min-h-screen transition-colors ${
-        isDarkMode ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-900"
-      }`}
-    >
-      <Sidebar
-        userRole={userRole}
-        isOpen={isSidebarOpen}
-        setIsOpen={setSidebarIsOpen}
-      />
-
+    return (
       <div
-        className={`flex-1 p-6 transition-all ${
-          isSidebarOpen ? "lg:ml-64" : "lg:ml-16"
-        } ${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}
+        className={`flex min-h-screen transition-colors ${
+          isDarkMode ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-900"
+        }`}
       >
-        <Header className="mb-6" userRole={userRole} />
-        <h1 className="text-3xl font-bold mb-6">Job Listings</h1>
+        <Sidebar
+          userRole={userRole}
+          isOpen={isSidebarOpen}
+          setIsOpen={setSidebarIsOpen}
+        />
 
-        {/* Recruiter Section: Show Add Job form if userRole is recruiter */}
-        {userRole === "recruiter" && (
-          <AddJobModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            handleJobSubmit={handleJobSubmit}
-            newJob={newJob}
-            setNewJob={setNewJob}
-          />
-        )}
+        <div
+          className={`flex-1 p-6 transition-all ${
+            isSidebarOpen ? "lg:ml-64" : "lg:ml-16"
+          } ${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}
+        >
+          <Header className="mb-6" userRole={userRole} />
+          <h1 className="text-3xl font-bold mb-6">Job Listings</h1>
 
-        {/* 🔽 Filters */}
-        <div className="flex flex-wrap items-center gap-2 mb-6">
-          <input
-            type="text"
-            placeholder="Search jobs..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className={`flex-1 border rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[200px] transition-colors ${
-              isDarkMode
-                ? "bg-gray-700 text-gray-200 border-gray-600"
-                : "bg-white text-gray-700 border-gray-300"
-            }`}
-          />
+          {/* Recruiter Section: Show Add Job form if userRole is recruiter */}
+          {userRole === "recruiter" && (
+            <AddJobModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              handleJobSubmit={handleJobSubmit}
+              newJob={newJob}
+              setNewJob={setNewJob}
+            />
+          )}
 
-          <Dropdown
-            label="Location"
-            options={locations}
-            selected={selectedLocation}
-            onSelect={setSelectedLocation}
-          />
-          <Dropdown
-            label="Job Type"
-            options={jobTypes}
-            selected={selectedJobType}
-            onSelect={setSelectedJobType}
-          />
-          <Dropdown
-            label="Company"
-            options={companies}
-            selected={selectedCompany}
-            onSelect={setSelectedCompany}
-          />
-          <Dropdown
-            label="Salary Range"
-            options={salaryRanges}
-            selected={selectedSalary}
-            onSelect={setSelectedSalary}
-          />
-        </div>
-
-        {/* 🧱 Job Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredJobs.map((job) => (
-            <JobCard
-              key={job.id}
-              job={job}
-              className={`transition-transform duration-200 hover:scale-105 ${
+          {/* 🔽 Filters */}
+          <div className="flex flex-wrap items-center gap-2 mb-6">
+            <input
+              type="text"
+              placeholder="Search jobs..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={`flex-1 border rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[200px] transition-colors ${
                 isDarkMode
-                  ? "dark:bg-gray-800 text-white border border-gray-700"
-                  : "bg-white text-gray-800 border border-gray-300"
+                  ? "bg-gray-700 text-gray-200 border-gray-600"
+                  : "bg-white text-gray-700 border-gray-300"
               }`}
             />
-          ))}
-        </div>
-        {userRole !== "jobseeker" && (
-          <div className="flex items-center justify-center mt-5">
-            <button
-              type="button"
-              onClick={() => setIsModalOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white  font-semibold py-2 px-4 rounded-xl shadow-md transition duration-300 ease-in-out"
-            >
-              Add New Job
-            </button>
+
+            <Dropdown
+              label="Location"
+              options={locations}
+              selected={selectedLocation}
+              onSelect={setSelectedLocation}
+            />
+            <Dropdown
+              label="Job Type"
+              options={jobTypes}
+              selected={selectedJobType}
+              onSelect={setSelectedJobType}
+            />
+            <Dropdown
+              label="Company"
+              options={companies}
+              selected={selectedCompany}
+              onSelect={setSelectedCompany}
+            />
+            <Dropdown
+              label="Salary Range"
+              options={salaryRanges}
+              selected={selectedSalary}
+              onSelect={setSelectedSalary}
+            />
           </div>
-        )}
+
+          {/* 🧱 Job Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredJobs.map((job) => (
+              <JobCard
+                key={job.id}
+                job={job}
+                className={`transition-transform duration-200 hover:scale-105 ${
+                  isDarkMode
+                    ? "dark:bg-gray-800 text-white border border-gray-700"
+                    : "bg-white text-gray-800 border border-gray-300"
+                }`}
+              />
+            ))}
+          </div>
+          {userRole !== "jobseeker" && (
+            <div className="flex items-center justify-center mt-5">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white  font-semibold py-2 px-4 rounded-xl shadow-md transition duration-300 ease-in-out"
+              >
+                Add New Job
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 };
 
 JobsPage.propTypes = {
