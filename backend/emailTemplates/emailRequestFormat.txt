@@ -1,0 +1,23 @@
+Header
+Key                     Value
+Content-Type            application/json
+Authorization           Bearer your_custom_token
+
+Note: "Bearer your_custom_token" is the token which would be gotten from the local storage after authentication hence should be modified in the code
+
+
+Body
+Raw
+Json
+{
+  "recipientEmails": ["randymonero076@gmail.com","Looploop1@gmail.com"], //emails are placed in an array
+  "messageContent": "Hello, this is a test message!"
+}
+
+this is how to setup the senders email (place it in the .env file)
+# EMAIL_USER=email@gmail.com
+# EMAIL_PASS= app_password gotten from your google account settings
+
+EMAIL_USER=testsloop1@gmail.com
+EMAIL_PASS=kpov qdch nzrz xomf
+
