@@ -1,5 +1,6 @@
 import { uploadFileToS3 } from "../middlewares/upload.js";
 import { createTransport } from "nodemailer";
+import path from "path";
 import prisma from "../lib/prisma.js";
 
 // File validation utility
@@ -132,53 +133,64 @@ export const applyForJob = async (req, res) => {
     const { jobId } = req.params;
     const userId = req.userId;
 
-    // Get user's full name and format it
-    const today = new Date().toISOString().split("T")[0];
-    const formattedName = req.body.fullName.replace(/\s+/g, "-").toLowerCase();
-    const uniqueName = `${formattedName}-${today}`;
-
     // 1) Check job exists
     const job = await prisma.job.findUnique({ where: { id: jobId } });
-    if (!job) {
-      return res.status(404).json({ error: "Job not found." });
-    }
+    if (!job) return res.status(404).json({ error: "Job not found." });
 
     // 2) Prevent duplicate applications
     const existing = await prisma.jobApplication.findFirst({
       where: { jobId, userId },
     });
-    if (existing) {
+    if (existing)
       return res
         .status(400)
         .json({ error: "You have already applied for this job." });
-    }
+
+    // Build a unique base name using their name + today's date
+    const today = new Date().toISOString().split("T")[0];
+    console.log(req.body);
+    const formattedName = req.body.fullName
+      .trim()
+      .replace(/\s+/g, "-")
+      .toLowerCase();
+    const uniqueBase = `${formattedName}-${today}`; // e.g. "john-doe-2025-05-01"
 
     // 3) Upload files to S3
     const cvFile = req.files.cv?.[0];
     const coverLetterFile = req.files.cover_letter?.[0];
-
     if (!cvFile || !coverLetterFile) {
       return res
         .status(400)
-        .json({ error: "Both CV and Cover Letter are required." });
+        .json({ error: "Both CV and cover letter are required." });
     }
 
-    // Upload CV and Cover Letter to S3
+    // Helper to build `<uniqueBase>-cv.pdf` etc.
+    const makeFileName = (fileObj, label) => {
+      const ext = path.extname(fileObj.originalname);
+      return `${uniqueBase}-${label}${ext}`; // e.g. "john-doe-2025-05-01-cv.pdf"
+    };
+
+    const cvFileName = makeFileName(cvFile, "cv");
+    const clFileName = makeFileName(coverLetterFile, "cover-letter");
+
+    // Upload into the `job_applications/` folder in S3
+    const S3_FOLDER = "job_applications";
+
     const cvS3Url = await uploadFileToS3(
       cvFile.buffer,
-      cvFile.originalname,
+      cvFileName,
       cvFile.mimetype,
-      uniqueName
+      S3_FOLDER
     );
     const coverLetterS3Url = await uploadFileToS3(
       coverLetterFile.buffer,
-      coverLetterFile.originalname,
+      clFileName,
       coverLetterFile.mimetype,
-      uniqueName
+      S3_FOLDER
     );
 
     // 4) Create application in DB
-    const application = await prisma.jobApplication.create({
+    await prisma.jobApplication.create({
       data: {
         jobId,
         userId,

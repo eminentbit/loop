@@ -7,7 +7,7 @@ import ProfilePage from "./pages/UserProfile";
 import TestDashboard from "./pages/TestDashboard";
 import Feed from "./pages/Feed";
 import CommunityPage from "./pages/Community";
-import NetworkPage from "@/pages/Network";
+import NetworkPage from "src/pages/Network";
 import SkillsPage from "@/pages/Skills";
 import NotificationPage from "@/pages/Notifications";
 import MyApplications from "@/pages/MyApplications";

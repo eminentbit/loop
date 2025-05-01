@@ -88,7 +88,7 @@ const Navbar = () => {
                   : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
               } transition-colors duration-200`}
             >
-              Following
+              Network
             </Link>{" "}
             {user ? (
               <div className="flex items-center ml-4">

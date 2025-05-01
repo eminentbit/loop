@@ -213,8 +213,8 @@ export const getJobById = (id) => {
 };
 
 // Search jobs
-export const searchJobs = (filters) => {
-  return mockJobs.filter((job) => {
+export const searchJobs = (filters, jobs) => {
+  return jobs.filter((job) => {
     // Search by query in title, description, company
     if (
       filters.query &&

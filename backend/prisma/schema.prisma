@@ -44,10 +44,12 @@ enum JobType {
 }
 
 enum SalaryRange {
+  VERY_LOW
   LOW // LOW = "< $1000"
   MEDIUM // "$1000 - $3000"
   HIGH // "$3000 - $6000"
   VERY_HIGH // "> $6000"
+  ULTRA
 }
 
 enum FeedType {
@@ -238,32 +240,33 @@ model Streak {
 }
 
 model Job {
-  id                 String           @id @default(uuid())
-  title              String
-  company            String
-  description        String
-  location           JobLocation
-  type               JobType
-  salary             SalaryRange
-  experience         String?
-  skills             String[]
-  companyLogo        String?
-  companyWebsite     String?
-  companyEmail       String?
-  companyPhone       String?
-  companyAddress     String?
-  companySize        String?
-  companyIndustry    String?
-  companyDescription String?
-  isRemote           Boolean          @default(false)
-  requirements       String[]
-  responsibilities   String[]
-  benefits           String[]
-  applicationLink    String?
-  department         String?
-  postedAt           DateTime         @default(now())
-  updatedAt          DateTime?        @updatedAt
-  JobApplication     JobApplication[]
+  id                  String           @id @default(uuid())
+  title               String
+  company             String
+  description         String
+  location            String?
+  jobType             JobType
+  salary              SalaryRange
+  applicationDeadline DateTime?
+  experience          String?
+  skills              String[]
+  companyLogo         String?
+  companyWebsite      String?
+  companyEmail        String?
+  companyPhone        String?
+  companyAddress      String?
+  companySize         String?
+  companyIndustry     String?
+  companyDescription  String?
+  isRemote            Boolean          @default(false)
+  requirements        String[]
+  responsibilities    String[]
+  benefits            String[]
+  applicationLink     String?
+  department          String?
+  postedAt            DateTime         @default(now())
+  updatedAt           DateTime?        @updatedAt
+  JobApplication      JobApplication[]
 }
 
 model Feed {

@@ -17,10 +17,12 @@ export const enumToSalary = (enumValue) => {
   if (!enumValue) return "";
 
   const salaryRanges = {
-    LOW: "30k - 50k",
-    MEDIUM: "50k - 70k",
-    HIGH: "70k - 100k",
-    VERY_HIGH: "100k+",
+    VERY_LOW: "<$50,000 ",
+    LOW: "$50,000 - $70,000",
+    MEDIUM: "$70,000 - $90,000",
+    HIGH: "$90,000 - $120,000",
+    VERY_HIGH: ">$120,000 - $150,000",
+    ULTRA: "$150,000+",
   };
 
   return salaryRanges[enumValue] || enumValue;

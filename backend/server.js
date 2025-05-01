@@ -7,7 +7,7 @@ import eventRoutes from "./routes/eventRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
 import enrollmentRoutes from "./routes/enrollmentRoutes.js";
 import streakRoutes from "./routes/streakRoutes.js";
-import verifyToken from "./middlewares/verifyToken.js";
+import networkRoutes from "./routes/networkRoutes.js";
 import feedRoutes from "./routes/feedRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import jobRoutes from "./routes/jobRoutes.js";
@@ -31,12 +31,13 @@ app.use(cookieParser()); // allow cookie parsing
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/events", verifyToken, eventRoutes);
+app.use("/api/events", eventRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/enrollments", enrollmentRoutes);
-app.use("/api/streaks", verifyToken, streakRoutes);
+app.use("/api/streaks", streakRoutes);
 app.use("/api/feed/posts", feedRoutes);
 app.use("/api/feed/comments", commentRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/application", applicationRoutes);
+app.use("/api/network", networkRoutes);
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

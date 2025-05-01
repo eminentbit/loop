@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "src/components/job.page.component/ui/Navbar";
@@ -14,6 +15,7 @@ const App = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
+  const [recruiters, setRecruiters] = useState([]);
   const [isAuth, setIsAuth] = useState(false);
 
   useEffect(() => {
@@ -34,60 +36,29 @@ const App = () => {
 
   const clearFilters = () => setSelectedFilters([]);
 
-  const recruiterData = {
-    recruiter1: {
-      name: "Sarah Johnson",
-      role: "Senior Recruiter",
-      company: "TechGlobal",
-      initials: "SJ",
-      tags: ["Software", "Product", "Remote"],
-      color:
-        "bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-300",
-    },
-    recruiter2: {
-      name: "Michael Chen",
-      role: "Tech Recruiter",
-      company: "InnovateX",
-      initials: "MC",
-      tags: ["Data", "ML", "Startups"],
-      color:
-        "bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-300",
-    },
-    recruiter3: {
-      name: "Emily Rodriguez",
-      role: "Talent Acquisition",
-      company: "FutureWorks",
-      initials: "ER",
-      tags: ["UX", "Frontend", "Creative"],
-      color:
-        "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300",
-    },
-    recruiter4: {
-      name: "David Kim",
-      role: "Senior Recruiter",
-      company: "TechVision",
-      initials: "DK",
-      tags: ["Cloud", "DevOps", "Enterprise"],
-      color: "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300",
-    },
-    recruiter5: {
-      name: "Jessica Thompson",
-      role: "HR Manager",
-      company: "GrowthLabs",
-      initials: "JT",
-      tags: ["Marketing", "Growth", "Startups"],
-      color: "bg-pink-100 text-pink-600 dark:bg-pink-900 dark:text-pink-300",
-    },
-    recruiter6: {
-      name: "Robert Wilson",
-      role: "Talent Lead",
-      company: "NextGen",
-      initials: "RW",
-      tags: ["Backend", "Cyber", "Fintech"],
-      color:
-        "bg-orange-100 text-orange-600 dark:bg-orange-900 dark:text-orange-300",
-    },
-  };
+  useEffect(() => {
+    const fetchRecruiters = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/network/recruiters`
+        ); // Replace with actual API
+        const data = response.data;
+
+        setRecruiters(data);
+
+        // Dynamically initialize follow state if needed
+        const initialFollowState = {};
+        data.forEach((r) => {
+          initialFollowState[r.id] = false;
+        });
+        setIsFollowing(initialFollowState);
+      } catch (error) {
+        console.error("Failed to fetch recruiters:", error);
+      }
+    };
+
+    fetchRecruiters();
+  }, []);
 
   useEffect(() => {
     const storedUser = sessionStorage.getItem("user");
@@ -176,47 +147,51 @@ const App = () => {
             Recommended Recruiters for You
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Object.entries(recruiterData).map(([id, data]) => (
+            {recruiters.map((recruiter) => (
               <div
-                key={id}
+                key={recruiter.id}
                 className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 transition"
               >
                 <div className="flex items-start">
                   <div
-                    className={`${data.color} h-16 w-16 rounded-full flex items-center justify-center`}
+                    className={`${recruiter.color} h-16 w-16 rounded-full flex items-center justify-center`}
                   >
                     <span className="text-2xl font-semibold">
-                      {data.initials}
+                      {recruiter.initials}
                     </span>
                   </div>
                   <div className="ml-4 flex-1">
-                    <h3 className="text-lg font-semibold mb-1">{data.name}</h3>
+                    <h3 className="text-lg font-semibold mb-1">
+                      {recruiter.name}
+                    </h3>
                     <p className="text-sm mb-2">
-                      {data.role} at{" "}
-                      <span className="font-medium">{data.company}</span>
+                      {recruiter.role} at{" "}
+                      <span className="font-medium">{recruiter.company}</span>
                     </p>
-                    <div className="flex flex-wrap gap-2">
-                      {data.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-full text-xs"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
+                    {recruiter.tags && (
+                      <div className="flex flex-wrap gap-2">
+                        {recruiter.tags.map((tag, index) => (
+                          <span
+                            key={index}
+                            className="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-full text-xs"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="mt-6 flex space-x-3">
                   <button
-                    onClick={() => toggleFollow(id)}
+                    onClick={() => toggleFollow(recruiter.id)}
                     className={`flex-1 px-4 py-2 rounded-md font-medium transition ${
-                      isFollowing[id]
+                      isFollowing[recruiter.id]
                         ? "bg-gray-100 dark:bg-gray-700 text-gray-800"
                         : "bg-indigo-50 dark:bg-indigo-700 text-indigo-700 dark:text-indigo-200"
                     }`}
                   >
-                    {isFollowing[id] ? "Unfollow" : "Follow"}
+                    {isFollowing[recruiter.id] ? "Unfollow" : "Follow"}
                   </button>
                   <button className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
                     Connect

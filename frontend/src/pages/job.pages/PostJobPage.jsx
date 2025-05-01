@@ -4,6 +4,7 @@ import PageContainer from "../../components/job.page.component/ui/PageContainer"
 import Button from "../../components/job.page.component/ui/Button";
 import { useNavigate } from "react-router-dom";
 import Navbar from "src/components/job.page.component/ui/Navbar";
+import axios from "axios";
 
 const PostJobPage = () => {
   const [user, setUser] = useState(null);
@@ -16,7 +17,7 @@ const PostJobPage = () => {
     salary: "",
     applicationDeadline: "",
     isRemote: false,
-    jobType: "full-time",
+    jobType: "FULL_TIME",
   });
 
   const [tags, setTags] = useState([]);
@@ -126,22 +127,41 @@ const PostJobPage = () => {
   }, [formData, tags]);
 
   const handleSubmit = useCallback(
-    (e) => {
+    async (e) => {
       e.preventDefault();
 
       if (!validateForm()) return;
 
       setIsSubmitting(true);
+      try {
+        const jobData = {
+          ...formData,
+          skills: tags,
+        };
 
-      // Simulate API call
-      // In a real app, you would use try/catch here for error handling
-      setTimeout(() => {
+        console.log(jobData);
+
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/jobs/create`,
+          jobData,
+          {
+            withCredentials: true,
+          }
+        );
+
+        console.log("Job posted successfully:", response.data);
+        navigate("/jobs");
+      } catch (error) {
+        console.error("Error posting job:", error);
+        setErrors((prev) => ({
+          ...prev,
+          submit: error.response?.data?.message || "Failed to post job",
+        }));
+      } finally {
         setIsSubmitting(false);
-        navigate("/");
-        // In a real app, would save the job to the database here
-      }, 1500);
+      }
     },
-    [validateForm, navigate]
+    [validateForm, formData, tags, navigate]
   );
 
   const handleUpgrade = useCallback(() => {
@@ -351,6 +371,48 @@ const PostJobPage = () => {
                       )}
                     </div>
 
+                    <div>
+                      <label
+                        htmlFor="experience"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        Experience Required
+                      </label>
+                      <select
+                        id="experience"
+                        name="experience"
+                        disabled={isJobseeker}
+                        value={formData.experience}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      >
+                        <option value="">Select experience level</option>
+                        <option value="entry">Entry Level (0-2 years)</option>
+                        <option value="mid">Mid Level (2-5 years)</option>
+                        <option value="senior">Senior Level (5+ years)</option>
+                        <option value="lead">Lead/Manager (7+ years)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="requiredSkills"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        Required Skills
+                      </label>
+                      <textarea
+                        id="requiredSkills"
+                        name="requiredSkills"
+                        value={formData.requiredSkills}
+                        onChange={handleInputChange}
+                        disabled={isJobseeker}
+                        rows={3}
+                        placeholder="List the key skills required for this position"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      />
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label
@@ -359,16 +421,22 @@ const PostJobPage = () => {
                         >
                           Salary Range
                         </label>
-                        <input
-                          type="text"
+                        <select
                           id="salary"
                           name="salary"
                           disabled={isJobseeker}
                           value={formData.salary}
                           onChange={handleInputChange}
-                          placeholder="e.g. $80k - $100k"
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                        />
+                        >
+                          <option value="">Select salary range</option>
+                          <option value="VERY_LOW"> {"<"}$50,000</option>
+                          <option value="LOW">$50,000 - $70,000</option>
+                          <option value="MEDIUM">$70,000 - $90,000</option>
+                          <option value="HIGH">$90,000 - $120,000</option>
+                          <option value="VERY_HIGH">$120,000 - $150,000</option>
+                          <option value="ULTRA">$150,000+</option>
+                        </select>
                       </div>
 
                       <div>
@@ -406,10 +474,11 @@ const PostJobPage = () => {
                           onChange={handleInputChange}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                         >
-                          <option value="full-time">Full-time</option>
-                          <option value="part-time">Part-time</option>
-                          <option value="contract">Contract</option>
-                          <option value="internship">Internship</option>
+                          <option value="FULL_TIME">Full-time</option>
+                          <option value="PART_TIME">Part-time</option>
+                          <option value="CONTRACT">Contract</option>
+                          <option value="FREELANCE">Freelance</option>
+                          <option value="INTERN">Internship</option>
                         </select>
                       </div>
 

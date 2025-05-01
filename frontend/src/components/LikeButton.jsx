@@ -42,7 +42,7 @@ const LikeButton = ({ feedId, initialLiked, likes }) => {
       ) : (
         <Heart className="w-5 h-5" />
       )}
-      <span className="font-medium">{likesCount}</span>
+      <span className="font-medium">{likes ? likes : likesCount}</span>
     </button>
   );
 };

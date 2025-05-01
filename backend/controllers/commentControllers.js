@@ -9,10 +9,10 @@ export const listComments = async (req, res) => {
     const comments = await prisma.comment.findMany({
       where: {
         feedId: parseInt(postId),
-        isDeleted: false, // move this here
+        isDeleted: false,
       },
       orderBy: {
-        createdAt: "asc",
+        createdAt: "desc",
       },
       include: {
         likes: {
@@ -30,7 +30,7 @@ export const listComments = async (req, res) => {
       id: c.id,
       content: c.content,
       createdAt: c.createdAt,
-      user: { userId: c.userId, username: c.user.fullName }, // adjust if you want user details
+      user: { userId: c.userId, username: c.user.fullName },
       likes: c.likes.length,
       likedByUser: c.likes.some((u) => u.id === userId),
     }));
@@ -62,7 +62,7 @@ export const addComment = async (req, res) => {
     });
 
     await prisma.feed.update({
-      where: { id: parseInt(feedId) },
+      where: { id: parseInt(postId) },
       data: {
         commentsCount: {
           increment: 1,
