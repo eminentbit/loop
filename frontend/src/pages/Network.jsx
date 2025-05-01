@@ -193,9 +193,11 @@ const App = () => {
                   >
                     {isFollowing[recruiter.id] ? "Unfollow" : "Follow"}
                   </button>
-                  <button className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
-                    Connect
-                  </button>
+                  <Link to={`/connections`} className="flex-1">
+                    <button className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
+                       Connections
+                    </button>
+                  </Link>
                 </div>
               </div>
             ))}
@@ -282,9 +284,11 @@ const App = () => {
                 </div>
               ))}
             </div>
-            <button className="mt-4 w-full px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 transition">
-              View All Connections
-            </button>
+            <Link to={`/connections`} className="flex-1">
+                    <button className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
+                      View Connections
+                    </button>
+                  </Link>
           </div>
         </section>
 
@@ -311,12 +315,15 @@ const App = () => {
                   desc: "Add your top skills to stand out to recruiters.",
                   btn: "Add Skills",
                   icon: "💡",
+                  link: "/skill",
+      
                 },
                 {
                   title: "Portfolio & Projects",
                   desc: "Showcase work with links to portfolio or GitHub.",
                   btn: "Add Projects",
                   icon: "📁",
+                  link: "/projects",
                 },
                 {
                   title: "Certifications",
@@ -361,22 +368,24 @@ const App = () => {
                   Connect with top recruiters and get discovered today.
                 </p>
               </div>
-              <button className="mt-6 md:mt-0 px-6 py-3 bg-white text-indigo-700 font-medium rounded-md hover:bg-gray-100 transition flex items-center">
-                <span>Join Now</span>
-                <svg
-                  className="w-5 h-5 ml-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
-              </button>
+              <Link to="/signup" className="mt-6 md:mt-0">
+                <button className="mt-6 md:mt-0 px-6 py-3 bg-white text-indigo-700 font-medium rounded-md hover:bg-gray-100 transition flex items-center">
+                  <span>Join Now</span>
+                  <svg
+                    className="w-5 h-5 ml-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
+                  </svg>
+                </button>
+              </Link>
             </div>
           </section>
         )}
