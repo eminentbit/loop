@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Filter } from 'lucide-react';
 import PageContainer from '../../components/job.page.component/ui/PageContainer';
 import JobCard from '../../components/job.page.component/jobs/JobCard';
@@ -44,6 +44,39 @@ const JobHomePage = () => {
     });
     setJobs(mockJobs);
   };
+    const [theme, setTheme] = useState("light");
+  
+    // Load theme from localStorage
+    useEffect(() => {
+      const saved = localStorage.getItem("theme");
+      if (saved === "dark" || saved === "light") {
+        setTheme(saved);
+      }
+    }, []);
+  
+    // Apply theme class on <html> and persist
+    useEffect(() => {
+      document.documentElement.classList.toggle("dark", theme === "dark");
+      localStorage.setItem("theme", theme);
+    }, [theme]);
+  
+    const toggleTheme = () => {
+      setTheme((prev) => (prev === "light" ? "dark" : "light"));
+    };
+
+    // Example usage of toggleTheme
+    useEffect(() => {
+      const handleKeyPress = (event) => {
+      if (event.key === "t") {
+        toggleTheme();
+      }
+      };
+
+      window.addEventListener("keydown", handleKeyPress);
+      return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+      };
+    }, []);
   
   return (
     <>

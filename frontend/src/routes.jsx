@@ -41,6 +41,8 @@ import Certificate from "@/pages/Certificates";
 import JobFeed from "./components/job.feed.compnent/job.feed";
 import VerifyEmail from "./pages/VerifyEmail";
 import CheckEmailPage from "./pages/CheckEmailPage";
+import ApplyJobsPage from "./pages/job.pages/ApplyJobsPage";
+import ConnectionsPage from "./pages/Connections";
 
 const AppRoutes = () => {
   const [role, setRole] = useState();
@@ -121,7 +123,7 @@ const AppRoutes = () => {
           </ProtectiveWrapper>
         }
       />
-      <Route path="/network" element={<NetworkPage userRole={role} />} />
+
       <Route
         path="/details"
         element={
@@ -286,10 +288,15 @@ const AppRoutes = () => {
       />
       <Route path="/candidates/:id" element={<Candidates />} />
       <Route path="/reports/:id" element={<ViewReport userRole={role} />} />
-
+      <Route path="/network" element={<NetworkPage />} />
+      <Route path="/network/:id" element={<NetworkPage />} />
       <Route path="/view-report" element={<ViewReport />} />
       <Route path="/network/company/:id" element={<CompanyDetailPage />} />
       <Route path="/certificate" element={<Certificate />} />
+      <Route path="/apply/:jobId" element={<ApplyJobsPage />} />
+      <Route path="/connections" element={<ConnectionsPage />} />
+      <Route path="/connections/:id" element={<ConnectionsPage />} />
+
     </Routes>
   );
 };
