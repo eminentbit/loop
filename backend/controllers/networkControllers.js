@@ -5,10 +5,13 @@ import asyncHandler from "express-async-handler";
 // @route   GET /api/recruiters
 // @access  Private
 export const getRecruiters = asyncHandler(async (req, res) => {
+  const userId = req.userId;
+
   const recruiters = await prisma.user.findMany({
     where: {
       role: "recruiter",
-      isActive: true,
+      is_active: true,
+      id: { not: userId },
     },
     select: {
       id: true,
@@ -19,9 +22,34 @@ export const getRecruiters = asyncHandler(async (req, res) => {
       companyName: true,
       companyRole: true,
       companyLogo: true,
+      followersSet: true,
+      followingSet: true,
+      _count: {
+        select: {
+          followersSet: true,
+          followingSet: true,
+        },
+      },
     },
   });
-  res.status(200).json(recruiters);
+
+  // Get all follow relationships for the current user
+  const followRelations = await prisma.follow.findMany({
+    where: {
+      followerId: userId,
+    },
+  });
+
+  // Create a set of recruiter IDs that the user is following
+  const followingSet = new Set(followRelations.map((f) => f.followingId));
+
+  // Add isFollowing field to each recruiter
+  const recruitersWithFollowStatus = recruiters.map((recruiter) => ({
+    ...recruiter,
+    isFollowing: followingSet.has(recruiter.id),
+  }));
+
+  res.status(200).json(recruitersWithFollowStatus);
 });
 
 // @desc    Follow a recruiter
@@ -30,6 +58,11 @@ export const getRecruiters = asyncHandler(async (req, res) => {
 export const followRecruiter = asyncHandler(async (req, res) => {
   const userId = req.userId;
   const { recruiterId } = req.params;
+
+  if (userId === recruiterId) {
+    res.status(400);
+    throw new Error("You cannot follow yourself");
+  }
 
   const recruiter = await prisma.user.findUnique({
     where: { id: recruiterId },
@@ -139,6 +172,7 @@ export const getFollowers = async (req, res) => {
     const followers = await prisma.follow.findMany({
       where: {
         followingId: userId,
+        followerId: userId,
       },
       include: {
         follower: {
@@ -155,6 +189,8 @@ export const getFollowers = async (req, res) => {
         },
       },
     });
+
+    console.log(followers);
 
     res.status(200).json({
       status: "success",
@@ -198,4 +234,39 @@ export const connectRecruiter = asyncHandler(async (req, res) => {
   });
 
   res.status(200).json({ message: "Message sent successfully" });
+});
+
+// @desc    Toggle follow/unfollow a recruiter
+// @route   POST /api/recruiters/toggle/:recruiterId
+// @access  Private
+export const toggleFollowRecruiter = asyncHandler(async (req, res) => {
+  const userId = req.userId;
+  const { recruiterId } = req.params;
+
+  if (userId === recruiterId) {
+    res.status(400);
+    throw new Error("You cannot follow yourself");
+  }
+
+  const existingFollow = await prisma.follow.findFirst({
+    where: {
+      followerId: userId,
+      followingId: recruiterId,
+    },
+  });
+
+  if (existingFollow) {
+    await prisma.follow.delete({
+      where: { id: existingFollow.id },
+    });
+    res.status(200).json({ message: "Successfully unfollowed recruiter" });
+  } else {
+    await prisma.follow.create({
+      data: {
+        followerId: userId,
+        followingId: recruiterId,
+      },
+    });
+    res.status(200).json({ message: "Successfully followed recruiter" });
+  }
 });

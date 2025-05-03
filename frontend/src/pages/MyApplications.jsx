@@ -1,23 +1,40 @@
 import { useContext, useState, useEffect } from "react";
-import Sidebar from "@/components/Sidebar";
-import Header from "@/components/Header";
 import kApplications from "@/data/applications";
 import { FaSearch, FaEnvelope, FaTimesCircle } from "react-icons/fa";
 import { DarkModeContext } from "@/context/DarkModeContext";
 import PropTypes from "prop-types";
+import axios from "axios";
+import Navbar from "src/components/job.page.component/ui/Navbar";
 
-const MyApplications = ({ userRole }) => {
+const MyApplications = () => {
   const [search, setSearch] = useState("");
-  const [isOpen, setIsOpen] = useState(() => {
-    const storedValue = localStorage.getItem("sidebarOpen");
-    return storedValue ? JSON.parse(storedValue) : true;
-  });
+  // const [isOpen, setIsOpen] = useState(() => {
+  //   const storedValue = localStorage.getItem("sidebarOpen");
+  //   return storedValue ? JSON.parse(storedValue) : true;
+  // });
+
+  // useEffect(() => {
+  //   localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
+  // }, [isOpen]);
 
   useEffect(() => {
-    localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
-  }, [isOpen]);
+    const fetchApplications = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/application`,
+          {
+            withCredentials: true,
+          }
+        );
+        setApplications(response.data);
+      } catch (error) {
+        console.error("Error fetching applications:", error);
+      }
+    };
+    fetchApplications();
+  });
   const { isDarkMode } = useContext(DarkModeContext);
-  // eslint-disable-next-line no-unused-vars
+
   const [applications, setApplications] = useState(kApplications);
 
   const getStatusStyle = (status) => {
@@ -43,26 +60,18 @@ const MyApplications = ({ userRole }) => {
 
   return (
     <div className={`flex ${isDarkMode ? "dark" : ""}`}>
-      <Sidebar userRole={userRole} isOpen={isOpen} setIsOpen={setIsOpen} />
-      <div
-        className={`w-full transition-all duration-300 ${
-          !isOpen ? "ml-16" : "ml-64 max-w-6xl"
-        }`}
-      >
-        <Header userRole={userRole} />
+      {/* <Sidebar userRole={userRole} isOpen={isOpen} setIsOpen={setIsOpen} /> */}
+      <div className={`w-full transition-all duration-300 `}>
+        <Navbar />
 
         {/* Container Card */}
         <div
-          className={`rounded-lg shadow-lg p-6 ${
+          className={`rounded-lg shadow-lg p-6  ml-16 ${
             isDarkMode ? "bg-gray-900 text-gray-100" : "bg-white text-gray-800"
           }`}
         >
           <h1 className="text-3xl font-bold mb-6">My Applications</h1>
-          <div
-            className={`grid grid-cols-1 lg:grid-cols-2 ${
-              !isOpen ? "gap-[10em]" : "gap-10"
-            }`}
-          >
+          <div className={`grid grid-cols-1 lg:grid-cols-2 `}>
             {/* Left Column: Search & List */}
             <div>
               {/* Search Bar */}

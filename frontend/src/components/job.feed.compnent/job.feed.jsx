@@ -195,16 +195,34 @@ export default function Feed() {
         </div>
 
         {isCreatingPost && (
-          <div className="mt-6 bg-white p-4 rounded-lg shadow">
-            <div className="mb-2 font-medium text-gray-700">
-              Create a new post
+          <div>
+            <div className="mt-6 bg-white p-4 rounded-lg shadow">
+              <div className="mb-2 font-medium text-gray-700">
+                Create a new post
+              </div>
+              <textarea
+                value={newPostContent}
+                onChange={(e) => setNewPostContent(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg p-3 min-h-32 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="What's on your mind?"
+              />
+              <div className="mt-3">
+                <input
+                  type="file"
+                  accept="image/*,video/*"
+                  className="block w-full text-sm text-gray-500
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-full file:border-0
+                file:text-sm file:font-semibold
+                file:bg-indigo-50 file:text-indigo-700
+                hover:file:bg-indigo-100"
+                />
+                <p className="mt-1 text-sm text-gray-500">
+                  Supported formats: Images (PNG, JPG, GIF) and Videos (MP4,
+                  WebM)
+                </p>
+              </div>
             </div>
-            <textarea
-              value={newPostContent}
-              onChange={(e) => setNewPostContent(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 min-h-32 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="What's on your mind?"
-            />
             <div className="flex justify-end mt-2">
               <button
                 onClick={() => setIsCreatingPost(false)}

@@ -146,6 +146,7 @@ model User {
   Notification         Notification[]
   NotificationSettings NotificationSettings[]
   JobApplication       JobApplication[]
+  Job                  Job[]
 }
 
 model Profile {
@@ -243,6 +244,8 @@ model Job {
   id                  String           @id @default(uuid())
   title               String
   company             String
+  userId              String
+  user                User             @relation(fields: [userId], references: [id])
   description         String
   location            String?
   jobType             JobType

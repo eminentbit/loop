@@ -1,12 +1,20 @@
 import { useState, useRef, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { MapPin, Calendar, BriefcaseIcon, ArrowLeft, Sun, Moon } from "lucide-react";
+import {
+  MapPin,
+  Calendar,
+  BriefcaseIcon,
+  ArrowLeft,
+  Sun,
+  Moon,
+} from "lucide-react";
 import PageContainer from "../../components/job.page.component/ui/PageContainer";
 import Tag from "../../components/job.page.component/ui/Tag";
 import Navbar from "src/components/job.page.component/ui/Navbar";
 import axios from "axios";
 import { enumToSalary, enumToString } from "src/utils/EnumToString";
 import ApplicationModal from "src/components/ApplicationModal";
+import { Button } from "src/components/ui/button";
 
 const formatDate = (dateString) => {
   const options = { year: "numeric", month: "long", day: "numeric" };
@@ -17,6 +25,11 @@ const JobDetailsPage = () => {
   const { jobId } = useParams();
   const [job, setJob] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    setUser(sessionStorage.getItem("user"));
+  }, []);
 
   // Theme state: 'light' or 'dark'
   const [theme, setTheme] = useState("light");
@@ -160,7 +173,11 @@ const JobDetailsPage = () => {
             className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none"
             aria-label="Toggle theme"
           >
-            {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+            {theme === "light" ? (
+              <Moon className="h-5 w-5" />
+            ) : (
+              <Sun className="h-5 w-5" />
+            )}
           </button>
         </div>
 
@@ -189,86 +206,91 @@ const JobDetailsPage = () => {
                     </Link>
                   </div>
                 </div>
-                <Button size="lg" onClick={openModal}>
-                  Apply Now
-                </Link>
-              </div>
+                {user.role == "jobseeker" ? (
+                  <Button size="lg" onClick={openModal}>
+                    Apply Now
+                  </Button>
+                ) : (
+                  <Button size="lg">See applicants</Button>
+                )}
 
-              {/* Job meta */}
-              <div className="mt-4 flex flex-wrap gap-4 text-gray-600">
-                <div className="flex items-center">
-                  <MapPin className="h-5 w-5 mr-1 text-gray-400 dark:text-gray-500" />
-                  <span>{job.location}</span>
-                  {job.isRemote && (
-                    <span className="ml-2 px-2 py-0.5 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-xs">
-                      Remote
-                    </span>
+                {/* Job meta */}
+                <div className="mt-4 flex flex-wrap gap-4 text-gray-600">
+                  <div className="flex items-center">
+                    <MapPin className="h-5 w-5 mr-1 text-gray-400 dark:text-gray-500" />
+                    <span>{job.location}</span>
+                    {job.isRemote && (
+                      <span className="ml-2 px-2 py-0.5 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-xs">
+                        Remote
+                      </span>
+                    )}
+                  </div>
+                  {job.jobType && (
+                    <div className="flex items-center">
+                      <BriefcaseIcon className="h-5 w-5 mr-1 text-gray-400 dark:text-gray-500" />
+                      <span className="capitalize">
+                        {enumToString(job.jobType)}
+                      </span>
+                    </div>
+                  )}
+                  {job.salary && (
+                    <div className="flex items-center">
+                      <span className="font-medium text-gray-900">
+                        {enumToSalary(job.salary)}
+                      </span>
+                    </div>
                   )}
                 </div>
-                {job.jobType && (
-                  <div className="flex items-center">
-                    <BriefcaseIcon className="h-5 w-5 mr-1 text-gray-400 dark:text-gray-500" />
-                    <span className="capitalize">
-                      {enumToString(job.jobType)}
+
+                {/* Description & skills */}
+                <div className="mt-6">
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                    Job Description
+                  </h2>
+                  <div className="prose max-w-none text-gray-600 dark:text-gray-400">
+                    {job.description}
+                  </div>
+                </div>
+                <div className="mt-6">
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                    Required Skills
+                  </h2>
+                  <div className="flex flex-wrap gap-2">
+                    {job.skills.map((tag, i) => (
+                      <Tag key={i} label={tag} />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Deadline */}
+                {job.applicationDeadline && (
+                  <div className="mt-6 flex items-center text-gray-600 dark:text-gray-400">
+                    <Calendar className="h-5 w-5 mr-1 text-gray-400 dark:text-gray-500" />
+                    <span>
+                      Application deadline:{" "}
+                      {formatDate(job.applicationDeadline)}
                     </span>
                   </div>
                 )}
-                {job.salary && (
-                  <div className="flex items-center">
-                    <span className="font-medium text-gray-900">
-                      {enumToSalary(job.salary)}
-                    </span>
-                  </div>
-                )}
               </div>
-
-              {/* Description & skills */}
-              <div className="mt-6">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
-                  Job Description
-                </h2>
-                <div className="prose max-w-none text-gray-600 dark:text-gray-400">
-                  {job.description}
-                </div>
-              </div>
-              <div className="mt-6">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
-                  Required Skills
-                </h2>
-                <div className="flex flex-wrap gap-2">
-                  {job.skills.map((tag, i) => (
-                    <Tag key={i} label={tag} />
-                  ))}
-                </div>
-              </div>
-
-              {/* Deadline */}
-              {job.applicationDeadline && (
-                <div className="mt-6 flex items-center text-gray-600 dark:text-gray-400">
-                  <Calendar className="h-5 w-5 mr-1 text-gray-400 dark:text-gray-500" />
-                  <span>
-                    Application deadline: {formatDate(job.applicationDeadline)}
-                  </span>
-                </div>
-              )}
             </div>
-          </div>
 
-          {/* Modal */}
-          {isOpen && (
-            <ApplicationModal
-              formRef={formRef}
-              onSubmit={handleSubmit}
-              onFileChange={handleFileChange}
-              onClose={closeModal}
-              showModal={isOpen}
-              submitting={submitting}
-              submitted={submitted}
-              cvError={fileErrors.cv}
-              coverLetterError={fileErrors.cover_letter}
-              jobTitle={job.title}
-            />
-          )}
+            {/* Modal */}
+            {isOpen && (
+              <ApplicationModal
+                formRef={formRef}
+                onSubmit={handleSubmit}
+                onFileChange={handleFileChange}
+                onClose={closeModal}
+                showModal={isOpen}
+                submitting={submitting}
+                submitted={submitted}
+                cvError={fileErrors.cv}
+                coverLetterError={fileErrors.cover_letter}
+                jobTitle={job.title}
+              />
+            )}
+          </div>
         </div>
       </PageContainer>
     </>

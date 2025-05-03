@@ -3,19 +3,26 @@
 import { Router } from "express";
 const router = Router();
 import {
-  followRecruiter,
   unfollowRecruiter,
   getRecruiters,
   getFollowing,
   getFollowers,
+  toggleFollowRecruiter,
+  followRecruiter,
 } from "../controllers/networkControllers.js";
 import verifyToken from "../middlewares/verifyToken.js";
 
 // Get all recruiters
 router.get("/recruiters", verifyToken, getRecruiters);
 
-// Follow a recruiter
 router.post("/recruiters/:recruiterId/follow", verifyToken, followRecruiter);
+
+// Follow a recruiter
+router.post(
+  "/recruiters/:recruiterId/toggleFollow",
+  verifyToken,
+  toggleFollowRecruiter
+);
 
 // Unfollow a recruiter
 router.delete(

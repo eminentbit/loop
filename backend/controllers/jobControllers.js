@@ -29,10 +29,13 @@ export const createJob = async (req, res) => {
       department,
     } = req.body;
 
+    const userId = req.userId;
+
     const job = await prisma.job.create({
       data: {
         title,
         description,
+        userId,
         salary,
         location,
         experience,
@@ -69,7 +72,15 @@ export const createJob = async (req, res) => {
 // GET all jobs
 export const getAllJobs = async (req, res) => {
   try {
-    const jobs = await prisma.job.findMany();
+    const jobs = await prisma.job.findMany({
+      include: {
+        user: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
     res.status(200).json(jobs);
   } catch (error) {
     res
