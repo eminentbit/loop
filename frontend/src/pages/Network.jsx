@@ -310,7 +310,7 @@ const NetworkPage = () => {
 
                     <div className="mt-6">
                       <button
-                        onClick={() => navigate(`/profile/${c.id}`)}
+                        onClick={() => navigate(`/public-profile/${c.id}`)}
                         className="w-full text-center px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 transition"
                       >
                         View Profile

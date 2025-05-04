@@ -50,6 +50,8 @@ const ProfilePage = () => {
           location: module.default.location,
           email: module.default.email,
           phone: module.default.phone,
+          countryCode: module.default.countryCode || "CMR",
+          avatar: module.default.avatar,
         });
         setLoading(false);
       })
@@ -281,65 +283,70 @@ const ProfilePage = () => {
             animate-fadeIn
           `}
         >
-          {!editMode.personal ? (
-            <>
-              <div className="relative">
-                <img
-                  src={userData.avatar}
-                  alt="User Avatar"
-                  className="w-28 h-28 rounded-full object-cover shadow-lg border-4 border-blue-500"
-                />
-                {userData.status?.toLowerCase() === "available" && (
-                  <span className="absolute bottom-2 right-3 flex h-5 w-5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-5 w-5 bg-green-500 border-2 border-white dark:border-gray-900"></span>
-                  </span>
-                )}
-              </div>
-              <div className="text-center sm:text-left">
-                <h1 className="text-3xl sm:text-4xl font-extrabold flex items-center gap-2 justify-center sm:justify-start">
-                  <UserIcon
-                    size={28}
-                    className="text-blue-600 dark:text-blue-400"
-                  />
-                  {userData.name}
-                </h1>
-                <p className="text-gray-400 text-lg">{userData.title}</p>
-                <p className="mt-2 text-green-400 font-semibold">
-                  {userData.status}
-                </p>
-                <button
-                  onClick={() => toggleEditMode("personal")}
-                  className={`mt-4 flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors
-                    ${
-                      isDarkMode
-                        ? "bg-blue-600 hover:bg-blue-700 text-white"
-                        : "bg-blue-100 hover:bg-blue-200 text-blue-800"
-                    }`}
-                >
-                  <Edit size={16} /> Edit Profile
-                </button>
-              </div>
-            </>
-          ) : (
-            <div className="w-full">
-              <div className="flex justify-between mb-4">
-                <h2 className="text-xl font-bold">Edit Profile</h2>
-                <div className="flex gap-2">
-                  <button
-                    onClick={savePersonalInfo}
-                    className="flex items-center gap-1 px-3 py-1 rounded bg-green-600 text-white text-sm"
-                  >
-                    <Save size={16} /> Save
-                  </button>
-                  <button
-                    onClick={() => toggleEditMode("personal")}
-                    className="flex items-center gap-1 px-3 py-1 rounded bg-gray-600 text-white text-sm"
-                  >
-                    <X size={16} /> Cancel
-                  </button>
-                </div>
-              </div>
+ {!editMode.personal ? (
+        <>
+          <div className="relative flex-shrink-0">
+            <img
+              src={userData.avatar}
+              alt="User Avatar"
+              className="w-32 h-32 rounded-full object-cover border-4 border-blue-500 shadow-inner"
+            />
+            {userData.status?.toLowerCase() === "available" && (
+              <span className="absolute bottom-0 right-0 inline-flex">
+                <span className="animate-ping absolute inline-flex h-5 w-5 rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex h-5 w-5 rounded-full bg-green-500 border-2 border-white dark:border-gray-800"></span>
+              </span>
+            )}
+          </div>
+
+          <div className="flex-1 text-center sm:text-left">
+            <h1 className="flex items-center justify-center sm:justify-start text-4xl font-semibold gap-2">
+              <UserIcon className="w-7 h-7 text-blue-600 dark:text-blue-400" />
+              {userData.name}
+            </h1>
+            <p className="mt-1 text-lg text-gray-500 dark:text-gray-400">
+              {userData.title}
+            </p>
+            <p className="mt-2 text-sm font-medium text-green-500">
+              ● {userData.status}
+            </p>
+
+            <button
+              onClick={() => toggleEditMode("personal")}
+              className={`mt-4 inline-flex items-center gap-2 px-5 py-2 rounded-md font-medium text-sm transition-shadow duration-200
+                ${isDarkMode
+                  ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md"
+                  : "bg-blue-100 hover:bg-blue-200 text-blue-800 shadow-sm"}
+              `}
+            >
+              <Edit className="w-4 h-4" />
+              Edit Profile
+            </button>
+          </div>
+        </>
+      ) : (
+        <div className="w-full">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-semibold">Edit Profile</h2>
+            <div className="flex gap-3">
+              
+              <button
+                onClick={savePersonalInfo}
+                className="flex items-center gap-2 px-4 py-2 rounded-md bg-green-600 hover:bg-green-700 text-white text-sm font-medium transition-colors"
+              >
+                <Save className="w-4 h-4" />
+                Save
+              </button>
+              <button
+                onClick={() => toggleEditMode("personal")}
+                className="flex items-center gap-2 px-4 py-2 rounded-md bg-gray-500 hover:bg-gray-600 text-white text-sm font-medium transition-colors"
+              >
+                <X className="w-4 h-4" />
+                Cancel
+              </button>
+            </div>
+          </div>
+          
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="mb-4">
@@ -381,11 +388,13 @@ const ProfilePage = () => {
                     Phone
                   </label>
                   <input
+                    
                     type="tel"
                     name="phone"
                     value={personalForm.phone}
                     onChange={handlePersonalChange}
                     className="w-full px-3 py-2 border rounded-md bg-gray-800 border-gray-700 text-white"
+                    placeholder="+1 (555) 123-4567"
                   />
                 </div>
                 <div className="mb-4">
@@ -901,17 +910,17 @@ const ProfilePage = () => {
           </section>
         </div>
 
-        {/* Animation */}
         <style>
-          {`
-            .animate-fadeIn {
-              animation: fadeIn 0.7s;
-            }
-            @keyframes fadeIn {
-              from { opacity: 0; transform: translateY(30px);}
-              to { opacity: 1; transform: translateY(0);}
-            }
-          `}
+{`
+.animate-fadeIn {
+  animation: fadeIn 0.7s;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+`}
+
         </style>
       </div>
     </div>

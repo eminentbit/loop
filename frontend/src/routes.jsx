@@ -40,9 +40,11 @@ import CompanyDetailPage from "./pages/CompanyDetials";
 import Certificate from "@/pages/Certificates";
 import JobFeed from "./components/job.feed.compnent/job.feed";
 import VerifyEmail from "./pages/VerifyEmail";
-import CheckEmailPage from "./pages/CheckEmailPage";
-import ApplyJobsPage from "./pages/job.pages/ApplyJobsPage";
-import ConnectionsPage from "./pages/Connections";
+import CheckEmailPage from "@/pages/CheckEmailPage";
+import ApplyJobsPage from "@/pages/job.pages/ApplyJobsPage";
+import ConnectionsPage from "@/pages/Connections";
+import PublicProfile from "@/pages/PublicProfile";
+import LoadingScreen from "./pages/LoadingScreen";
 
 const AppRoutes = () => {
   const [role, setRole] = useState();
@@ -296,6 +298,8 @@ const AppRoutes = () => {
       <Route path="/apply/:jobId" element={<ApplyJobsPage />} />
       <Route path="/connections" element={<ConnectionsPage />} />
       <Route path="/connections/:id" element={<ConnectionsPage />} />
+      <Route path="/public-profile/:id" element={<PublicProfile />} />
+      <Route path="/loading" element={<LoadingScreen />} />
 
     </Routes>
   );

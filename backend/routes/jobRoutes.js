@@ -12,7 +12,7 @@ import verifyToken from "../middlewares/verifyToken.js";
 const router = Router();
 
 // CREATE a new Job
-router.post("/create", createJob);
+router.post("/create", verifyToken, createJob);
 
 // GET all Jobs
 router.get("/", getAllJobs);
