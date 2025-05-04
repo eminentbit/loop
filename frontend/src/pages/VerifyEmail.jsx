@@ -58,7 +58,7 @@ const VerifyEmail = () => {
               Email Verified!
             </h2>
             <p>{message}</p>
-            <p className="text-sm mt-4 text-gray-600">
+            <p className="text-sm mt-4 text-gray-600 hidden">
               Redirecting to login page...
             </p>
           </>

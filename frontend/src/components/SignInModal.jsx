@@ -41,7 +41,7 @@ function SignInModal({ setIsModalOpen, onClose }) {
       if (setIsModalOpen) {
         setIsModalOpen(false);
       }
-      navigate("/job-feeds");
+      navigate("/loading");
     } catch (error) {
       if (error.response) {
         // Server responded with a status other than 2xx
