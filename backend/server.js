@@ -1,4 +1,4 @@
-import express, { application } from "express";
+import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
@@ -17,11 +17,17 @@ dotenv.config();
 const PORT = process.env.PORT || 8000;
 const app = express();
 
+console.log(process.env.FRONTEND_URL);
+
 // Middleware
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      process.env.FRONTEND_URL,
+    ],
     credentials: true,
     optionsSuccessStatus: 200,
     methods: ["GET", "POST", "PUT", "DELETE"],
@@ -40,4 +46,8 @@ app.use("/api/feed/comments", commentRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/application", applicationRoutes);
 app.use("/api/network", networkRoutes);
+
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ message: "Server is healthy" });
+});
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -1,29 +1,31 @@
-# Use official Node.js runtime as base image
+# Stage 1: Builder
 FROM node:23-alpine AS builder
 
-# Set working directory in container
 WORKDIR /app
 
-# Copy package files
+# Copy and install only production dependencies
 COPY package*.json ./
-
-# Install dependencies
 RUN npm ci --only=production
 
-# Copy all source files
+# Copy the rest of the app
 COPY . .
 
-RUN npm run build
+# Generate Prisma client if needed
+RUN npx prisma generate --no-engine
 
+# Uncomment this if you have a build step
+# RUN npm run build  # If you have a build step, uncomment this
+
+# Stage 2: Runtime
 FROM node:23-alpine
 
 WORKDIR /app
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
 
-# Expose port (typical for backend services)
-EXPOSE 3000
+# Copy built artifacts from the builder stage
+COPY --from=builder /app .
 
-# Command to run the application
-CMD ["node", "dist/index.js"]
+# Expose port 5000
+EXPOSE 5000
+
+# Start the Node.js application
+CMD ["npm", "run", "serve"]  

@@ -1,32 +1,26 @@
-# Use Node.js as the base image
-FROM node:23-alpine
+# Stage 1: Builder (Node.js for building the frontend)
+FROM node:23-alpine AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files
+# Copy only package.json and package-lock.json for efficient caching
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install all dependencies (including devDependencies)
+RUN npm ci
 
 # Copy the rest of the application code
 COPY . .
 
-# Build the application
+# Build the application (assuming 'npm run build' creates a 'dist' folder)
 RUN npm run build
 
-# Use nginx to serve the static files
-FROM nginx:alpine
+# Stage 2: Production (Nginx for serving static content)
+FROM nginx:stable-alpine
+RUN rm -rf /usr/share/nginx/html/*
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY conf/nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy the build files to nginx
-COPY --from=0 /app/build /usr/share/nginx/html
-
-# Copy nginx configuration (if you have a custom one)
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Expose port 80
 EXPOSE 80
 
-# Start nginx
 CMD ["nginx", "-g", "daemon off;"]
