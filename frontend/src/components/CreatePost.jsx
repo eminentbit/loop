@@ -6,6 +6,7 @@ import ConfirmationModal from "./ConfirmationModal"; // Create this separately
 // import getCookie from "../utils/GetCookie";
 import PropTypes from "prop-types";
 import axios from "axios";
+import SignInModal from "./SignInModal";
 
 const CreatePost = ({ onPostSuccess }) => {
   const [postContent, setPostContent] = useState("");
@@ -13,6 +14,7 @@ const CreatePost = ({ onPostSuccess }) => {
   const [selectedFiles, setSelectedFiles] = useState(null); // holds FileList or file info
   const [showModal, setShowModal] = useState(false);
   const { isDarkMode } = useContext(DarkModeContext);
+  const [modalOpen, setModalOpen] = useState(false);
   const fileInputRef = useRef(null);
 
   // This function triggers the file input based on the selected type
@@ -39,6 +41,11 @@ const CreatePost = ({ onPostSuccess }) => {
 
   // Handles text-only submission (without file/document selection)
   const handleTextSubmit = async () => {
+    const storedUser = sessionStorage.getItem("user");
+    if (!storedUser) {
+      setModalOpen(true);
+      return;
+    }
     const postData = {
       type: "text",
       content: postContent,
@@ -170,6 +177,15 @@ const CreatePost = ({ onPostSuccess }) => {
         accept={modalType === "media" ? "image/*,video/*" : "*"}
         onChange={handleFileChange}
       />
+
+      {modalOpen && (
+        <SignInModal
+          onClose={() => {
+            setModalOpen(false);
+          }}
+          setIsModalOpen={setModalOpen}
+        />
+      )}
 
       {/* Show the ConfirmationModal only when files are selected */}
       {showModal && selectedFiles && (

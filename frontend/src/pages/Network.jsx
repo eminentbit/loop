@@ -3,6 +3,7 @@ import { User } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "src/components/job.page.component/ui/Navbar";
+import SignInModal from "src/components/SignInModal";
 import {
   capitalizeFirstLetter,
   capitalizeFirstLetterOfEachWord,
@@ -16,6 +17,7 @@ const NetworkPage = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [recruiters, setRecruiters] = useState([]);
   const [connections, setConnections] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
 
   // Toggle dark mode class
@@ -54,7 +56,6 @@ const NetworkPage = () => {
           `${import.meta.env.VITE_API_URL}/network/following`,
           { withCredentials: true }
         );
-        console.log(response.data.data);
         setConnections(response.data.data);
       } catch (error) {
         console.error("Failed to fetch connections:", error);
@@ -71,6 +72,11 @@ const NetworkPage = () => {
 
   // Toggle follow/unfollow
   const toggleFollow = async (id) => {
+    const storedUser = sessionStorage.getItem("user");
+    if (!storedUser) {
+      setModalOpen(true);
+      return;
+    }
     try {
       await axios.post(
         `${
@@ -194,6 +200,15 @@ const NetworkPage = () => {
         </div>
       </div>
 
+      {modalOpen && (
+        <SignInModal
+          onClose={() => {
+            setModalOpen(false);
+          }}
+          setIsModalOpen={setModalOpen}
+        />
+      )}
+
       <main className="max-w-7xl mx-auto px-4 py-8 space-y-12">
         {/* Recommended Recruiters */}
         <section>
@@ -249,6 +264,11 @@ const NetworkPage = () => {
                     type="button"
                     disabled
                     onClick={() => {
+                      const storedUser = sessionStorage.getItem("user");
+                      if (!storedUser) {
+                        setModalOpen(true);
+                        return;
+                      }
                       navigate("/connections");
                     }}
                     className="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition flex-1"

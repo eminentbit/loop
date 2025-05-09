@@ -187,7 +187,7 @@ const JobHomePage = () => {
         )}
 
         {sessionStorage.getItem("user") != "undefined" ? (
-          sessionStorage.getItem("user").role == "jobseeker" ? (
+          sessionStorage.getItem("user")?.role == "jobseeker" ? (
             <Button
               className={"bg-blue-400 ml-[50%] mt-10"}
               onClick={() => {

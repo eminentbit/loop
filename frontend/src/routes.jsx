@@ -59,7 +59,7 @@ const AppRoutes = () => {
         }
       );
       const data = await response.json();
-      // setRole(data.user.role);
+      setRole(data.user.role);
       sessionStorage.setItem("user", JSON.stringify(data.user));
     } catch (error) {
       console.error("Session check failed", error);
@@ -73,7 +73,7 @@ const AppRoutes = () => {
     if (storedUser != "undefined") {
       // If user data exists, set it from sessionStorage
       const parsedUser = JSON.parse(storedUser);
-      setRole(parsedUser.role);
+      setRole(parsedUser?.role);
     } else {
       // If user data doesn't exist, fetch from the API
       checkRole();

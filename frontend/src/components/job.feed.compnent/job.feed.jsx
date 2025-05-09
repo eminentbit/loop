@@ -106,22 +106,28 @@ export default function Feed() {
           <p className="text-center text-red-500 py-8">{error}</p>
         ) : (
           <div className="space-y-6">
-            {posts.map((post) => (
-              <motion.div
-                key={post.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-              >
-                <FeedPost
-                  post={post}
-                  onComment={handleComment}
-                  onReply={handleReply}
-                  refreshPosts={fetchPosts}
-                />
-              </motion.div>
-            ))}
+            {posts.length > 0 ? (
+              posts.map((post) => (
+                <motion.div
+                  key={post.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <FeedPost
+                    post={post}
+                    onComment={handleComment}
+                    onReply={handleReply}
+                    refreshPosts={fetchPosts}
+                  />
+                </motion.div>
+              ))
+            ) : (
+              <div className="flex items-center justify-center mt-[20%]">
+                <p>No post found</p>
+              </div>
+            )}
             <ConfirmationModal open={openMedia} />
           </div>
         )}
