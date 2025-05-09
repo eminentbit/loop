@@ -1,5 +1,6 @@
-import multer from "multer";
+import path from "path";
 import prisma from "../lib/prisma.js";
+import { uploadFileToS3 } from "../middlewares/upload.js";
 
 // Get all posts (feeds)
 export const getFeed = async (req, res) => {
@@ -8,7 +9,7 @@ export const getFeed = async (req, res) => {
     const feeds = await prisma.feed.findMany({
       include: {
         likes: { select: { id: true } },
-        user: { select: { fullName: true } },
+        user: { select: { id: true, fullName: true } },
         comments: { select: { id: true } },
       },
       orderBy: { createdAt: "desc" },
@@ -83,30 +84,17 @@ export const getFeedById = async (req, res) => {
   }
 };
 
-// Setup multer for file uploads (adjust destination as needed)
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Ensure this folder exists or use cloud storage
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
-  },
-});
-
-export const upload = multer({ storage });
-
 // Create post controller
 export const createPost = async (req, res) => {
   try {
-    const isFormData = req.is("multipart/form-data");
-    let {
+    const {
       type,
       title = null,
       content = null,
       videoUrl = null,
       eventDate = null,
       liveUrl = null,
-    } = isFormData ? req.body : req.body;
+    } = req.body;
 
     const userId = req.userId;
 
@@ -114,9 +102,17 @@ export const createPost = async (req, res) => {
       return res.status(400).json({ message: "Type and userId are required" });
     }
 
-    let image = null;
-    if (req.file) {
-      image = `/uploads/${req.file.filename}`;
+    let fileUrl = null;
+    const S3_FOLDER = "posts";
+
+    // ✅ Check if file is uploaded
+    if (req.files) {
+      const { buffer, originalname, mimetype } = req.files.attachments[0];
+
+      const ext = path.extname(originalname); // This is where the error was
+      const fileName = `${userId}-${Date.now()}${ext}`;
+
+      fileUrl = await uploadFileToS3(buffer, fileName, mimetype, S3_FOLDER);
     }
 
     const newPost = await prisma.feed.create({
@@ -128,7 +124,7 @@ export const createPost = async (req, res) => {
         videoUrl,
         eventDate: eventDate ? new Date(eventDate) : null,
         liveUrl,
-        image,
+        image: fileUrl,
       },
       include: {
         user: {
@@ -140,10 +136,12 @@ export const createPost = async (req, res) => {
       },
     });
 
-    res.status(201).json(newPost);
+    return res.status(201).json(newPost);
   } catch (error) {
     console.error("Error creating post:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Server error", error: error.message });
   }
 };
 

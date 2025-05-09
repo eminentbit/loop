@@ -13,12 +13,12 @@ const ConfirmationModal = ({ open, file, onCancel, onSend }) => {
   const getFilePreview = () => {
     if (!file) return null;
 
-    const fileType = file.type;
+    const fileType = file[0].type;
 
     if (fileType.startsWith("image/")) {
       return (
         <img
-          src={URL.createObjectURL(file)}
+          src={URL.createObjectURL(file[0])}
           alt="Preview"
           className="max-h-64 rounded-lg"
         />
@@ -28,7 +28,7 @@ const ConfirmationModal = ({ open, file, onCancel, onSend }) => {
     if (fileType.startsWith("video/")) {
       return (
         <video controls className="max-h-64 rounded-lg">
-          <source src={URL.createObjectURL(file)} type={fileType} />
+          <source src={URL.createObjectURL([file[0]])} type={fileType} />
           Your browser does not support the video tag.
         </video>
       );
@@ -36,7 +36,7 @@ const ConfirmationModal = ({ open, file, onCancel, onSend }) => {
 
     return (
       <div className="text-center p-4">
-        <p className="text-lg font-medium">{file.name}</p>
+        <p className="text-lg font-medium">{file[0].name}</p>
         <p className="text-sm text-gray-500">
           {fileType || "Unknown file type"}
         </p>

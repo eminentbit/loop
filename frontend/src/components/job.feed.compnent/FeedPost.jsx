@@ -20,7 +20,6 @@ export default function FeedPost({
   const [isMe, setIsMe] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  // const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     const postId = post.id;
@@ -51,11 +50,9 @@ export default function FeedPost({
 
   const handleSubmitComment = async (e) => {
     e.preventDefault();
-
     if (!commentText.trim()) return;
     try {
       const postId = post.id;
-      console.log({ content: commentText });
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/feed/comments/${postId}/create/`,
         { content: commentText },
@@ -87,7 +84,7 @@ export default function FeedPost({
           }
         );
 
-        if (response.data.user.id === post.userId) {
+        if (response.data.user.id === post.user.id) {
           setIsMe(true);
         }
       } catch (err) {
@@ -107,27 +104,21 @@ export default function FeedPost({
   };
 
   const handleShowComments = () => {
-    if (sessionStorage.getItem("user") == "undefined") {
-      // setOpenModal(true);
-      return;
-    }
-    console.log("Show comments clicked");
+    if (sessionStorage.getItem("user") == "undefined") return;
     setShowComments(!showComments);
   };
 
-  // Format the posted date
   const getFormattedDate = (dateString) => {
     try {
       return formatDistanceToNow(new Date(dateString), { addSuffix: true });
     } catch (error) {
-      console.log(error);
+      console.error("Error formatting date:", error);
       return "recently";
     }
   };
 
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
-      {/* Post Header */}
       <div className="p-4 border-b border-gray-100 flex items-center">
         <img
           src={post.user.image ? post.user.image : DefaultImage}
@@ -144,47 +135,25 @@ export default function FeedPost({
         </div>
       </div>
 
-      {/* Post Content */}
       <div className="p-4">
-        <div className="whitespace-pre-line">{post.content}</div>
+        <div className="whitespace-pre-line mb-2">{post.content}</div>
 
-        {/* Job Specific Details */}
-        {post.type === "job" && post.originalData && (
-          <div className="mt-4 bg-gray-50 p-3 rounded-md">
-            <div className="flex items-center mb-2">
-              {post.originalData.companyLogo && (
-                <img
-                  src={post.originalData.companyLogo}
-                  alt={post.originalData.company?.name || "Company"}
-                  className="h-8 w-8 mr-2"
-                />
-              )}
-              <span className="font-medium">
-                {post.originalData.company?.name || "Company"}
-              </span>
-            </div>
-
-            {post.originalData.salary && (
-              <div className="text-sm text-gray-700 mb-1">
-                <span className="font-medium">Salary:</span>{" "}
-                {post.originalData.salary}
-              </div>
-            )}
-
-            {post.originalData.applyUrl && (
-              <a
-                href={post.originalData.applyUrl}
-                className="mt-2 inline-block bg-indigo-500 hover:bg-indigo-600 text-white rounded px-4 py-2 text-sm font-medium"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Apply Now
-              </a>
-            )}
-          </div>
+        {post.image && (
+          <img
+            src={post.image}
+            alt="Post"
+            className="rounded-lg mb-2 max-h-96 w-full object-cover"
+          />
         )}
 
-        {/* Tags */}
+        {post.videoUrl && (
+          <video
+            controls
+            src={post.videoUrl}
+            className="w-full rounded-lg mb-2 max-h-[500px]"
+          />
+        )}
+
         {post.tags && post.tags.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-1">
             {post.tags.map((tag, index) => (
@@ -199,18 +168,6 @@ export default function FeedPost({
         )}
       </div>
 
-      {/* Post Footer - Engagement Stats */}
-      {/* <div className="px-4 py-2 border-t border-gray-100 flex items-center text-sm text-gray-500">
-        <div className="flex items-center">
-          <ThumbsUp size={14} className="text-indigo-500" />
-          <span className="ml-1">{post.likes || 0}</span>
-        </div>
-        <div className="ml-4 cursor-pointer" onClick={handleShowComments}>
-          <span>{post.comments.length} comments</span>
-        </div>
-      </div> */}
-
-      {/* Post Actions */}
       <div className="px-4 py-2 border-t border-gray-100 flex justify-between">
         <div className="flex items-center justify-center mx-auto">
           <LikeButton
@@ -232,9 +189,7 @@ export default function FeedPost({
         <button
           type="button"
           className="flex items-center justify-center w-1/3 py-2 hover:bg-gray-50 rounded-md text-gray-700"
-          onClick={() => {
-            setIsOpen(true);
-          }}
+          onClick={() => setIsOpen(true)}
         >
           <Share2 size={18} className="text-gray-500" />
           <span className="ml-2">Share</span>
@@ -244,16 +199,12 @@ export default function FeedPost({
       {isOpen && (
         <ShareModal
           url={`${window.location}/feed?${post.id}`}
-          onClose={() => {
-            setIsOpen(false);
-          }}
+          onClose={() => setIsOpen(false)}
         />
       )}
 
-      {/* Comments Section */}
       {showComments && (
         <div className="border-t border-gray-100">
-          {/* Add Comment Form */}
           <form onSubmit={handleSubmitComment} className="p-4 flex">
             <img
               src={post.user.image ?? DefaultImage}
@@ -278,11 +229,9 @@ export default function FeedPost({
             </div>
           </form>
 
-          {/* Comments List */}
           <div className="px-4 pb-4 space-y-4">
             {comments.map((comment) => (
               <div key={comment.id} className="pl-10">
-                {/* Comment */}
                 <div className="flex mb-2">
                   <img
                     src={comment.user.profile ?? DefaultImage}
@@ -296,12 +245,8 @@ export default function FeedPost({
                       </div>
                       <div className="text-sm">{comment.content}</div>
                     </div>
-                    {/* Comment Actions */}
                     <div className="flex items-center text-xs mt-1 space-x-3 text-gray-500">
-                      <span className="text-xs text-gray-500">
-                        {getFormattedDate(comment.createdAt)}
-                      </span>
-
+                      <span>{getFormattedDate(comment.createdAt)}</span>
                       <button
                         onClick={() => {
                           onCommentLike(comment.id);
@@ -322,7 +267,6 @@ export default function FeedPost({
                           <span className="ml-1">({comment.likes})</span>
                         )}
                       </button>
-
                       <button
                         onClick={() => setReplyingTo(comment.id)}
                         className="hover:text-indigo-600"
@@ -330,7 +274,6 @@ export default function FeedPost({
                         Reply
                       </button>
                     </div>
-                    {/* Reply Form */}
                     {replyingTo === comment.id && (
                       <div className="mt-2 flex">
                         <img
@@ -356,14 +299,13 @@ export default function FeedPost({
                         </div>
                       </div>
                     )}
-                    {/* Replies */}
                     {comment.replies && comment.replies.length > 0 && (
                       <div className="mt-2 space-y-2">
                         {comment.replies.map((reply) => (
                           <div key={reply.id} className="flex">
                             <img
-                              src={reply ? reply.user.profile : DefaultImage}
-                              alt={reply ? reply.user.name : "Replied User"}
+                              src={reply?.user.profile || DefaultImage}
+                              alt={reply?.user.name || "Replied User"}
                               className="h-6 w-6 rounded-full mr-2"
                             />
                             <div className="flex-1">
@@ -373,13 +315,8 @@ export default function FeedPost({
                                 </div>
                                 <div className="text-xs">{reply.content}</div>
                               </div>
-
-                              {/* Reply Actions */}
                               <div className="flex items-center text-xs mt-1 space-x-3 text-gray-500">
-                                <span className="text-xs text-gray-500">
-                                  {getFormattedDate(reply.postedAt)}
-                                </span>
-
+                                <span>{getFormattedDate(reply.postedAt)}</span>
                                 <button
                                   onClick={() =>
                                     onReplyLike(post.id, comment.id, reply.id)
@@ -418,19 +355,14 @@ FeedPost.propTypes = {
     userId: PropTypes.string,
     createdAt: PropTypes.string,
     content: PropTypes.string,
-    type: PropTypes.string,
-    originalData: PropTypes.object,
+    image: PropTypes.string,
+    videoUrl: PropTypes.string,
+    tags: PropTypes.arrayOf(PropTypes.string),
     commentsCount: PropTypes.number,
-    tags: PropTypes.object,
-    likes: PropTypes.number,
-    comments: PropTypes.object,
-    isLiked: PropTypes.bool,
     likesCount: PropTypes.number,
     isLikedByUser: PropTypes.bool,
   }),
-  onLike: PropTypes.bool,
-  onComment: PropTypes.bool,
-  onReply: PropTypes.bool,
-  onCommentLike: PropTypes.bool,
-  onReplyLike: PropTypes.bool,
+  onReply: PropTypes.func,
+  onCommentLike: PropTypes.func,
+  onReplyLike: PropTypes.func,
 };

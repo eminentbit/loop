@@ -202,10 +202,6 @@ export const getApplicationById = async (req, res) => {
 
 export const applyForJob = async (req, res) => {
   try {
-    console.log("Applying for job...");
-    console.log("Body:", req.body);
-    console.log("Files:", req.files);
-
     const { jobId } = req.params;
     const userId = req.userId;
 
@@ -243,7 +239,7 @@ export const applyForJob = async (req, res) => {
     // Helper to build `<uniqueBase>-cv.pdf` etc.
     const makeFileName = (fileObj, label) => {
       const ext = path.extname(fileObj.originalname);
-      return `${uniqueBase}-${label}${ext}`; // e.g. "john-doe-2025-05-01-cv.pdf"
+      return `applications/${uniqueBase}-${label}${ext}`; // e.g. "john-doe-2025-05-01-cv.pdf"
     };
 
     const cvFileName = makeFileName(cvFile, "cv");

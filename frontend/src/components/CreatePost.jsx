@@ -7,7 +7,7 @@ import ConfirmationModal from "./ConfirmationModal"; // Create this separately
 import PropTypes from "prop-types";
 import axios from "axios";
 
-const CreatePost = ({ onPostSuccess, setOpenMedia }) => {
+const CreatePost = ({ onPostSuccess }) => {
   const [postContent, setPostContent] = useState("");
   const [modalType, setModalType] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState(null); // holds FileList or file info
@@ -93,7 +93,7 @@ const CreatePost = ({ onPostSuccess, setOpenMedia }) => {
       setSelectedFiles(null);
       setModalType(null);
       setShowModal(false);
-      // Optionally show success message or refresh posts
+      onPostSuccess();
     }
   };
 
@@ -174,8 +174,9 @@ const CreatePost = ({ onPostSuccess, setOpenMedia }) => {
       {/* Show the ConfirmationModal only when files are selected */}
       {showModal && selectedFiles && (
         <ConfirmationModal
+          open={showModal}
           type={modalType}
-          files={selectedFiles}
+          file={selectedFiles}
           content={postContent}
           onCancel={() => {
             // Cancel selection and reset state
@@ -183,7 +184,7 @@ const CreatePost = ({ onPostSuccess, setOpenMedia }) => {
             setModalType(null);
             setSelectedFiles(null);
           }}
-          onConfirm={handleModalSubmit}
+          onSend={handleModalSubmit}
         />
       )}
     </>
@@ -192,6 +193,7 @@ const CreatePost = ({ onPostSuccess, setOpenMedia }) => {
 
 CreatePost.propTypes = {
   onPostSuccess: PropTypes.func,
+  setOpenMedia: PropTypes.func,
 };
 
 export default CreatePost;

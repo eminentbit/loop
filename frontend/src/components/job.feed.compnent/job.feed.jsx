@@ -23,6 +23,7 @@ export default function Feed() {
         { withCredentials: true }
       );
       setPosts(data);
+      console.log(data);
     } catch (err) {
       setError(err.message || "Failed to fetch posts.");
     } finally {

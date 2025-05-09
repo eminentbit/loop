@@ -5,41 +5,29 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export const uploadFileToS3 = async (
-  buffer,
-  fileName,
-  mimeType,
-  uniqueName
-) => {
-  if (!fileName) {
-    throw new Error("File name must be provided.");
-  }
+export const uploadFileToS3 = async (buffer, fileName, mimetype, folder) => {
+  const key = `${folder}/${fileName}`;
 
-  const folderPath = `applications/${uniqueName}/`;
-
-  const uploadParams = {
-    Bucket: process.env.AWS_S3_BUCKET_NAME,
-    Key: `${folderPath}${fileName}`,
+  const command = new PutObjectCommand({
+    Bucket: process.env.AWS_S3_BUCKET_NAME, // Your S3 bucket name
+    Key: key,
     Body: buffer,
-    ContentType: mimeType,
-  };
+    ContentType: mimetype,
+  });
 
-  try {
-    const result = await s3Client.send(new PutObjectCommand(uploadParams));
-    return `https://${process.env.AWS_S3_BUCKET_NAME}.s3.amazonaws.com/${folderPath}${fileName}`;
-  } catch (error) {
-    console.error("Error uploading to S3", error);
-    throw new Error("Error uploading file to S3");
-  }
+  await s3Client.send(command);
+
+  // Return a permanent public URL
+  const fileUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+  return fileUrl;
 };
 
 const storage = multer.memoryStorage(); // No files saved to disk
 export const upload = multer({ storage });
 
-export const applicationFields = upload.fields([
-  { name: "cv", maxCount: 1 },
-  { name: "cover_letter", maxCount: 1 },
-]);
+export const applicationFields = upload.single("attachments");
+
+export const postFields = upload.fields([{ name: "attachments", maxCount: 5 }]);
 
 export const validateFile = (req, res, next) => {
   const { cv, cover_letter } = req.files;
