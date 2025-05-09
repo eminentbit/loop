@@ -154,17 +154,25 @@ const JobDetails = () => {
       </div>
 
       {showModal && (
-        <div className="backdrop-blur-sm fixed inset-0 flex items-center justify-center z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
           <Dialog open={showModal} onOpenChange={closeModal}>
-            <DialogContent className="max-w-lg">
+            <DialogContent className="w-full max-w-lg p-6">
               <DialogHeader>
-                <DialogTitle>Apply for {job.title}</DialogTitle>
-                <Button onClick={closeModal} className="absolute top-3 right-3">
+                <DialogTitle className="text-lg font-semibold">
+                  Apply for {job.title}
+                </DialogTitle>
+                <Button
+                  onClick={closeModal}
+                  size="icon"
+                  variant="ghost"
+                  className="absolute top-3 right-3 text-gray-600 hover:text-gray-800"
+                >
                   <X className="w-5 h-5" />
                 </Button>
               </DialogHeader>
+
               {submitted ? (
-                <p className="text-green-600 text-center">
+                <p className="text-green-600 text-center mt-6">
                   Application submitted!
                 </p>
               ) : (
@@ -172,54 +180,59 @@ const JobDetails = () => {
                   ref={formRef}
                   onSubmit={handleSubmit}
                   encType="multipart/form-data"
-                  className="space-y-4 pt-4"
+                  className="space-y-4 mt-4"
                 >
                   <div>
                     <Label htmlFor="fullName">Full Name</Label>
-                    <Input type="text" name="fullName" id="fullName" required />
-                  </div>{" "}
+                    <Input type="text" id="fullName" name="fullName" required />
+                  </div>
+
                   <div>
                     <Label htmlFor="email">Email</Label>
-                    <Input type="email" name="email" id="email" required />{" "}
+                    <Input type="email" id="email" name="email" required />
                   </div>
+
                   <div>
                     <Label htmlFor="cv">CV (PDF, max 10MB)</Label>
                     <Input
                       type="file"
-                      name="cv"
                       id="cv"
+                      name="cv"
                       accept=".pdf"
                       required
                       onChange={handleFileChange}
                     />
                     {fileErrors.cv && (
-                      <p className="text-red-500 text-sm mt-1">
+                      <p className="text-sm text-red-500 mt-1">
                         {fileErrors.cv}
                       </p>
                     )}
                   </div>
+
                   <div>
                     <Label htmlFor="cover_letter">
                       Cover Letter (PDF, max 10MB)
                     </Label>
                     <Input
                       type="file"
-                      name="cover_letter"
                       id="cover_letter"
+                      name="cover_letter"
                       accept=".pdf"
                       required
                       onChange={handleFileChange}
                     />
                     {fileErrors.cover_letter && (
-                      <p className="text-red-500 text-sm mt-1">
+                      <p className="text-sm text-red-500 mt-1">
                         {fileErrors.cover_letter}
                       </p>
                     )}
                   </div>
+
                   <div>
                     <Label htmlFor="message">Message (optional)</Label>
-                    <Textarea name="message" id="message" rows={4} />
+                    <Textarea id="message" name="message" rows={4} />
                   </div>
+
                   <Button
                     type="submit"
                     disabled={submitting}

@@ -45,6 +45,8 @@ import ApplyJobsPage from "@/pages/job.pages/ApplyJobsPage";
 import ConnectionsPage from "@/pages/Connections";
 import PublicProfile from "@/pages/PublicProfile";
 import LoadingScreen from "./pages/LoadingScreen";
+import MyJobs from "./pages/MyJobs";
+import Applicants from "./pages/Applicants";
 
 const AppRoutes = () => {
   const [role, setRole] = useState();
@@ -68,7 +70,7 @@ const AppRoutes = () => {
     // Check if user data exists in sessionStorage
     const storedUser = sessionStorage.getItem("user");
 
-    if (storedUser) {
+    if (storedUser != "undefined") {
       // If user data exists, set it from sessionStorage
       const parsedUser = JSON.parse(storedUser);
       setRole(parsedUser.role);
@@ -93,8 +95,24 @@ const AppRoutes = () => {
       />
       {/* Job Routes */}
       <Route path="/jobs" element={<JobHomePage />} />
-      <Route path="/post-job" element={<PostJobPage />} />
+      <Route
+        path="/post-job"
+        element={
+          <ProtectiveWrapper>
+            <PostJobPage />
+          </ProtectiveWrapper>
+        }
+      />
       <Route path="/job/:jobId" element={<JobDetailsPage />} />
+      <Route
+        path="/job/:jobId/applicants"
+        element={
+          <ProtectiveWrapper>
+            <Applicants />
+          </ProtectiveWrapper>
+        }
+      />
+      <Route path="/jobs/my-jobs" element={<MyJobs />} />
 
       {/* feed */}
       <Route path="/job-feeds" element={<JobFeed />} />
@@ -169,7 +187,7 @@ const AppRoutes = () => {
       <Route path="/jobs">
         <Route index element={<JobHomePage />} />
         <Route path="recommended" element={<RecommendedPage />} />
-        <Route path=":jobId" element={<JobDetailsPage />} />
+        <Route path=":jobId" element={<DetailPage />} />
       </Route>
       <Route
         path="/applications"
@@ -276,13 +294,34 @@ const AppRoutes = () => {
         element={<ContactCandidate userRole={role} />}
       />
       <Route path="/reports/:id" element={<ViewReport userRole={role} />} />
-      <Route path="/network" element={<NetworkPage />} />
+      <Route
+        path="/network"
+        element={
+          <ProtectiveWrapper>
+            <NetworkPage />
+          </ProtectiveWrapper>
+        }
+      />
       <Route path="/network/:id" element={<NetworkPage />} />
       <Route path="/view-report" element={<ViewReport />} />
       <Route path="/network/company/:id" element={<CompanyDetailPage />} />
       <Route path="/certificate" element={<Certificate />} />
-      <Route path="/apply/:jobId" element={<ApplyJobsPage />} />
-      <Route path="/connections" element={<ConnectionsPage />} />
+      <Route
+        path="/apply/:jobId"
+        element={
+          <ProtectiveWrapper>
+            <ApplyJobsPage />
+          </ProtectiveWrapper>
+        }
+      />
+      <Route
+        path="/connections"
+        element={
+          <ProtectiveWrapper>
+            <ConnectionsPage />
+          </ProtectiveWrapper>
+        }
+      />
       <Route path="/connections/:id" element={<ConnectionsPage />} />
       <Route path="/public-profile/:id" element={<PublicProfile />} />
       <Route path="/loading" element={<LoadingScreen />} />

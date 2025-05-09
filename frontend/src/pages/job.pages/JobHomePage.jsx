@@ -12,6 +12,8 @@ import { useNavigate } from "react-router-dom";
 
 const JobHomePage = () => {
   const [jobs, setJobs] = useState([]);
+  const [allJobs, setAllJobs] = useState([]);
+  const [showingMyJobs, setShowingMyJobs] = useState(false);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [filters, setFilters] = useState({
@@ -30,8 +32,10 @@ const JobHomePage = () => {
           }
         );
         const data = await response.data;
-        console.log("Fetched jobs:", data);
+
         setJobs(data);
+        setAllJobs(data);
+        setIsLoading(false);
       } catch (error) {
         console.error("Failed to fetch jobs:", error);
       }
@@ -40,6 +44,27 @@ const JobHomePage = () => {
     fetchJobs();
   }, []);
 
+  const toggleMyJobs = () => {
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    if (!user || user.role !== "recruiter") return;
+
+    if (showingMyJobs) {
+      setJobs(allJobs);
+    } else {
+      const myJobs = allJobs.filter((job) => job.userId === user.id);
+      setJobs(myJobs);
+    }
+
+    setShowingMyJobs(!showingMyJobs);
+  };
+
+  // const filterMyJobs = () => {
+  //   const user = JSON.parse(sessionStorage.getItem("user"));
+  //   if (!user || user.role !== "recruiter") return;
+
+  //   const myJobs = allJobs.filter((job) => job.recruiterId === user.id);
+  //   setJobs(myJobs);
+  // };
   const handleSearch = (newFilters) => {
     setIsLoading(true);
     setFilters(newFilters);
@@ -160,14 +185,28 @@ const JobHomePage = () => {
             )}
           </div>
         )}
-        <Button
-          className={"bg-blue-400 ml-[50%] mt-10"}
-          onClick={() => {
-            navigate("/applications");
-          }}
-        >
-          See all applications
-        </Button>
+
+        {sessionStorage.getItem("user") != "undefined" ? (
+          sessionStorage.getItem("user").role == "jobseeker" ? (
+            <Button
+              className={"bg-blue-400 ml-[50%] mt-10"}
+              onClick={() => {
+                navigate("/applications");
+              }}
+            >
+              See all applications
+            </Button>
+          ) : (
+            <Button
+              className={"bg-blue-400 ml-[50%] mt-10"}
+              onClick={toggleMyJobs}
+            >
+              {showingMyJobs ? "Show All Jobs" : "My Jobs"}
+            </Button>
+          )
+        ) : (
+          ""
+        )}
       </PageContainer>
     </>
   );

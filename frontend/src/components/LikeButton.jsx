@@ -4,12 +4,17 @@ import { Heart } from "lucide-react";
 import FilledHeartIcon from "./FilledHearIcon"; // Adjust the import based on your icon library
 import PropTypes from "prop-types";
 
-const LikeButton = ({ feedId, initialLiked, likes }) => {
+const LikeButton = ({ feedId, initialLiked, likes, setOpenModal }) => {
   const [liked, setLiked] = useState(initialLiked);
   const [loading, setLoading] = useState(false);
   const [likesCount, setLikesCount] = useState(likes);
 
   const handleLike = async () => {
+    if (sessionStorage.getItem("user") == "undefined") {
+      setOpenModal(true);
+      return;
+    }
+    if (loading) return; // Prevent multiple clicks
     setLoading(true);
     try {
       const response = await axios.put(
@@ -51,6 +56,7 @@ LikeButton.propTypes = {
   feedId: PropTypes.number.isRequired,
   initialLiked: PropTypes.bool.isRequired,
   likes: PropTypes.number.isRequired,
+  setOpenModal: PropTypes.func.isRequired,
 };
 
 export default LikeButton;

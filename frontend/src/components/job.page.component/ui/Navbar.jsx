@@ -12,7 +12,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const storedUser = sessionStorage.getItem("user");
-    if (storedUser) {
+    if (storedUser != "undefined") {
       setUser(JSON.parse(storedUser));
     }
   }, []);

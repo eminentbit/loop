@@ -115,7 +115,7 @@ const JobsPage = ({ userRole }) => {
           },
         });
         const data = await response.data;
-        console.log("Fetched jobs:", data);
+
         setJobs(data);
       } catch (error) {
         console.error("Failed to fetch jobs:", error);

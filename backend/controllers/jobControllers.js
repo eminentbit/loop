@@ -161,3 +161,17 @@ export const deleteJob = async (req, res) => {
       .json({ message: "Error deleting job", error: error.message });
   }
 };
+
+export const getJobByUserId = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const jobs = await prisma.job.findMany({
+      where: { userId: userId },
+    });
+    res.status(200).json(jobs);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error fetching jobs", error: error.message });
+  }
+};

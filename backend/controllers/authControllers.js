@@ -252,6 +252,13 @@ export const verifyEmail = async (req, res) => {
 };
 
 export const checkAuth = async (req, res) => {
+  if (!req.userId) {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthenticated! No token provided!",
+    });
+  }
+
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.userId },
@@ -283,6 +290,13 @@ export const checkAuth = async (req, res) => {
 };
 
 export const profileDisplay = async (req, res) => {
+  if (!req.userId) {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthenticated! No token provided!",
+    });
+  }
+
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.userId },

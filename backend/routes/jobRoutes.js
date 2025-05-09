@@ -6,6 +6,7 @@ import {
   getAllJobs,
   getJobById,
   updateJob,
+  getJobByUserId,
 } from "../controllers/jobControllers.js";
 import { submitApplication } from "../controllers/applicationController.js";
 import verifyToken from "../middlewares/verifyToken.js";
@@ -16,6 +17,9 @@ router.post("/create", verifyToken, createJob);
 
 // GET all Jobs
 router.get("/", getAllJobs);
+
+// Get the jobs for a particular user
+router.get("/user", verifyToken, getJobByUserId);
 
 // GET a single Job by ID
 router.get("/:id", getJobById);

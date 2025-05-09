@@ -11,6 +11,7 @@ const AuthContext = createContext({
   isFollowing: () => false,
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext);
 
 import PropTypes from "prop-types";
@@ -20,7 +21,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const storedUser = sessionStorage.getItem("user");
-    if (storedUser) {
+    if (storedUser != "undefined") {
       setUser(JSON.parse(storedUser));
     }
   }, []);

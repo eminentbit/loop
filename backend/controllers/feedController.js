@@ -1,42 +1,50 @@
 import multer from "multer";
-import path from "path";
 import prisma from "../lib/prisma.js";
 
 // Get all posts (feeds)
 export const getFeed = async (req, res) => {
-  const userId = req.userId;
-
-  if (!userId) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-
+  const userId = req.userId; // undefined if not logged in
   try {
     const feeds = await prisma.feed.findMany({
       include: {
         likes: { select: { id: true } },
-        user: {
-          select: {
-            fullName: true,
-          },
-        },
-        comments: true,
+        user: { select: { fullName: true } },
+        comments: { select: { id: true } },
       },
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: { createdAt: "desc" },
     });
 
-    const feedWithIsLiked = feeds.map((feed) => ({
-      ...feed,
-      isLikedByUser: feed.likes.some((likeUser) => likeUser.id === userId),
-    }));
+    // build response for everyone
+    const response = feeds.map((feed) => {
+      const isLikedByUser = userId
+        ? feed.likes.some((like) => like.id === userId)
+        : false;
 
-    return res.status(200).json(feedWithIsLiked);
+      return {
+        id: feed.id,
+        title: feed.title,
+        content: feed.content,
+        image: feed.image,
+        videoUrl: feed.videoUrl,
+        eventDate: feed.eventDate,
+        liveUrl: feed.liveUrl,
+        createdAt: feed.createdAt,
+        updatedAt: feed.updatedAt,
+        user: feed.user,
+        likesCount: feed.likes.length,
+        commentsCount: feed.comments.length,
+        isLikedByUser,
+      };
+    });
+
+    return res.status(200).json(response);
   } catch (error) {
     console.error("Error fetching feeds:", error);
-    return res
-      .status(500)
-      .json({ message: "Server error", error: error.message });
+    if (!res.headersSent) {
+      return res
+        .status(500)
+        .json({ message: "Server error", error: error.message });
+    }
   }
 };
 
@@ -54,7 +62,6 @@ export const getFeedById = async (req, res) => {
       where: { id: parseInt(feedId) },
       include: {
         likes: { select: { id: true } },
-        // include other related data if needed
       },
     });
 

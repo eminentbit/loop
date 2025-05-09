@@ -20,6 +20,7 @@ export default function FeedPost({
   const [isMe, setIsMe] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  // const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     const postId = post.id;
@@ -106,6 +107,11 @@ export default function FeedPost({
   };
 
   const handleShowComments = () => {
+    if (sessionStorage.getItem("user") == "undefined") {
+      // setOpenModal(true);
+      return;
+    }
+    console.log("Show comments clicked");
     setShowComments(!showComments);
   };
 
@@ -219,7 +225,7 @@ export default function FeedPost({
           className="flex items-center justify-center w-1/3 py-2 hover:bg-gray-50 rounded-md text-gray-700"
         >
           <MessageCircle size={18} className="text-gray-500" />
-          {post.comments.length}
+          {post.commentsCount}
           <span className="ml-2">Comment</span>
         </button>
 
@@ -414,6 +420,7 @@ FeedPost.propTypes = {
     content: PropTypes.string,
     type: PropTypes.string,
     originalData: PropTypes.object,
+    commentsCount: PropTypes.number,
     tags: PropTypes.object,
     likes: PropTypes.number,
     comments: PropTypes.object,

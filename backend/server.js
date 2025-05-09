@@ -17,8 +17,6 @@ dotenv.config();
 const PORT = process.env.PORT || 8000;
 const app = express();
 
-console.log(process.env.FRONTEND_URL);
-
 // Middleware
 app.use(express.json());
 app.use(

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   MapPin,
   Calendar,
@@ -7,14 +7,18 @@ import {
   ArrowLeft,
   Sun,
   Moon,
+  X,
 } from "lucide-react";
-import PageContainer from "../../components/job.page.component/ui/PageContainer";
-import Tag from "../../components/job.page.component/ui/Tag";
+import PageContainer from "src/components/job.page.component/ui/PageContainer";
+import Tag from "src/components/job.page.component/ui/Tag";
 import Navbar from "src/components/job.page.component/ui/Navbar";
 import axios from "axios";
 import { enumToSalary, enumToString } from "src/utils/EnumToString";
-import ApplicationModal from "src/components/ApplicationModal";
+import { Dialog, DialogContent, DialogTitle } from "@radix-ui/react-dialog";
+import { DialogHeader } from "src/components/ui/dialog";
 import { Button } from "src/components/ui/button";
+import { Input } from "src/components/ui/input";
+import { Textarea } from "src/components/ui/textarea";
 
 const formatDate = (dateString) => {
   const options = { year: "numeric", month: "long", day: "numeric" };
@@ -25,14 +29,24 @@ const JobDetailsPage = () => {
   const { jobId } = useParams();
   const [job, setJob] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    setUser(sessionStorage.getItem("user"));
-  }, []);
 
   // Theme state: 'light' or 'dark'
   const [theme, setTheme] = useState("light");
+
+  // Modal/form state
+  const [showModal, setShowModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [fileErrors, setFileErrors] = useState({ cv: "", cover_letter: "" });
+  const navigate = useNavigate();
+  const formRef = useRef();
+
+  // Load user from session
+  useEffect(() => {
+    setUser(JSON.parse(sessionStorage.getItem("user") || "null"));
+  }, []);
 
   // Load theme from localStorage
   useEffect(() => {
@@ -42,43 +56,33 @@ const JobDetailsPage = () => {
     }
   }, []);
 
-  // Apply theme class on <html> and persist
+  // Apply theme class and persist
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  const toggleTheme = () => {
+  const toggleTheme = () =>
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
-  };
 
-  // Modal/form state
-  const [isOpen, setIsOpen] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [fileErrors, setFileErrors] = useState({ cv: "", cover_letter: "" });
-  const formRef = useRef();
-
+  // Fetch job details
   useEffect(() => {
     setIsLoading(true);
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/jobs/${jobId}`
-        );
-        setJob(response.data);
-      } catch (error) {
-        console.error("Error fetching job details:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/jobs/${jobId}/`, {
+        withCredentials: true,
+      })
+      .then((response) => setJob(response.data))
+      .catch((err) => {
+        console.log(err);
+        setError("Unable to load job details. Please try again later.");
+      })
+      .finally(() => setIsLoading(false));
   }, [jobId]);
 
-  const openModal = () => setIsOpen(true);
+  const openModal = () => setShowModal(true);
   const closeModal = () => {
-    setIsOpen(false);
+    setShowModal(false);
     setSubmitted(false);
     setFileErrors({ cv: "", cover_letter: "" });
     formRef.current?.reset();
@@ -104,21 +108,14 @@ const JobDetailsPage = () => {
 
     setSubmitting(true);
     const formData = new FormData(formRef.current);
-    const data = Object.fromEntries(formData.entries());
 
-    for (const [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
     try {
-      console.log("Form data is", data);
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/application/jobs/${jobId}/`,
-        data,
+        formData,
         {
           withCredentials: true,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: { "Content-Type": "multipart/form-data" },
         }
       );
       if (response.status === 200) setSubmitted(true);
@@ -142,18 +139,19 @@ const JobDetailsPage = () => {
         </PageContainer>
       </>
     );
-  if (!job)
+
+  if (error || !job)
     return (
       <PageContainer>
         <div className="text-center py-12">
           <h2 className="text-2xl font-semibold text-gray-700 dark:text-gray-200">
-            Job not found
+            {error || "Job not found"}
           </h2>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
             This job posting doesn&apos;t exist or has been removed.
           </p>
           <Link
-            to="/apply/:jobId"
+            to="/jobs"
             className="mt-4 inline-block text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"
           >
             Back to Jobs
@@ -166,7 +164,7 @@ const JobDetailsPage = () => {
     <>
       <Navbar />
       <PageContainer>
-        {/* Theme Toggle Button */}
+        {/* Theme Toggle */}
         <div className="flex justify-end mb-4">
           <button
             onClick={toggleTheme}
@@ -181,117 +179,222 @@ const JobDetailsPage = () => {
           </button>
         </div>
 
-        <div className="max-w-4xl mx-auto">
-          <Link
-            to="/jobs"
-            className="inline-flex items-center text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 mb-6"
-          >
-            <ArrowLeft className="h-4 w-4 mr-1" /> Back to Jobs
-          </Link>
+        <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="p-6">
+            <Link
+              to="/jobs"
+              className="inline-flex items-center text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 mb-6"
+            >
+              <ArrowLeft className="h-4 w-4 mr-1" /> Back to Jobs
+            </Link>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div className="p-6">
-              {/* Job header */}
-              <div className="flex justify-between items-start">
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    {job.title}
-                  </h1>
-                  <div className="mt-2">
-                    <Link
-                      to={`/company/${job.company}`}
-                      className="text-lg text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                    >
-                      {job.company}
-                    </Link>
-                  </div>
-                </div>
-                {user.role == "jobseeker" ? (
-                  <Button size="lg" onClick={openModal}>
-                    Apply Now
-                  </Button>
-                ) : (
-                  <Button size="lg">See applicants</Button>
+            <div className="flex justify-between items-start">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  {job.title}
+                </h1>
+                <Link
+                  to={`/company/${job.company}`}
+                  className="text-lg text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                >
+                  {job.company}
+                </Link>
+              </div>
+              {user?.role === "jobseeker" ? (
+                <Button size="lg" onClick={openModal}>
+                  Apply Now
+                </Button>
+              ) : (
+                <Button
+                  size="lg"
+                  onClick={() => {
+                    navigate(`/job/${jobId}/applicants`);
+                  }}
+                >
+                  See applicants
+                </Button>
+              )}
+            </div>
+
+            {/* Meta */}
+            <div className="mt-4 flex flex-wrap gap-4 text-gray-600">
+              <div className="flex items-center">
+                <MapPin className="h-5 w-5 mr-1 text-gray-400 dark:text-gray-500" />
+                <span>{job.location}</span>
+                {job.isRemote && (
+                  <span className="ml-2 px-2 py-0.5 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-xs">
+                    Remote
+                  </span>
                 )}
-
-                {/* Job meta */}
-                <div className="mt-4 flex flex-wrap gap-4 text-gray-600">
-                  <div className="flex items-center">
-                    <MapPin className="h-5 w-5 mr-1 text-gray-400 dark:text-gray-500" />
-                    <span>{job.location}</span>
-                    {job.isRemote && (
-                      <span className="ml-2 px-2 py-0.5 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-xs">
-                        Remote
-                      </span>
-                    )}
-                  </div>
-                  {job.jobType && (
-                    <div className="flex items-center">
-                      <BriefcaseIcon className="h-5 w-5 mr-1 text-gray-400 dark:text-gray-500" />
-                      <span className="capitalize">
-                        {enumToString(job.jobType)}
-                      </span>
-                    </div>
-                  )}
-                  {job.salary && (
-                    <div className="flex items-center">
-                      <span className="font-medium text-gray-900">
-                        {enumToSalary(job.salary)}
-                      </span>
-                    </div>
-                  )}
+              </div>
+              {job.jobType && (
+                <div className="flex items-center">
+                  <BriefcaseIcon className="h-5 w-5 mr-1 text-gray-400 dark:text-gray-500" />
+                  <span className="capitalize">
+                    {enumToString(job.jobType)}
+                  </span>
                 </div>
-
-                {/* Description & skills */}
-                <div className="mt-6">
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
-                    Job Description
-                  </h2>
-                  <div className="prose max-w-none text-gray-600 dark:text-gray-400">
-                    {job.description}
-                  </div>
+              )}
+              {job.salary && (
+                <div className="flex items-center">
+                  <span className="font-medium text-gray-900 dark:text-gray-100">
+                    {enumToSalary(job.salary)}
+                  </span>
                 </div>
-                <div className="mt-6">
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
-                    Required Skills
-                  </h2>
-                  <div className="flex flex-wrap gap-2">
-                    {job.skills.map((tag, i) => (
-                      <Tag key={i} label={tag} />
-                    ))}
-                  </div>
-                </div>
+              )}
+            </div>
 
-                {/* Deadline */}
-                {job.applicationDeadline && (
-                  <div className="mt-6 flex items-center text-gray-600 dark:text-gray-400">
-                    <Calendar className="h-5 w-5 mr-1 text-gray-400 dark:text-gray-500" />
-                    <span>
-                      Application deadline:{" "}
-                      {formatDate(job.applicationDeadline)}
-                    </span>
-                  </div>
-                )}
+            {/* Description */}
+            <div className="mt-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                Job Description
+              </h2>
+              <div className="prose max-w-none text-gray-600 dark:text-gray-400">
+                {job.description}
               </div>
             </div>
 
-            {/* Modal */}
-            {isOpen && (
-              <ApplicationModal
-                formRef={formRef}
-                onSubmit={handleSubmit}
-                onFileChange={handleFileChange}
-                onClose={closeModal}
-                showModal={isOpen}
-                submitting={submitting}
-                submitted={submitted}
-                cvError={fileErrors.cv}
-                coverLetterError={fileErrors.cover_letter}
-                jobTitle={job.title}
-              />
+            {/* Skills */}
+            <div className="mt-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                Required Skills
+              </h2>
+              <div className="flex flex-wrap gap-2">
+                {job.skills.map((tag, i) => (
+                  <Tag key={i} label={tag} />
+                ))}
+              </div>
+            </div>
+
+            {/* Deadline */}
+            {job.applicationDeadline && (
+              <div className="mt-6 flex items-center text-gray-600 dark:text-gray-400">
+                <Calendar className="h-5 w-5 mr-1 text-gray-400 dark:text-gray-500" />
+                <span>
+                  Application deadline: {formatDate(job.applicationDeadline)}
+                </span>
+              </div>
             )}
           </div>
         </div>
+
+        {/* Modal */}
+        {showModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
+            <Dialog open={showModal} onOpenChange={closeModal}>
+              <DialogContent className="w-full max-w-lg p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
+                <DialogHeader>
+                  <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    Apply for {job.title}
+                  </DialogTitle>
+                  <Button
+                    onClick={closeModal}
+                    size="icon"
+                    variant="ghost"
+                    className="absolute top-3 right-3 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white"
+                  >
+                    <X className="w-5 h-5" />
+                  </Button>
+                </DialogHeader>
+
+                {submitted ? (
+                  <p className="text-green-600 dark:text-green-400 text-center mt-6">
+                    Application submitted!
+                  </p>
+                ) : (
+                  <form
+                    ref={formRef}
+                    onSubmit={handleSubmit}
+                    encType="multipart/form-data"
+                    className="space-y-4 mt-4"
+                  >
+                    <div>
+                      <label
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                        htmlFor="fullName"
+                      >
+                        Full Name
+                      </label>
+                      <Input
+                        type="text"
+                        id="fullName"
+                        name="fullName"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                        htmlFor="email"
+                      >
+                        Email
+                      </label>
+                      <Input type="email" id="email" name="email" required />
+                    </div>
+                    <div>
+                      <label
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                        htmlFor="cv"
+                      >
+                        CV (PDF, max 10MB)
+                      </label>
+                      <Input
+                        type="file"
+                        id="cv"
+                        name="cv"
+                        accept=".pdf"
+                        required
+                        onChange={handleFileChange}
+                      />
+                      {fileErrors.cv && (
+                        <p className="text-sm text-red-500 mt-1">
+                          {fileErrors.cv}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <label
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                        htmlFor="cover_letter"
+                      >
+                        Cover Letter (PDF, max 10MB)
+                      </label>
+                      <Input
+                        type="file"
+                        id="cover_letter"
+                        name="cover_letter"
+                        accept=".pdf"
+                        required
+                        onChange={handleFileChange}
+                      />
+                      {fileErrors.cover_letter && (
+                        <p className="text-sm text-red-500 mt-1">
+                          {fileErrors.cover_letter}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <label
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                        htmlFor="message"
+                      >
+                        Message (optional)
+                      </label>
+                      <Textarea id="message" name="message" rows={4} />
+                    </div>
+                    <Button
+                      type="submit"
+                      disabled={submitting}
+                      className="w-full"
+                    >
+                      {submitting ? "Submitting..." : "Submit Application"}
+                    </Button>
+                  </form>
+                )}
+              </DialogContent>
+            </Dialog>
+          </div>
+        )}
       </PageContainer>
     </>
   );

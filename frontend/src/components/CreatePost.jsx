@@ -1,12 +1,13 @@
 import { useState, useContext, useRef } from "react";
 import { Camera, Video, FileText, Calendar, Send } from "lucide-react";
+import DefaultProfile from "../assets/default-profile.png"; // Placeholder for profile image
 import { DarkModeContext } from "../context/DarkModeContext";
 import ConfirmationModal from "./ConfirmationModal"; // Create this separately
 // import getCookie from "../utils/GetCookie";
 import PropTypes from "prop-types";
 import axios from "axios";
 
-const CreatePost = ({ refreshPosts }) => {
+const CreatePost = ({ onPostSuccess, setOpenMedia }) => {
   const [postContent, setPostContent] = useState("");
   const [modalType, setModalType] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState(null); // holds FileList or file info
@@ -33,7 +34,6 @@ const CreatePost = ({ refreshPosts }) => {
     if (files && files.length > 0) {
       setSelectedFiles(files);
       setShowModal(true);
-      console.log(showModal);
     }
   };
 
@@ -60,7 +60,7 @@ const CreatePost = ({ refreshPosts }) => {
 
       if (response.status === 201) {
         setPostContent("");
-        refreshPosts();
+        onPostSuccess();
       }
     } catch (error) {
       console.log("Error", error);
@@ -106,7 +106,7 @@ const CreatePost = ({ refreshPosts }) => {
       >
         <div className="flex items-center mb-4">
           <img
-            src="https://i.pravatar.cc/150?img=5"
+            src={DefaultProfile}
             alt="Your Profile"
             className="w-10 h-10 rounded-full mr-3"
           />
@@ -191,7 +191,7 @@ const CreatePost = ({ refreshPosts }) => {
 };
 
 CreatePost.propTypes = {
-  refreshPosts: PropTypes.func,
+  onPostSuccess: PropTypes.func,
 };
 
 export default CreatePost;

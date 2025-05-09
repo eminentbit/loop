@@ -30,7 +30,7 @@ const ProtectiveWrapper = ({ children }) => {
 
     const storedSession = sessionStorage.getItem("user");
 
-    if (storedSession) {
+    if (storedSession != "undefined") {
       setIsAuthenticated(true);
       return;
     }

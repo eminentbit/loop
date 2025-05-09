@@ -106,6 +106,82 @@ export const getApplications = async (req, res) => {
   }
 };
 
+export const getMyApplicants = async (req, res) => {
+  const { jobId } = req.params;
+  const page = parseInt(req.query.page) || 1;
+  const search = req.query.search || "";
+  const pageSize = 10;
+  const skip = (page - 1) * pageSize;
+
+  try {
+    // Filter condition (example: searching applicant name or position)
+    const where = {
+      jobId: jobId,
+      ...(search
+        ? {
+            OR: [
+              { applicantName: { contains: search, mode: "insensitive" } },
+              { position: { contains: search, mode: "insensitive" } },
+            ],
+          }
+        : {}),
+    };
+
+    const [totalCount, results] = await Promise.all([
+      prisma.jobApplication.count({ where }),
+      prisma.jobApplication.findMany({
+        where,
+        skip,
+        take: pageSize,
+        orderBy: { updatedAt: "desc" },
+      }),
+    ]);
+
+    const nextPage =
+      skip + pageSize < totalCount
+        ? `${req.baseUrl}${req.path}?page=${page + 1}&search=${search}`
+        : null;
+
+    const prevPage =
+      page > 1
+        ? `${req.baseUrl}${req.path}?page=${page - 1}&search=${search}`
+        : null;
+
+    return res.status(200).json({
+      count: totalCount,
+      results,
+      next: nextPage,
+      previous: prevPage,
+    });
+  } catch (error) {
+    console.error("Error fetching applications:", error);
+    return res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+export const getRecruiterApplications = async (req, res) => {
+  try {
+    const applications = await prisma.jobApplication.findMany({
+      include: {
+        job: true,
+        user: true,
+      },
+      where: {
+        job: {
+          userId: req.userId,
+        },
+      },
+    });
+    res.status(200).json(applications);
+  } catch (error) {
+    console.error("Error fetching recruiter applications:", error);
+    res.status(500).json({ error: "Failed to fetch recruiter applications" });
+  }
+};
+
 export const getApplicationById = async (req, res) => {
   try {
     const applications = await prisma.jobApplication.findUnique({
