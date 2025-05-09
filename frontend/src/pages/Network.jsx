@@ -3,6 +3,10 @@ import { User } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "src/components/job.page.component/ui/Navbar";
+import {
+  capitalizeFirstLetter,
+  capitalizeFirstLetterOfEachWord,
+} from "src/utils/Capitalize";
 
 const NetworkPage = () => {
   const navigate = useNavigate();
@@ -193,9 +197,7 @@ const NetworkPage = () => {
       <main className="max-w-7xl mx-auto px-4 py-8 space-y-12">
         {/* Recommended Recruiters */}
         <section>
-          <h2 className="text-2xl font-bold mb-6">
-            Recommended Recruiters for You
-          </h2>
+          <h2 className="text-2xl font-bold mb-6">Recommended for You</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredRecruiters.map((r) => (
               <div
@@ -213,8 +215,10 @@ const NetworkPage = () => {
                   <div className="ml-4 flex-1">
                     <h3 className="text-lg font-semibold mb-1">{r.fullName}</h3>
                     <p className="text-sm mb-2">
-                      {r.role} at{" "}
-                      <span className="font-medium">{r.companyName}</span>
+                      {capitalizeFirstLetter(r.role)} at{" "}
+                      <span className="font-medium">
+                        {capitalizeFirstLetterOfEachWord(r.companyName)}
+                      </span>
                     </p>
                     {r.tags?.length > 0 && (
                       <div className="flex flex-wrap gap-2">
@@ -241,11 +245,16 @@ const NetworkPage = () => {
                   >
                     {isFollowing[r.id] ? "Unfollow" : "Follow"}
                   </button>
-                  <Link to="/connections" className="flex-1">
-                    <button className="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
-                      Connections
-                    </button>
-                  </Link>
+                  <button
+                    type="button"
+                    disabled
+                    onClick={() => {
+                      navigate("/connections");
+                    }}
+                    className="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition flex-1"
+                  >
+                    Connections
+                  </button>
                 </div>
               </div>
             ))}

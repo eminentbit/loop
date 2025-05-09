@@ -28,7 +28,7 @@ import SignInModal from "@/components/SignInModal";
 import JobHomePage from "./pages/job.pages/JobHomePage";
 import About from "@/pages/About";
 import ContactPage from "@/pages/Contact";
-import StartupDetail from "@/pages/StartupDetial";
+import StartupDetail from "@/pages/StartupDetail";
 import LandingPage from "@/pages/LandingPage";
 import SkillTest from "@/pages/SkillTest";
 import Candidates from "./pages/Candidates";
@@ -36,7 +36,7 @@ import ContactCandidate from "@/pages/ContactCandidate";
 import ViewReport from "@/pages/ViewReport";
 import PostJobPage from "./pages/job.pages/PostJobPage";
 import JobDetailsPage from "./pages/job.pages/JobDetailsPage";
-import CompanyDetailPage from "./pages/CompanyDetials";
+import CompanyDetailPage from "./pages/CompanyDetails";
 import Certificate from "@/pages/Certificates";
 import JobFeed from "./components/job.feed.compnent/job.feed";
 import VerifyEmail from "./pages/VerifyEmail";
@@ -48,6 +48,21 @@ import LoadingScreen from "./pages/LoadingScreen";
 
 const AppRoutes = () => {
   const [role, setRole] = useState();
+  const checkRole = async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/auth/check-auth/`,
+        {
+          credentials: "include",
+        }
+      );
+      const data = await response.json();
+      // setRole(data.user.role);
+      sessionStorage.setItem("user", JSON.stringify(data.user));
+    } catch (error) {
+      console.error("Session check failed", error);
+    }
+  };
 
   useEffect(() => {
     // Check if user data exists in sessionStorage
@@ -59,21 +74,6 @@ const AppRoutes = () => {
       setRole(parsedUser.role);
     } else {
       // If user data doesn't exist, fetch from the API
-      const checkRole = async () => {
-        try {
-          const response = await fetch(
-            `${import.meta.env.VITE_API_URL}/auth/check-auth/`,
-            {
-              credentials: "include",
-            }
-          );
-          const data = await response.json();
-          setRole(data.user.role);
-          sessionStorage.setItem("user", JSON.stringify(data.user));
-        } catch (error) {
-          console.error("Session check failed", error);
-        }
-      };
       checkRole();
     }
   }, []);
@@ -81,7 +81,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/signin" element={<SignInModal />} />
+      <Route path="/signin" element={<SignInModal checkRole={checkRole} />} />
       <Route path="/signup" element={<SignupWizard />} />
       <Route
         path="/dashboard"
@@ -167,22 +167,9 @@ const AppRoutes = () => {
         }
       />
       <Route path="/jobs">
-        <Route
-          path="/jobs/recommended"
-          element={
-            <ProtectiveWrapper>
-              <RecommendedPage userRole={role} />
-            </ProtectiveWrapper>
-          }
-        />
-        <Route
-          path="/jobs/:jobId"
-          element={
-            <ProtectiveWrapper>
-              <DetailPage userRole={role} />
-            </ProtectiveWrapper>
-          }
-        />
+        <Route index element={<JobHomePage />} />
+        <Route path="recommended" element={<RecommendedPage />} />
+        <Route path=":jobId" element={<JobDetailsPage />} />
       </Route>
       <Route
         path="/applications"
@@ -288,7 +275,6 @@ const AppRoutes = () => {
         path="/candidates/:id/contact"
         element={<ContactCandidate userRole={role} />}
       />
-      <Route path="/candidates/:id" element={<Candidates />} />
       <Route path="/reports/:id" element={<ViewReport userRole={role} />} />
       <Route path="/network" element={<NetworkPage />} />
       <Route path="/network/:id" element={<NetworkPage />} />
@@ -300,7 +286,6 @@ const AppRoutes = () => {
       <Route path="/connections/:id" element={<ConnectionsPage />} />
       <Route path="/public-profile/:id" element={<PublicProfile />} />
       <Route path="/loading" element={<LoadingScreen />} />
-
     </Routes>
   );
 };

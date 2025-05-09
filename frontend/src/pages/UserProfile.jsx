@@ -1,6 +1,7 @@
 import { useContext, useState, useEffect } from "react";
 import { DarkModeContext } from "@/context/DarkModeContext";
 import PropTypes from "prop-types";
+import ProfilePic from "../assets/default-profile.png";
 import {
   MapPin,
   Mail,
@@ -10,7 +11,6 @@ import {
   FileText,
   CheckCircle,
   Link as LinkIcon,
-  User as UserIcon,
   Edit,
   Save,
   X,
@@ -18,6 +18,8 @@ import {
   Trash2,
 } from "lucide-react";
 import Navbar from "src/components/job.page.component/ui/Navbar";
+import axios from "axios";
+import { capitalizeFirstLetter } from "src/utils/Capitalize";
 
 const ProfilePage = () => {
   const { isDarkMode } = useContext(DarkModeContext);
@@ -39,27 +41,44 @@ const ProfilePage = () => {
   const [portfolioForm, setPortfolioForm] = useState({});
 
   useEffect(() => {
-    // Fetch user data from API or import
-    import("@/data/user")
-      .then((module) => {
-        setUserData(module.default);
+    const fetchUserData = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/auth/profile`,
+          { withCredentials: true }
+        );
+        const data = response.data.user;
+        console.log(data);
+
+        setUserData(data);
         setPersonalForm({
-          name: module.default.name,
-          title: module.default.title,
-          summary: module.default.summary,
-          location: module.default.location,
-          email: module.default.email,
-          phone: module.default.phone,
-          countryCode: module.default.countryCode || "CMR",
-          avatar: module.default.avatar,
+          name: data.fullName || "N/A",
+          title: data.title || "N/A",
+          summary: data.about || "N/A",
+          location: data.location || "N/A",
+          email: data.email,
+          phone: data.phoneNumber || "N/A",
+          countryCode: data.phoneNumber || "CMR",
+          skills: data.skills || [],
+          certifications: data.certifications || [],
+          experiences: data.experiences || [],
+          avatar: data.profile || "",
+          ...data,
         });
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } finally {
         setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error loading user data:", error);
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchUserData();
   }, []);
+
+  useEffect(() => {
+    console.log("Personal form:", personalForm);
+  }, [personalForm]);
 
   // Toggle edit mode for a specific section
   const toggleEditMode = (section) => {
@@ -72,12 +91,12 @@ const ProfilePage = () => {
     if (editMode[section]) {
       if (section === "personal") {
         setPersonalForm({
-          name: userData.name,
-          title: userData.title,
-          summary: userData.summary,
-          location: userData.location,
+          name: userData.fullNnme,
+          title: userData.title || "N/A",
+          summary: userData.about || "N/A",
+          location: userData.location || "N/A",
           email: userData.email,
-          phone: userData.phone,
+          phone: userData.phonenumber || "N/A",
         });
       }
     }
@@ -283,70 +302,70 @@ const ProfilePage = () => {
             animate-fadeIn
           `}
         >
- {!editMode.personal ? (
-        <>
-          <div className="relative flex-shrink-0">
-            <img
-              src={userData.avatar}
-              alt="User Avatar"
-              className="w-32 h-32 rounded-full object-cover border-4 border-blue-500 shadow-inner"
-            />
-            {userData.status?.toLowerCase() === "available" && (
-              <span className="absolute bottom-0 right-0 inline-flex">
-                <span className="animate-ping absolute inline-flex h-5 w-5 rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex h-5 w-5 rounded-full bg-green-500 border-2 border-white dark:border-gray-800"></span>
-              </span>
-            )}
-          </div>
+          {!editMode.personal ? (
+            <>
+              <div className="relative flex-shrink-0">
+                <img
+                  src={userData.profile ?? ProfilePic}
+                  alt="User Avatar"
+                  className="w-32 h-32 rounded-full object-cover border-4 border-blue-500 shadow-inner"
+                />
+                {userData.status?.toLowerCase() === "available" && (
+                  <span className="absolute bottom-0 right-0 inline-flex">
+                    <span className="animate-ping absolute inline-flex h-5 w-5 rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex h-5 w-5 rounded-full bg-green-500 border-2 border-white dark:border-gray-800"></span>
+                  </span>
+                )}
+              </div>
 
-          <div className="flex-1 text-center sm:text-left">
-            <h1 className="flex items-center justify-center sm:justify-start text-4xl font-semibold gap-2">
-              <UserIcon className="w-7 h-7 text-blue-600 dark:text-blue-400" />
-              {userData.name}
-            </h1>
-            <p className="mt-1 text-lg text-gray-500 dark:text-gray-400">
-              {userData.title}
-            </p>
-            <p className="mt-2 text-sm font-medium text-green-500">
-              ● {userData.status}
-            </p>
+              <div className="flex-1 text-center sm:text-left">
+                <h1 className="flex items-center justify-center sm:justify-start text-4xl font-semibold gap-2">
+                  {/* <UserIcon className="w-7 h-7 text-blue-600 dark:text-blue-400" /> */}
+                  {userData.fullName}
+                </h1>
+                <p className="mt-1 text-lg text-gray-500 dark:text-gray-400">
+                  {capitalizeFirstLetter(userData.role) || "N/A"}
+                </p>
+                <p className="mt-2 text-sm font-medium text-green-500">
+                  ● {userData.status || "N/A"}
+                </p>
 
-            <button
-              onClick={() => toggleEditMode("personal")}
-              className={`mt-4 inline-flex items-center gap-2 px-5 py-2 rounded-md font-medium text-sm transition-shadow duration-200
-                ${isDarkMode
-                  ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md"
-                  : "bg-blue-100 hover:bg-blue-200 text-blue-800 shadow-sm"}
+                <button
+                  onClick={() => toggleEditMode("personal")}
+                  className={`mt-4 inline-flex items-center gap-2 px-5 py-2 rounded-md font-medium text-sm transition-shadow duration-200
+                ${
+                  isDarkMode
+                    ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md"
+                    : "bg-blue-100 hover:bg-blue-200 text-blue-800 shadow-sm"
+                }
               `}
-            >
-              <Edit className="w-4 h-4" />
-              Edit Profile
-            </button>
-          </div>
-        </>
-      ) : (
-        <div className="w-full">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-semibold">Edit Profile</h2>
-            <div className="flex gap-3">
-              
-              <button
-                onClick={savePersonalInfo}
-                className="flex items-center gap-2 px-4 py-2 rounded-md bg-green-600 hover:bg-green-700 text-white text-sm font-medium transition-colors"
-              >
-                <Save className="w-4 h-4" />
-                Save
-              </button>
-              <button
-                onClick={() => toggleEditMode("personal")}
-                className="flex items-center gap-2 px-4 py-2 rounded-md bg-gray-500 hover:bg-gray-600 text-white text-sm font-medium transition-colors"
-              >
-                <X className="w-4 h-4" />
-                Cancel
-              </button>
-            </div>
-          </div>
-          
+                >
+                  <Edit className="w-4 h-4" />
+                  Edit Profile
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="w-full">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-semibold">Edit Profile</h2>
+                <div className="flex gap-3">
+                  <button
+                    onClick={savePersonalInfo}
+                    className="flex items-center gap-2 px-4 py-2 rounded-md bg-green-600 hover:bg-green-700 text-white text-sm font-medium transition-colors"
+                  >
+                    <Save className="w-4 h-4" />
+                    Save
+                  </button>
+                  <button
+                    onClick={() => toggleEditMode("personal")}
+                    className="flex items-center gap-2 px-4 py-2 rounded-md bg-gray-500 hover:bg-gray-600 text-white text-sm font-medium transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                    Cancel
+                  </button>
+                </div>
+              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="mb-4">
@@ -388,7 +407,6 @@ const ProfilePage = () => {
                     Phone
                   </label>
                   <input
-                    
                     type="tel"
                     name="phone"
                     value={personalForm.phone}
@@ -513,27 +531,33 @@ const ProfilePage = () => {
               )}
 
               <ul className="flex flex-wrap gap-2 mt-2">
-                {userData.skills.map((skill, index) => (
-                  <li
-                    key={index}
-                    className={`px-3 py-1 rounded-full text-sm font-semibold shadow transition flex items-center
-                      ${
-                        isDarkMode
-                          ? "bg-blue-900 text-blue-300"
-                          : "bg-blue-100 text-blue-800"
-                      }`}
-                  >
-                    {skill}
-                    {editMode.skills && (
-                      <button
-                        onClick={() => removeSkill(index)}
-                        className="ml-2 text-red-400 hover:text-red-500"
+                {userData.skills
+                  ? userData.skills.map((skill, index) => (
+                      <li
+                        key={index}
+                        className={`px-3 py-1 rounded-full text-sm font-semibold shadow transition flex items-center
+          ${
+            isDarkMode
+              ? "bg-blue-900 text-blue-300"
+              : "bg-blue-100 text-blue-800"
+          }`}
                       >
-                        <X size={14} />
-                      </button>
+                        {skill}
+                        {editMode.skills && (
+                          <button
+                            onClick={() => removeSkill(index)}
+                            className="ml-2 text-red-400 hover:text-red-500"
+                          >
+                            <X size={14} />
+                          </button>
+                        )}
+                      </li>
+                    ))
+                  : editMode.skills && (
+                      <li className="text-sm text-gray-500 italic">
+                        No skills yet. Add a skill to get started.
+                      </li>
                     )}
-                  </li>
-                ))}
               </ul>
             </div>
 
@@ -580,26 +604,27 @@ const ProfilePage = () => {
               )}
 
               <ul className="flex flex-col gap-2 mt-2">
-                {userData.certifications.map((cert, index) => (
-                  <li
-                    key={index}
-                    className={`flex items-center justify-between text-sm pl-1
+                {userData.certifications &&
+                  userData.certifications.map((cert, index) => (
+                    <li
+                      key={index}
+                      className={`flex items-center justify-between text-sm pl-1
                       ${isDarkMode ? "text-blue-200" : "text-blue-800"}`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-blue-400 inline-block"></span>
-                      {cert}
-                    </div>
-                    {editMode.certifications && (
-                      <button
-                        onClick={() => removeCertification(index)}
-                        className="text-red-400 hover:text-red-500"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    )}
-                  </li>
-                ))}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-blue-400 inline-block"></span>
+                        {cert}
+                      </div>
+                      {editMode.certifications && (
+                        <button
+                          onClick={() => removeCertification(index)}
+                          className="text-red-400 hover:text-red-500"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
+                    </li>
+                  ))}
               </ul>
             </div>
           </section>
@@ -715,51 +740,52 @@ const ProfilePage = () => {
               </div>
             ) : (
               <>
-                {userData.experiences.map((exp) => (
-                  <div
-                    key={exp.id}
-                    className={`
+                {userData.experiences &&
+                  userData.experiences.map((exp) => (
+                    <div
+                      key={exp.id}
+                      className={`
                       mb-6 pb-6 border-b
                       ${isDarkMode ? "border-gray-700" : "border-blue-100"}
                       last:mb-0 last:pb-0 last:border-b-0
                     `}
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-xl font-semibold">{exp.role}</h3>
-                        <p className="text-gray-400">
-                          {exp.company} <span className="mx-1">|</span>{" "}
-                          {exp.duration}
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => startEditExperience(exp)}
-                          className={`p-1 rounded text-sm
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="text-xl font-semibold">{exp.role}</h3>
+                          <p className="text-gray-400">
+                            {exp.company} <span className="mx-1">|</span>{" "}
+                            {exp.duration}
+                          </p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => startEditExperience(exp)}
+                            className={`p-1 rounded text-sm
                             ${
                               isDarkMode
                                 ? "bg-gray-800 hover:bg-gray-700 text-blue-400"
                                 : "bg-blue-50 hover:bg-blue-100 text-blue-600"
                             }`}
-                        >
-                          <Edit size={16} />
-                        </button>
-                        <button
-                          onClick={() => removeExperience(exp.id)}
-                          className={`p-1 rounded text-sm
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button
+                            onClick={() => removeExperience(exp.id)}
+                            className={`p-1 rounded text-sm
                             ${
                               isDarkMode
                                 ? "bg-gray-800 hover:bg-gray-700 text-red-400"
                                 : "bg-red-50 hover:bg-red-100 text-red-600"
                             }`}
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       </div>
+                      <p className="mt-2 text-base">{exp.description}</p>
                     </div>
-                    <p className="mt-2 text-base">{exp.description}</p>
-                  </div>
-                ))}
+                  ))}
               </>
             )}
 
@@ -849,10 +875,11 @@ const ProfilePage = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {userData.portfolio.map((item) => (
-                  <div
-                    key={item.id}
-                    className={`
+                {userData.portfolio &&
+                  userData.portfolio.map((item) => (
+                    <div
+                      key={item.id}
+                      className={`
                       block rounded-xl overflow-hidden shadow-lg border transition
                       relative group
                       ${
@@ -861,57 +888,57 @@ const ProfilePage = () => {
                           : "bg-gray-100 hover:bg-blue-100 border-blue-100"
                       }
                           `}
-                  >
-                    <div className="relative">
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="w-full h-40 object-cover transition-transform duration-200 group-hover:scale-105"
-                      />
+                    >
+                      <div className="relative">
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="w-full h-40 object-cover transition-transform duration-200 group-hover:scale-105"
+                        />
 
-                      <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            startEditPortfolio(item);
-                          }}
-                          className="p-1 rounded bg-blue-600 text-white"
+                        <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              startEditPortfolio(item);
+                            }}
+                            className="p-1 rounded bg-blue-600 text-white"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              removePortfolioItem(item.id);
+                            }}
+                            className="p-1 rounded bg-red-600 text-white"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="p-4">
+                        <h3 className="text-lg font-semibold">{item.title}</h3>
+                        <a
+                          href={item.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:text-blue-400 text-sm flex items-center gap-1 mt-1"
+                          onClick={(e) => e.stopPropagation()}
                         >
-                          <Edit size={16} />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            removePortfolioItem(item.id);
-                          }}
-                          className="p-1 rounded bg-red-600 text-white"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                          <LinkIcon size={14} /> View Project
+                        </a>
                       </div>
                     </div>
-
-                    <div className="p-4">
-                      <h3 className="text-lg font-semibold">{item.title}</h3>
-                      <a
-                        href={item.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 hover:text-blue-400 text-sm flex items-center gap-1 mt-1"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <LinkIcon size={14} /> View Project
-                      </a>
-                    </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             )}
           </section>
         </div>
 
         <style>
-{`
+          {`
 .animate-fadeIn {
   animation: fadeIn 0.7s;
 }
@@ -920,7 +947,6 @@ const ProfilePage = () => {
   to { opacity: 1; transform: translateY(0);}
 }
 `}
-
         </style>
       </div>
     </div>

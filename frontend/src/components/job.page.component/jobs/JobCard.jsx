@@ -54,7 +54,7 @@ const JobCard = ({ job }) => {
             </Link>
           </h3>
           <span className="text-sm text-gray-500">
-            {timeAgo(job.createdAt)}
+            {timeAgo(job.updatedAt)}
           </span>
         </div>
 
@@ -133,6 +133,7 @@ JobCard.propTypes = {
     description: PropTypes.string.isRequired,
     tags: PropTypes.arrayOf(PropTypes.string).isRequired,
     salary: PropTypes.string,
+    updatedAt: PropTypes.string,
     applicationDeadline: PropTypes.string,
   }).isRequired,
 };

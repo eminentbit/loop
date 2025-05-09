@@ -76,14 +76,104 @@ enum JobStatus {
   WITHDRAWN
 }
 
+enum CountryCode {
+  DZ_213 // Algeria
+  AO_244 // Angola
+  BJ_229 // Benin
+  BW_267 // Botswana
+  BF_226 // Burkina Faso
+  BI_257 // Burundi
+  CM_237 // Cameroon
+  CV_238 // Cape Verde
+  CF_236 // Central African Republic
+  TD_235 // Chad
+  KM_269 // Comoros
+  CG_242 // Congo
+  CD_243 // Democratic Republic of the Congo
+  DJ_253 // Djibouti
+  EG_20 // Egypt
+  GQ_240 // Equatorial Guinea
+  ER_291 // Eritrea
+  ET_251 // Ethiopia
+  GA_241 // Gabon
+  GM_220 // Gambia
+  GH_233 // Ghana
+  GN_224 // Guinea
+  GW_245 // Guinea-Bissau
+  CI_225 // Ivory Coast
+  KE_254 // Kenya
+  LS_266 // Lesotho
+  LR_231 // Liberia
+  LY_218 // Libya
+  MG_261 // Madagascar
+  MW_265 // Malawi
+  ML_223 // Mali
+  MR_222 // Mauritania
+  MU_230 // Mauritius
+  MA_212 // Morocco
+  MZ_258 // Mozambique
+  NA_264 // Namibia
+  NE_227 // Niger
+  NG_234 // Nigeria
+  RW_250 // Rwanda
+  ST_239 // Sao Tome and Principe
+  SN_221 // Senegal
+  SC_248 // Seychelles
+  SL_232 // Sierra Leone
+  SO_252 // Somalia
+  ZA_27 // South Africa
+  SS_211 // South Sudan
+  SD_249 // Sudan
+  SZ_268 // Swaziland
+  TZ_255 // Tanzania
+  TG_228 // Togo
+  TN_216 // Tunisia
+  UG_256 // Uganda
+  ZM_260 // Zambia
+  ZW_263 // Zimbabwe
+}
+
+model Experience {
+  id            String    @id @default(uuid())
+  user          User      @relation(fields: [userId], references: [id])
+  userId        String
+  title         String
+  company       String
+  location      String?
+  startDate     DateTime
+  endDate       DateTime?
+  isCurrentRole Boolean   @default(false)
+  description   String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Certification {
+  id           String    @id @default(uuid())
+  user         User      @relation(fields: [userId], references: [id])
+  userId       String
+  name         String
+  issuer       String
+  issueDate    DateTime
+  expiryDate   DateTime?
+  credentialId String?
+  url          String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
 model User {
-  id        String  @id @default(uuid())
-  email     String  @unique
-  fullName  String  @map("full_name")
-  role      Role
-  password  String
-  is_active Boolean @default(true)
-  is_staff  Boolean @default(false)
+  id             String          @id @default(uuid())
+  email          String          @unique
+  fullName       String          @map("full_name")
+  role           Role
+  password       String
+  is_active      Boolean         @default(true)
+  is_staff       Boolean         @default(false)
+  experiences    Experience[]
+  certifications Certification[]
+  countryCode    CountryCode?
+  countryCodNum  Int?
 
   feeds         Feed[]    @relation("UserFeeds")
   comments      Comment[] @relation("UserComments")
@@ -277,6 +367,8 @@ model Feed {
   user            User      @relation("UserFeeds", fields: [userId], references: [id])
   userId          String
   type            FeedType
+  sharedFromId    Int?
+  sharedByUserId  String?
   title           String?
   content         String?
   image           String?

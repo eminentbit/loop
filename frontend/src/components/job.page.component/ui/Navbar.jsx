@@ -11,8 +11,9 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (sessionStorage.getItem("user")) {
-      setUser(JSON.parse(sessionStorage.getItem("user")));
+    const storedUser = sessionStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
     }
   }, []);
 

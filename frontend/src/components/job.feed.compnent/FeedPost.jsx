@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import DefaultImage from "../../assets/default-profile.png";
 import LikeButton from "../LikeButton";
 import axios from "axios";
+import ShareModal from "../ShareModal";
 
 export default function FeedPost({
   post,
@@ -18,6 +19,7 @@ export default function FeedPost({
   const [comments, setComments] = useState([]);
   const [isMe, setIsMe] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const postId = post.id;
@@ -93,7 +95,7 @@ export default function FeedPost({
     };
 
     checkIfMe();
-  });
+  }, [post.userId, post]);
 
   const handleSubmitReply = (commentId) => {
     if (!replyText.trim()) return;
@@ -123,12 +125,12 @@ export default function FeedPost({
       <div className="p-4 border-b border-gray-100 flex items-center">
         <img
           src={post.user.image ? post.user.image : DefaultImage}
-          alt={post.user.username}
+          alt={post.user.fullName}
           className="h-10 w-10 rounded-full mr-3"
         />
         <div>
           <h3 className="font-semibold text-gray-800">
-            {!isMe ? post.user.username : "You"}
+            {!isMe ? post.user.fullName : "You"}
           </h3>
           <p className="text-xs text-gray-500">
             {getFormattedDate(post.createdAt)}
@@ -221,11 +223,26 @@ export default function FeedPost({
           <span className="ml-2">Comment</span>
         </button>
 
-        <button className="flex items-center justify-center w-1/3 py-2 hover:bg-gray-50 rounded-md text-gray-700">
+        <button
+          type="button"
+          className="flex items-center justify-center w-1/3 py-2 hover:bg-gray-50 rounded-md text-gray-700"
+          onClick={() => {
+            setIsOpen(true);
+          }}
+        >
           <Share2 size={18} className="text-gray-500" />
           <span className="ml-2">Share</span>
         </button>
       </div>
+
+      {isOpen && (
+        <ShareModal
+          url={`${window.location}/feed?${post.id}`}
+          onClose={() => {
+            setIsOpen(false);
+          }}
+        />
+      )}
 
       {/* Comments Section */}
       {showComments && (

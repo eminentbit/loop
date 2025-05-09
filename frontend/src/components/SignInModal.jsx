@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import GoogleLogin from "./GoogleLogin";
 import FacebookLogin from "./FacebookLogin";
 
-function SignInModal({ setIsModalOpen, onClose }) {
+function SignInModal({ setIsModalOpen, onClose, checkRole }) {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -41,6 +41,7 @@ function SignInModal({ setIsModalOpen, onClose }) {
       if (setIsModalOpen) {
         setIsModalOpen(false);
       }
+      checkRole();
       navigate("/loading");
     } catch (error) {
       if (error.response) {
@@ -145,6 +146,7 @@ function SignInModal({ setIsModalOpen, onClose }) {
 SignInModal.propTypes = {
   setIsModalOpen: PropTypes.func.isRequired,
   onClose: PropTypes.func,
+  checkRole: PropTypes.func,
 };
 
 export default SignInModal;

@@ -2,44 +2,42 @@ import { useState, useEffect } from "react";
 // import { jobsData } from "src/data/jobData";
 import FeedPost from "./FeedPost";
 import Navbar from "../job.page.component/ui/Navbar";
-import { PlusCircle, Send } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import axios from "axios";
+import CreatePost from "../CreatePost";
 
 export default function Feed() {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [newPostContent, setNewPostContent] = useState("");
+  // const [newPostContent, setNewPostContent] = useState("");
   // eslint-disable-next-line no-unused-vars
   const [error, setError] = useState(null);
   const [isCreatingPost, setIsCreatingPost] = useState(false);
 
+  const fetchPosts = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/feed/posts/`,
+        { credentials: "include" }
+      );
+      if (!response.ok) throw new Error("Failed to fetch posts.");
+      const data = await response.json();
+
+      setPosts(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    // Simulate API call with a delay
-    const fetchPosts = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/feed/posts/`,
-          { credentials: "include" }
-        );
-        if (!response.ok) throw new Error("Failed to fetch posts.");
-        const data = await response.json();
-
-        setPosts(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchPosts();
   }, []);
 
   const handleComment = (postId, comment) => {
-    // In a real app, this would be an API call
-    // await fetch(`/api/posts/${postId}/comments`, { method: 'POST', body: JSON.stringify({ content: comment }) })
     setPosts(
       posts.map((post) =>
         post.id === postId
@@ -50,7 +48,7 @@ export default function Feed() {
                 {
                   id: Date.now().toString(),
                   author: {
-                    name: "Current User",
+                    name: post.username,
                     // avatar: "/placeholder.svg?height=40&width=40",
                   },
                   content: comment,
@@ -137,40 +135,40 @@ export default function Feed() {
     );
   };
 
-  const handleCreatePost = () => {
-    const postFeed = async () => {
-      const postData = {
-        type: "text",
-        content: newPostContent,
-      };
+  // const handleCreatePost = () => {
+  //   const postFeed = async () => {
+  //     const postData = {
+  //       type: "text",
+  //       content: newPostContent,
+  //     };
 
-      try {
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/feed/posts/create/`,
-          postData,
-          {
-            withCredentials: true,
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+  //     try {
+  //       const response = await axios.post(
+  //         `${import.meta.env.VITE_API_URL}/feed/posts/create/`,
+  //         postData,
+  //         {
+  //           withCredentials: true,
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //         }
+  //       );
 
-        console.log(response.data);
+  //       console.log(response.data);
 
-        if (response.status === 201) {
-          setNewPostContent("");
-          // refreshPosts();
-        }
-      } catch (error) {
-        console.log("Error", error);
-      }
-    };
+  //       if (response.status === 201) {
+  //         setNewPostContent("");
+  //         fetchPosts();
+  //       }
+  //     } catch (error) {
+  //       console.log("Error", error);
+  //     }
+  //   };
 
-    postFeed();
-    setNewPostContent("");
-    setIsCreatingPost(false);
-  };
+  //   postFeed();
+  //   setNewPostContent("");
+  //   setIsCreatingPost(false);
+  // };
 
   return (
     <>
@@ -194,7 +192,7 @@ export default function Feed() {
           </button>
         </div>
 
-        {isCreatingPost && (
+        {/* {isCreatingPost && (
           <div>
             <div className="mt-6 bg-white p-4 rounded-lg shadow">
               <div className="mb-2 font-medium text-gray-700">
@@ -240,7 +238,9 @@ export default function Feed() {
               </button>
             </div>
           </div>
-        )}
+        )} */}
+
+        {isCreatingPost && <CreatePost refreshPosts={fetchPosts} />}
 
         {isLoading ? (
           <div className="flex justify-center my-12">

@@ -34,7 +34,7 @@ const JobsPage = ({ userRole }) => {
     const fetchJobs = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/jobs/`,
+          `${import.meta.env.VITE_API_URL}/jobs/`, // http://localhost:3000/api/jobs
           {
             withCredentials: true,
             // headers: {

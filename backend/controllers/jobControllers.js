@@ -41,7 +41,7 @@ export const createJob = async (req, res) => {
         experience,
         company,
         isRemote,
-        type: jobType,
+        jobType,
         applicationDeadline: new Date(applicationDeadline),
         skills,
         requirements,

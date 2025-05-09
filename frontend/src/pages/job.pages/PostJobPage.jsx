@@ -34,7 +34,7 @@ const PostJobPage = () => {
 
       setUser(storedUser ? JSON.parse(storedUser) : null);
       if (!storedUser) {
-        navigate("/login");
+        navigate("/signin");
       }
       // Check if the user is a jobseeker
       if (JSON.parse(storedUser).role === "jobseeker") {
