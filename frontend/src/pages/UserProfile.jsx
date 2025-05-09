@@ -306,7 +306,11 @@ const ProfilePage = () => {
             <>
               <div className="relative flex-shrink-0">
                 <img
-                  src={userData.profile ?? ProfilePic}
+                  src={
+                    userData.profile != "undefined"
+                      ? userData.profile
+                      : ProfilePic
+                  }
                   alt="User Avatar"
                   className="w-32 h-32 rounded-full object-cover border-4 border-blue-500 shadow-inner"
                 />
