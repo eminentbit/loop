@@ -21,19 +21,19 @@ const ProtectiveWrapper = ({ children }) => {
           setIsAuthenticated(true);
         } else {
           setIsAuthenticated(false);
+          return;
         }
       } catch (error) {
         console.error("Session check failed", error);
         setIsAuthenticated(false);
       }
+      const storedSession = sessionStorage.getItem("user");
+
+      if (storedSession != "undefined") {
+        setIsAuthenticated(true);
+        return;
+      }
     };
-
-    const storedSession = sessionStorage.getItem("user");
-
-    if (storedSession != "undefined") {
-      setIsAuthenticated(true);
-      return;
-    }
 
     checkSession();
   }, []);

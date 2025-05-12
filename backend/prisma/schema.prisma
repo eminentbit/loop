@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,6 +5,351 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model Experience {
+  id            String    @id @default(uuid())
+  userId        String
+  title         String
+  company       String
+  location      String?
+  startDate     DateTime
+  endDate       DateTime?
+  isCurrentRole Boolean   @default(false)
+  description   String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  user          User      @relation(fields: [userId], references: [id])
+}
+
+model Certification {
+  id           String    @id @default(uuid())
+  userId       String
+  name         String
+  issuer       String
+  issueDate    DateTime
+  expiryDate   DateTime?
+  credentialId String?
+  url          String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  user         User      @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id                      String                 @id @default(uuid())
+  email                   String                 @unique
+  fullName                String                 @map("full_name")
+  role                    Role
+  password                String
+  is_active               Boolean                @default(true)
+  is_staff                Boolean                @default(false)
+  companyName             String?                @map("company_name")
+  companyRole             String?                @map("company_role")
+  companyWebsite          String?                @map("company_website")
+  companyDescription      String?                @map("company_description")
+  companyLogo             String?
+  industry                String?
+  companySize             String?                @map("company_size")
+  additionalInfo          String?
+  currentJobTitle         String?                @map("current_job_title")
+  experienceLevel         String?                @map("experience_level")
+  careerInterests         String?                @map("career_interests")
+  locationPreference      String?                @map("location_preference")
+  resume                  String?
+  portfolio               String?
+  socialLinks             String?                @map("social_links")
+  about                   String?
+  phoneNumber             String?                @map("phone_number")
+  githubProfile           String?                @map("github_profile")
+  linkedinProfile         String?                @map("linkedin_profile")
+  twitterProfile          String?                @map("twitter_profile")
+  dribbbleProfile         String?                @map("dribbble_profile")
+  behanceProfile          String?                @map("behance_profile")
+  website                 String?
+  blog                    String?
+  youtubeChannel          String?                @map("youtube_channel")
+  tiktokProfile           String?                @map("tiktok_profile")
+  facebookProfile         String?                @map("facebook_profile")
+  instagramProfile        String?                @map("instagram_profile")
+  telegramProfile         String?                @map("telegram_profile")
+  discordProfile          String?                @map("discord_profile")
+  redditProfile           String?                @map("reddit_profile")
+  quoraProfile            String?                @map("quora_profile")
+  mediumProfile           String?                @map("medium_profile")
+  devtoProfile            String?                @map("devto_profile")
+  stackoverflowProfile    String?                @map("stackoverflow_profile")
+  createdAt               DateTime               @default(now())
+  updatedAt               DateTime               @updatedAt
+  primarySkills           String[]               @map("primary_skills")
+  countryCodNum           Int?
+  countryCode             CountryCode?
+  certifications          Certification[]
+  comments                Comment[]              @relation("UserComments")
+  Enrollment              Enrollment[]
+  organizedEvents         Event[]
+  experiences             Experience[]
+  feeds                   Feed[]                 @relation("UserFeeds")
+  followingSet            Follow[]               @relation("Following")
+  followersSet            Follow[]               @relation("Followers")
+  Job                     Job[]
+  JobApplication          JobApplication[]
+  Notification            Notification[]
+  NotificationSettings    NotificationSettings[]
+  pages                   Page[]
+  profile                 Profile?
+  reportsMade             Report[]               @relation("UserReports")
+  Streak                  Streak[]
+  newsletterSubscriptions Subscriber[]
+  likedComments           Comment[]              @relation("CommentLikes")
+  likedPosts              Feed[]                 @relation("postLikes")
+}
+
+model Profile {
+  id       String  @id @default(uuid())
+  userId   String  @unique
+  avatar   String?
+  verified Boolean @default(false)
+  user     User    @relation(fields: [userId], references: [id])
+}
+
+model Follow {
+  id          String   @id @default(uuid())
+  followerId  String
+  followingId String
+  created     DateTime @default(now())
+  follower    User     @relation("Following", fields: [followerId], references: [id])
+  following   User     @relation("Followers", fields: [followingId], references: [id])
+
+  @@unique([followerId, followingId])
+}
+
+model Page {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  content     String
+  authorId    String?
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  author      User?    @relation(fields: [authorId], references: [id])
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  startTime   DateTime
+  endTime     DateTime
+  location    String?
+  organizerId String?
+  isPublic    Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  organizer   User?    @relation(fields: [organizerId], references: [id])
+}
+
+model Subscriber {
+  id           String       @id @default(uuid())
+  email        String       @unique
+  userId       String?
+  subscribedAt DateTime     @default(now())
+  user         User?        @relation(fields: [userId], references: [id])
+  newsletters  Newsletter[] @relation("NewsletterSubscribers")
+}
+
+model Newsletter {
+  id          String       @id @default(uuid())
+  subject     String
+  body        String
+  sendDate    DateTime
+  isSent      Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  subscribers Subscriber[] @relation("NewsletterSubscribers")
+}
+
+model Course {
+  id          String       @id @default(uuid())
+  title       String
+  imageUrl    String
+  enrollments Enrollment[]
+}
+
+model Enrollment {
+  id           String  @id @default(uuid())
+  userId       String
+  courseId     String
+  completed    Boolean @default(false)
+  hoursSpent   Int     @default(0)
+  quizzesTaken Int     @default(0)
+  course       Course  @relation(fields: [courseId], references: [id])
+  user         User    @relation(fields: [userId], references: [id])
+}
+
+model Streak {
+  id     String  @id @default(uuid())
+  userId String
+  day    Weekday
+  active Boolean @default(false)
+  user   User    @relation(fields: [userId], references: [id])
+}
+
+model Job {
+  id                  String           @id @default(uuid())
+  title               String
+  company             String
+  description         String
+  salary              SalaryRange
+  postedAt            DateTime         @default(now())
+  applicationLink     String?
+  benefits            String[]
+  companyAddress      String?
+  companyDescription  String?
+  companyEmail        String?
+  companyIndustry     String?
+  companyLogo         String?
+  companyPhone        String?
+  companySize         String?
+  companyWebsite      String?
+  department          String?
+  experience          String?
+  isRemote            Boolean          @default(false)
+  requirements        String[]
+  responsibilities    String[]
+  skills              String[]
+  updatedAt           DateTime?        @updatedAt
+  applicationDeadline DateTime?
+  jobType             JobType
+  location            String?
+  userId              String
+  user                User             @relation(fields: [userId], references: [id])
+  JobApplication      JobApplication[]
+}
+
+model Feed {
+  id              Int       @id @default(autoincrement())
+  userId          String
+  type            FeedType
+  title           String?
+  content         String?
+  image           String?
+  videoUrl        String?
+  eventDate       DateTime?
+  liveUrl         String?
+  commentsCount   Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  isBanned        Boolean   @default(false)
+  isBlocked       Boolean   @default(false)
+  isDeactivated   Boolean   @default(false)
+  isDeleted       Boolean   @default(false)
+  isDeletedByUser Boolean   @default(false)
+  isFlagged       Boolean   @default(false)
+  isPublic        Boolean   @default(true)
+  isReported      Boolean   @default(false)
+  isSpam          Boolean   @default(false)
+  isSuspended     Boolean   @default(false)
+  likesCount      Int       @default(0)
+  sharedByUserId  String?
+  sharedFromId    Int?
+  comments        Comment[]
+  user            User      @relation("UserFeeds", fields: [userId], references: [id])
+  reports         Report[]  @relation("FeedReports")
+  likes           User[]    @relation("postLikes")
+}
+
+model Comment {
+  id            Int      @id @default(autoincrement())
+  feedId        Int
+  userId        String
+  reported      Boolean  @default(false)
+  content       String
+  createdAt     DateTime @default(now())
+  reportedCount Int      @default(0)
+  isDeleted     Boolean  @default(false)
+  likedByUser   Boolean  @default(false)
+  feed          Feed     @relation(fields: [feedId], references: [id])
+  user          User     @relation("UserComments", fields: [userId], references: [id])
+  reports       Report[] @relation("CommentReports")
+  likes         User[]   @relation("CommentLikes")
+}
+
+model Report {
+  id          Int        @id @default(autoincrement())
+  feedId      Int?
+  commentId   Int?
+  reporterId  String
+  reason      ReportType
+  description String?
+  createdAt   DateTime   @default(now())
+  resolved    Boolean    @default(false)
+  isDeleted   Boolean    @default(false)
+  comment     Comment?   @relation("CommentReports", fields: [commentId], references: [id])
+  feed        Feed?      @relation("FeedReports", fields: [feedId], references: [id])
+  reporter    User       @relation("UserReports", fields: [reporterId], references: [id])
+
+  @@unique([commentId, reporterId])
+  @@unique([feedId, reporterId])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  type      String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model NotificationSettings {
+  id                String  @id @default(uuid())
+  userId            String
+  emailAlerts       Boolean @default(true)
+  pushNotifications Boolean @default(true)
+  smsAlerts         Boolean @default(false)
+  user              User    @relation(fields: [userId], references: [id])
+}
+
+model JobApplication {
+  id                   String    @id @default(uuid())
+  jobId                String
+  userId               String
+  status               JobStatus @default(PENDING)
+  resume               String?
+  coverLetter          String?
+  appliedAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  isDeleted            Boolean   @default(false)
+  isShortlisted        Boolean   @default(false)
+  isAccepted           Boolean   @default(false)
+  isRejected           Boolean   @default(false)
+  isWithdrawn          Boolean   @default(false)
+  isArchived           Boolean   @default(false)
+  isFlagged            Boolean   @default(false)
+  isReported           Boolean   @default(false)
+  isSpam               Boolean   @default(false)
+  isBlocked            Boolean   @default(false)
+  isSuspended          Boolean   @default(false)
+  isBanned             Boolean   @default(false)
+  isDeactivated        Boolean   @default(false)
+  isDeletedByUser      Boolean   @default(false)
+  isDeletedByAdmin     Boolean   @default(false)
+  isDeletedBySystem    Boolean   @default(false)
+  isDeletedByModerator Boolean   @default(false)
+  isDeletedByOwner     Boolean   @default(false)
+  isDeletedByCompany   Boolean   @default(false)
+  isDeletedByRecruiter Boolean   @default(false)
+  isDeletedByInvestor  Boolean   @default(false)
+  isDeletedByJobseeker Boolean   @default(false)
+  email                String    @map("email")
+  fullName             String
+  cv                   String?
+  message              String?
+  job                  Job       @relation(fields: [jobId], references: [id])
+  user                 User      @relation(fields: [userId], references: [id])
 }
 
 enum Role {
@@ -44,11 +383,11 @@ enum JobType {
 }
 
 enum SalaryRange {
+  LOW
+  MEDIUM
+  HIGH
+  VERY_HIGH
   VERY_LOW
-  LOW // LOW = "< $1000"
-  MEDIUM // "$1000 - $3000"
-  HIGH // "$3000 - $6000"
-  VERY_HIGH // "> $6000"
   ULTRA
 }
 
@@ -77,411 +416,58 @@ enum JobStatus {
 }
 
 enum CountryCode {
-  DZ_213 // Algeria
-  AO_244 // Angola
-  BJ_229 // Benin
-  BW_267 // Botswana
-  BF_226 // Burkina Faso
-  BI_257 // Burundi
-  CM_237 // Cameroon
-  CV_238 // Cape Verde
-  CF_236 // Central African Republic
-  TD_235 // Chad
-  KM_269 // Comoros
-  CG_242 // Congo
-  CD_243 // Democratic Republic of the Congo
-  DJ_253 // Djibouti
-  EG_20 // Egypt
-  GQ_240 // Equatorial Guinea
-  ER_291 // Eritrea
-  ET_251 // Ethiopia
-  GA_241 // Gabon
-  GM_220 // Gambia
-  GH_233 // Ghana
-  GN_224 // Guinea
-  GW_245 // Guinea-Bissau
-  CI_225 // Ivory Coast
-  KE_254 // Kenya
-  LS_266 // Lesotho
-  LR_231 // Liberia
-  LY_218 // Libya
-  MG_261 // Madagascar
-  MW_265 // Malawi
-  ML_223 // Mali
-  MR_222 // Mauritania
-  MU_230 // Mauritius
-  MA_212 // Morocco
-  MZ_258 // Mozambique
-  NA_264 // Namibia
-  NE_227 // Niger
-  NG_234 // Nigeria
-  RW_250 // Rwanda
-  ST_239 // Sao Tome and Principe
-  SN_221 // Senegal
-  SC_248 // Seychelles
-  SL_232 // Sierra Leone
-  SO_252 // Somalia
-  ZA_27 // South Africa
-  SS_211 // South Sudan
-  SD_249 // Sudan
-  SZ_268 // Swaziland
-  TZ_255 // Tanzania
-  TG_228 // Togo
-  TN_216 // Tunisia
-  UG_256 // Uganda
-  ZM_260 // Zambia
-  ZW_263 // Zimbabwe
-}
-
-model Experience {
-  id            String    @id @default(uuid())
-  user          User      @relation(fields: [userId], references: [id])
-  userId        String
-  title         String
-  company       String
-  location      String?
-  startDate     DateTime
-  endDate       DateTime?
-  isCurrentRole Boolean   @default(false)
-  description   String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-}
-
-model Certification {
-  id           String    @id @default(uuid())
-  user         User      @relation(fields: [userId], references: [id])
-  userId       String
-  name         String
-  issuer       String
-  issueDate    DateTime
-  expiryDate   DateTime?
-  credentialId String?
-  url          String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-}
-
-model User {
-  id             String          @id @default(uuid())
-  email          String          @unique
-  fullName       String          @map("full_name")
-  role           Role
-  password       String
-  is_active      Boolean         @default(true)
-  is_staff       Boolean         @default(false)
-  experiences    Experience[]
-  certifications Certification[]
-  countryCode    CountryCode?
-  countryCodNum  Int?
-
-  feeds         Feed[]    @relation("UserFeeds")
-  comments      Comment[] @relation("UserComments")
-  likedPosts    Feed[]    @relation("postLikes")
-  likedComments Comment[] @relation("CommentLikes")
-  reportsMade   Report[]  @relation("UserReports")
-
-  // Recruiter-specific
-  companyName        String? @map("company_name")
-  companyRole        String? @map("company_role")
-  companyWebsite     String? @map("company_website")
-  companyDescription String? @map("company_description")
-  companyLogo        String?
-  industry           String?
-  companySize        String? @map("company_size")
-  additionalInfo     String?
-
-  // Jobseeker/Investor-specific
-  currentJobTitle    String?  @map("current_job_title")
-  experienceLevel    String?  @map("experience_level")
-  primarySkills      String[] @map("primary_skills")
-  careerInterests    String?  @map("career_interests")
-  locationPreference String?  @map("location_preference")
-
-  resume               String?
-  portfolio            String?
-  socialLinks          String? @map("social_links")
-  about                String?
-  phoneNumber          String? @map("phone_number")
-  githubProfile        String? @map("github_profile")
-  linkedinProfile      String? @map("linkedin_profile")
-  twitterProfile       String? @map("twitter_profile")
-  dribbbleProfile      String? @map("dribbble_profile")
-  behanceProfile       String? @map("behance_profile")
-  website              String?
-  blog                 String?
-  youtubeChannel       String? @map("youtube_channel")
-  tiktokProfile        String? @map("tiktok_profile")
-  facebookProfile      String? @map("facebook_profile")
-  instagramProfile     String? @map("instagram_profile")
-  telegramProfile      String? @map("telegram_profile")
-  discordProfile       String? @map("discord_profile")
-  redditProfile        String? @map("reddit_profile")
-  quoraProfile         String? @map("quora_profile")
-  mediumProfile        String? @map("medium_profile")
-  devtoProfile         String? @map("devto_profile")
-  stackoverflowProfile String? @map("stackoverflow_profile")
-
-  profile                 Profile?
-  pages                   Page[]
-  organizedEvents         Event[]
-  newsletterSubscriptions Subscriber[]
-  followersSet            Follow[]     @relation("Followers")
-  followingSet            Follow[]     @relation("Following")
-
-  createdAt            DateTime               @default(now())
-  updatedAt            DateTime               @updatedAt
-  Enrollment           Enrollment[]
-  Streak               Streak[]
-  Notification         Notification[]
-  NotificationSettings NotificationSettings[]
-  JobApplication       JobApplication[]
-  Job                  Job[]
-}
-
-model Profile {
-  id       String  @id @default(uuid())
-  user     User    @relation(fields: [userId], references: [id])
-  userId   String  @unique
-  avatar   String?
-  verified Boolean @default(false)
-}
-
-model Follow {
-  id          String   @id @default(uuid())
-  follower    User     @relation("Following", fields: [followerId], references: [id])
-  following   User     @relation("Followers", fields: [followingId], references: [id])
-  followerId  String
-  followingId String
-  created     DateTime @default(now())
-
-  @@unique([followerId, followingId])
-}
-
-model Page {
-  id          String   @id @default(uuid())
-  title       String
-  slug        String   @unique
-  content     String
-  author      User?    @relation(fields: [authorId], references: [id])
-  authorId    String?
-  isPublished Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Event {
-  id          String   @id @default(uuid())
-  title       String
-  description String
-  startTime   DateTime
-  endTime     DateTime
-  location    String?
-  organizer   User?    @relation(fields: [organizerId], references: [id])
-  organizerId String?
-  isPublic    Boolean  @default(true)
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-}
-
-model Subscriber {
-  id           String       @id @default(uuid())
-  email        String       @unique
-  user         User?        @relation(fields: [userId], references: [id])
-  userId       String?
-  subscribedAt DateTime     @default(now())
-  newsletters  Newsletter[] @relation("NewsletterSubscribers")
-}
-
-model Newsletter {
-  id          String       @id @default(uuid())
-  subject     String
-  body        String
-  sendDate    DateTime
-  isSent      Boolean      @default(false)
-  subscribers Subscriber[] @relation("NewsletterSubscribers")
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-}
-
-model Course {
-  id          String       @id @default(uuid())
-  title       String
-  imageUrl    String
-  enrollments Enrollment[]
-}
-
-model Enrollment {
-  id           String  @id @default(uuid())
-  user         User    @relation(fields: [userId], references: [id])
-  userId       String
-  course       Course  @relation(fields: [courseId], references: [id])
-  courseId     String
-  completed    Boolean @default(false)
-  hoursSpent   Int     @default(0)
-  quizzesTaken Int     @default(0)
-}
-
-model Streak {
-  id     String  @id @default(uuid())
-  user   User    @relation(fields: [userId], references: [id])
-  userId String
-  day    Weekday
-  active Boolean @default(false)
-}
-
-model Job {
-  id                  String           @id @default(uuid())
-  title               String
-  company             String
-  userId              String
-  user                User             @relation(fields: [userId], references: [id])
-  description         String
-  location            String?
-  jobType             JobType
-  salary              SalaryRange
-  applicationDeadline DateTime?
-  experience          String?
-  skills              String[]
-  companyLogo         String?
-  companyWebsite      String?
-  companyEmail        String?
-  companyPhone        String?
-  companyAddress      String?
-  companySize         String?
-  companyIndustry     String?
-  companyDescription  String?
-  isRemote            Boolean          @default(false)
-  requirements        String[]
-  responsibilities    String[]
-  benefits            String[]
-  applicationLink     String?
-  department          String?
-  postedAt            DateTime         @default(now())
-  updatedAt           DateTime?        @updatedAt
-  JobApplication      JobApplication[]
-}
-
-model Feed {
-  id              Int       @id @default(autoincrement())
-  user            User      @relation("UserFeeds", fields: [userId], references: [id])
-  userId          String
-  type            FeedType
-  sharedFromId    Int?
-  sharedByUserId  String?
-  title           String?
-  content         String?
-  image           String?
-  videoUrl        String?
-  eventDate       DateTime?
-  liveUrl         String?
-  likes           User[]    @relation("postLikes")
-  likesCount      Int       @default(0)
-  isPublic        Boolean   @default(true)
-  isDeleted       Boolean   @default(false)
-  isReported      Boolean   @default(false)
-  isFlagged       Boolean   @default(false)
-  isSpam          Boolean   @default(false)
-  isBlocked       Boolean   @default(false)
-  isSuspended     Boolean   @default(false)
-  isBanned        Boolean   @default(false)
-  isDeactivated   Boolean   @default(false)
-  isDeletedByUser Boolean   @default(false)
-  comments        Comment[]
-  commentsCount   Int       @default(0)
-  reports         Report[]  @relation("FeedReports")
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-}
-
-model Comment {
-  id            Int      @id @default(autoincrement())
-  feed          Feed     @relation(fields: [feedId], references: [id])
-  feedId        Int
-  user          User     @relation("UserComments", fields: [userId], references: [id])
-  userId        String
-  likes         User[]   @relation("CommentLikes")
-  likedByUser   Boolean  @default(false)
-  reported      Boolean  @default(false)
-  content       String
-  createdAt     DateTime @default(now())
-  reportedCount Int      @default(0)
-  isDeleted     Boolean  @default(false)
-  reports       Report[] @relation("CommentReports")
-}
-
-model Report {
-  id          Int        @id @default(autoincrement())
-  feed        Feed?      @relation("FeedReports", fields: [feedId], references: [id])
-  feedId      Int?
-  comment     Comment?   @relation("CommentReports", fields: [commentId], references: [id])
-  commentId   Int?
-  reporter    User       @relation("UserReports", fields: [reporterId], references: [id])
-  reporterId  String
-  reason      ReportType
-  description String?
-  createdAt   DateTime   @default(now())
-  resolved    Boolean    @default(false)
-  isDeleted   Boolean    @default(false)
-
-  @@unique([commentId, reporterId])
-  @@unique([feedId, reporterId])
-}
-
-model Notification {
-  id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
-  type      String
-  message   String
-  isRead    Boolean  @default(false)
-  createdAt DateTime @default(now())
-}
-
-model NotificationSettings {
-  id                String  @id @default(uuid())
-  user              User    @relation(fields: [userId], references: [id])
-  userId            String
-  emailAlerts       Boolean @default(true)
-  pushNotifications Boolean @default(true)
-  smsAlerts         Boolean @default(false)
-}
-
-model JobApplication {
-  id                   String    @id @default(uuid())
-  job                  Job       @relation(fields: [jobId], references: [id])
-  jobId                String
-  user                 User      @relation(fields: [userId], references: [id])
-  userId               String
-  fullName             String
-  email                String    @map("email")
-  status               JobStatus @default(PENDING)
-  resume               String?
-  message              String?
-  cv                   String?
-  coverLetter          String?
-  appliedAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
-  isDeleted            Boolean   @default(false)
-  isShortlisted        Boolean   @default(false)
-  isAccepted           Boolean   @default(false)
-  isRejected           Boolean   @default(false)
-  isWithdrawn          Boolean   @default(false)
-  isArchived           Boolean   @default(false)
-  isFlagged            Boolean   @default(false)
-  isReported           Boolean   @default(false)
-  isSpam               Boolean   @default(false)
-  isBlocked            Boolean   @default(false)
-  isSuspended          Boolean   @default(false)
-  isBanned             Boolean   @default(false)
-  isDeactivated        Boolean   @default(false)
-  isDeletedByUser      Boolean   @default(false)
-  isDeletedByAdmin     Boolean   @default(false)
-  isDeletedBySystem    Boolean   @default(false)
-  isDeletedByModerator Boolean   @default(false)
-  isDeletedByOwner     Boolean   @default(false)
-  isDeletedByCompany   Boolean   @default(false)
-  isDeletedByRecruiter Boolean   @default(false)
-  isDeletedByInvestor  Boolean   @default(false)
-  isDeletedByJobseeker Boolean   @default(false)
+  DZ_213
+  AO_244
+  BJ_229
+  BW_267
+  BF_226
+  BI_257
+  CM_237
+  CV_238
+  CF_236
+  TD_235
+  KM_269
+  CG_242
+  CD_243
+  DJ_253
+  EG_20
+  GQ_240
+  ER_291
+  ET_251
+  GA_241
+  GM_220
+  GH_233
+  GN_224
+  GW_245
+  CI_225
+  KE_254
+  LS_266
+  LR_231
+  LY_218
+  MG_261
+  MW_265
+  ML_223
+  MR_222
+  MU_230
+  MA_212
+  MZ_258
+  NA_264
+  NE_227
+  NG_234
+  RW_250
+  ST_239
+  SN_221
+  SC_248
+  SL_232
+  SO_252
+  ZA_27
+  SS_211
+  SD_249
+  SZ_268
+  TZ_255
+  TG_228
+  TN_216
+  UG_256
+  ZM_260
+  ZW_263
 }
