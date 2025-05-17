@@ -12,6 +12,8 @@ import feedRoutes from "./routes/feedRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import jobRoutes from "./routes/jobRoutes.js";
 import applicationRoutes from "./routes/applicationRoutes.js";
+import limiter from "./middlewares/limiter.js";
+import helmet from "helmet";
 
 dotenv.config();
 const PORT = process.env.PORT || 8000;
@@ -31,7 +33,10 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
-app.use(cookieParser()); // allow cookie parsing
+app.use(cookieParser());
+app.use(helmet());
+
+app.use("/", limiter); // Rate limiter
 
 // Routes
 app.use("/api/auth", authRoutes);

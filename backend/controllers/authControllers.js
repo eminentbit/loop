@@ -58,13 +58,15 @@ export const register = async (req, res) => {
     // Send the verification email
     const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    transporter.sendMail({
+      from: process.env.SENDER_EMAIL,
       to: email,
       subject: "Verify Your Email",
       html: `
         <p>Click the link to verify your email:</p>
         <p><a href="${verificationUrl}" target="_blank" style="color: #1a73e8;">Verify Email</a></p>
+        <p>Or you can copy the link below:</p>
+        <a href="${verificationUrl}">${verificationUrl}</p>
         <p>This link will expire in 24 hours.</p>
       `,
     });
@@ -237,7 +239,22 @@ export const verifyEmail = async (req, res) => {
     // Set login token
     generateTokenAndSetCookie(res, user.id);
 
-    res.status(200).json({
+    // Send welcome email
+    transporter.sendMail({
+      from: process.env.SENDER_EMAIL,
+      to: email,
+      subject: "Welcome to loopos!",
+      html: `
+      <h2>Welcome to loopos, ${fullName}!</h2>
+      <p>Thank you for joining our community. Your account has been successfully verified.</p>
+      <p>You can now log in and start exploring all our features.</p>
+      <p>If you have any questions, feel free to reach out to our support team.</p>
+      <p>Best regards,</p>
+      <p>The loopos Team</p>
+      `,
+    });
+
+    return res.status(200).json({
       message: "Email verified successfully. You are now logged in.",
       user: {
         id: user.id,

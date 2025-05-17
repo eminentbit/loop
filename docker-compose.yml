@@ -30,6 +30,16 @@ services:
       timeout: 10s
       retries: 3
 
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    environment:
+      - REDIS_PASSWORD=mjlsbkCh2z8Ft63
+    command: ["redis-server", "--requirepass", "mjlsbkCh2z8Ft63"]
+
   reverse-proxy:
     image: nginx:latest
     ports:
@@ -45,3 +55,4 @@ services:
 volumes:
   frontend_node_modules:
   backend_node_modules:
+  redis_data:
