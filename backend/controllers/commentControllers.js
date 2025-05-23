@@ -21,6 +21,7 @@ export const listComments = async (req, res) => {
         user: {
           select: {
             fullName: true,
+            profile: true,
           },
         },
       },
@@ -58,6 +59,14 @@ export const addComment = async (req, res) => {
         content,
         feed: { connect: { id: parseInt(postId) } },
         user: { connect: { id: userId } },
+      },
+      include: {
+        user: {
+          select: {
+            fullName: true,
+            profile: true, // Adjust this field name if different in your schema
+          },
+        },
       },
     });
 

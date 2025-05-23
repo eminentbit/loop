@@ -4,6 +4,7 @@ import transporter from "../utils/transporter.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 import dotenv from "dotenv";
 import prisma from "../lib/prisma.js";
+import { sendVerificationEmail, sendWelcomeEmail } from "../utils/emails.js";
 dotenv.config();
 
 export const register = async (req, res) => {
@@ -58,18 +59,7 @@ export const register = async (req, res) => {
     // Send the verification email
     const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
 
-    transporter.sendMail({
-      from: process.env.SENDER_EMAIL,
-      to: email,
-      subject: "Verify Your Email",
-      html: `
-        <p>Click the link to verify your email:</p>
-        <p><a href="${verificationUrl}" target="_blank" style="color: #1a73e8;">Verify Email</a></p>
-        <p>Or you can copy the link below:</p>
-        <a href="${verificationUrl}">${verificationUrl}</p>
-        <p>This link will expire in 24 hours.</p>
-      `,
-    });
+    sendVerificationEmail(email, verificationUrl);
 
     res.status(200).json({
       message: "Verification email sent. Please check your inbox.",
@@ -240,19 +230,7 @@ export const verifyEmail = async (req, res) => {
     generateTokenAndSetCookie(res, user.id);
 
     // Send welcome email
-    transporter.sendMail({
-      from: process.env.SENDER_EMAIL,
-      to: email,
-      subject: "Welcome to loopos!",
-      html: `
-      <h2>Welcome to loopos, ${fullName}!</h2>
-      <p>Thank you for joining our community. Your account has been successfully verified.</p>
-      <p>You can now log in and start exploring all our features.</p>
-      <p>If you have any questions, feel free to reach out to our support team.</p>
-      <p>Best regards,</p>
-      <p>The loopos Team</p>
-      `,
-    });
+    sendWelcomeEmail(email, fullName);
 
     return res.status(200).json({
       message: "Email verified successfully. You are now logged in.",

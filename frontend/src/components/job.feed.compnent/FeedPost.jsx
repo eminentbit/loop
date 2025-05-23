@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { MessageCircle, Send, ThumbsUp, Share2 } from "lucide-react";
 import PropTypes from "prop-types";
@@ -20,33 +20,36 @@ export default function FeedPost({
   const [isMe, setIsMe] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [commentsCount, setCommentsCount] = useState(0);
+
+  const fetchComments = useCallback(async () => {
+    const postId = post.id;
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/feed/comments/${postId}/`,
+        {
+          credentials: "include",
+        }
+      );
+      const data = await res.json();
+
+      setComments(
+        data.map((c) => ({
+          ...c,
+          likes: c.likes || 0,
+          likedByUser: c.liked_by_user || c.likedByUser || false,
+        }))
+      );
+
+      setCommentsCount(data.length);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  }, [post]);
 
   useEffect(() => {
-    const postId = post.id;
-    const fetchComments = async () => {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/feed/comments/${postId}/`,
-          {
-            credentials: "include",
-          }
-        );
-        const data = await res.json();
-
-        setComments(
-          data.map((c) => ({
-            ...c,
-            likes: c.likes || 0,
-            likedByUser: c.liked_by_user || c.likedByUser || false,
-          }))
-        );
-      } catch (error) {
-        console.error("Error fetching comments:", error);
-      }
-    };
-
     fetchComments();
-  }, [post]);
+  }, [fetchComments]);
 
   const handleSubmitComment = async (e) => {
     e.preventDefault();
@@ -69,6 +72,8 @@ export default function FeedPost({
         { ...added, likes: added.likes || 0, likedByUser: false },
       ]);
       setCommentText("");
+      fetchComments();
+      setCommentsCount((prev) => prev + 1);
     } catch (error) {
       console.error(error);
     }
@@ -182,8 +187,10 @@ export default function FeedPost({
           className="flex items-center justify-center w-1/3 py-2 hover:bg-gray-50 rounded-md text-gray-700"
         >
           <MessageCircle size={18} className="text-gray-500" />
-          {post.commentsCount}
-          <span className="ml-2">Comment</span>
+          {commentsCount}
+          <span className="ml-2">
+            {commentsCount > 0 ? "Comments" : "Comment"}
+          </span>
         </button>
 
         <button
@@ -235,13 +242,13 @@ export default function FeedPost({
                 <div className="flex mb-2">
                   <img
                     src={comment.user.profile ?? DefaultImage}
-                    alt={comment.user.username ?? "Comment Name"}
+                    alt={comment.user.fullName ?? "Comment Name"}
                     className="h-8 w-8 rounded-full mr-2"
                   />
                   <div className="flex-1">
                     <div className="bg-gray-100 rounded-lg px-3 py-2">
                       <div className="text-[1em] font-bold">
-                        {!isMe ? comment.user.username : "You"}
+                        {!isMe ? comment.user.fullName : "You"}
                       </div>
                       <div className="text-sm">{comment.content}</div>
                     </div>

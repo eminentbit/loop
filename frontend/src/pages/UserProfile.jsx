@@ -306,11 +306,7 @@ const ProfilePage = () => {
             <>
               <div className="relative flex-shrink-0">
                 <img
-                  src={
-                    userData.profile != "undefined"
-                      ? userData.profile
-                      : ProfilePic
-                  }
+                  src={userData.profile ? userData.profile : ProfilePic}
                   alt="User Avatar"
                   className="w-32 h-32 rounded-full object-cover border-4 border-blue-500 shadow-inner"
                 />
@@ -328,7 +324,7 @@ const ProfilePage = () => {
                   {userData.fullName}
                 </h1>
                 <p className="mt-1 text-lg text-gray-500 dark:text-gray-400">
-                  {capitalizeFirstLetter(userData.role) || "N/A"}
+                  {userData.role ? capitalizeFirstLetter(userData.role) : "N/A"}
                 </p>
                 <p className="mt-2 text-sm font-medium text-green-500">
                   ● {userData.status || "N/A"}
@@ -483,7 +479,7 @@ const ProfilePage = () => {
               <div className="flex flex-col gap-1 text-gray-500 dark:text-gray-400 text-sm pl-1">
                 <span className="flex items-center gap-1">
                   <MapPin className="inline mr-1 text-blue-400" size={16} />{" "}
-                  {userData.location}
+                  {userData.location ?? "N/A"}
                 </span>
                 <span className="flex items-center gap-1">
                   <Mail className="inline mr-1 text-blue-400" size={16} />
@@ -491,7 +487,7 @@ const ProfilePage = () => {
                 </span>
                 <span className="flex items-center gap-1">
                   <Phone className="inline mr-1 text-blue-400" size={16} />
-                  {userData.phone}
+                  {userData.phone ?? "N/A"}
                 </span>
               </div>
             </div>

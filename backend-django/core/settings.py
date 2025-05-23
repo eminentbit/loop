@@ -121,15 +121,13 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
 ]
 
-SESSION_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False # Change to true in production (HTTPS)
 
 # Session and CSRF cookie
+SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = False  # Change to True in production (HTTPS)
-SESSION_COOKIE_SAMESITE = 'Lax'
 
 
 LOGGING = {

@@ -5,14 +5,17 @@ import { MessageCircle } from "lucide-react";
 import axios from "axios";
 import LikeButton from "./LikeButton";
 
-const PostCard = ({ post, onToggleComments, areCommentsOpen }) => {
+const PostCard = ({
+  post,
+  onToggleComments,
+  areCommentsOpen,
+  commentsCount,
+}) => {
   const { isDarkMode } = useContext(DarkModeContext);
   // const [fullName, setFullName] = useState("");
   const [isMe, setIsMe] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [authorPic, setAuthorPic] = useState("");
-  // eslint-disable-next-line no-unused-vars
-  const [commentCount, setCommentCount] = useState(0);
   // eslint-disable-next-line no-unused-vars
   const [error, setError] = useState("");
 
@@ -153,9 +156,7 @@ const PostCard = ({ post, onToggleComments, areCommentsOpen }) => {
           aria-label="Toggle comments"
         >
           <MessageCircle className="w-5 h-5" />
-          <span className="font-medium">
-            {commentCount ? commentCount : post.comments.length}
-          </span>
+          <span className="font-medium">{commentsCount}</span>
         </button>
       </div>
     </div>
@@ -181,6 +182,7 @@ PostCard.propTypes = {
       })
     ),
   }).isRequired,
+  commentsCount: PropTypes.number,
   onToggleComments: PropTypes.func.isRequired,
   areCommentsOpen: PropTypes.bool.isRequired,
 };

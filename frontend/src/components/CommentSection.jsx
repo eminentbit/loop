@@ -1,40 +1,41 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import { ThumbsUp, Flag, X } from "lucide-react";
 import ReportModal from "./ReportModal";
 import axios from "axios";
 
-const CommentSection = ({ postId, onClose }) => {
+const CommentSection = ({ postId, onClose, setCommentsCount }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [reportTarget, setReportTarget] = useState(null);
 
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/feed/comments/${postId}/`,
-          {
-            credentials: "include",
-          }
-        );
-        const data = await res.json();
-        console.log(data);
-        setComments(
-          data.map((c) => ({
-            ...c,
-            likes: c.likes || 0,
-            likedByUser: c.liked_by_user || c.likedByUser || false,
-          }))
-        );
-      } catch (error) {
-        console.error("Error fetching comments:", error);
-      }
-    };
+  const fetchComments = useCallback(async () => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/feed/comments/${postId}/`,
+        {
+          credentials: "include",
+        }
+      );
+      const data = await res.json();
+      console.log(data);
+      setComments(
+        data.map((c) => ({
+          ...c,
+          likes: c.likes || 0,
+          likedByUser: c.liked_by_user || c.likedByUser || false,
+        }))
+      );
+      setCommentsCount(comments.length);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  }, [comments.length, postId, setCommentsCount]);
 
+  useEffect(() => {
     fetchComments();
-  }, [postId]);
+  }, [fetchComments]);
 
   const handlePost = async () => {
     if (!newComment.trim()) return;
@@ -49,12 +50,14 @@ const CommentSection = ({ postId, onClose }) => {
 
       if (!res.status === 200) throw new Error("Failed to post comment");
 
-      const added = res.data;
+      const added = newComment;
       setComments((prev) => [
-        ...prev,
         { ...added, likes: added.likes || 0, likedByUser: false },
+        ...prev,
       ]);
       setNewComment("");
+      setCommentsCount((prev) => prev + 1);
+      fetchComments();
     } catch (error) {
       console.error(error);
     }
@@ -96,10 +99,10 @@ const CommentSection = ({ postId, onClose }) => {
 
   const handleConfirmReport = async () => {
     try {
-      await fetch(
+      await axios.get(
         `${import.meta.env.VITE_API_URL}/feed/comments/${reportTarget}/report/`,
         {
-          credentials: "include",
+          withCredentials: true,
         }
       );
       setReportModalOpen(false);
@@ -119,7 +122,9 @@ const CommentSection = ({ postId, onClose }) => {
     <div className="bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-5 h-full flex flex-col border border-gray-200 dark:border-gray-700 transition-all duration-300">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
-        <h4 className="text-xl font-semibold text-gray-800 dark:text-white">Comments</h4>
+        <h4 className="text-xl font-semibold text-gray-800 dark:text-white">
+          Comments
+        </h4>
         <button
           onClick={onClose}
           className="text-gray-500 hover:text-red-500 transition"
@@ -132,9 +137,11 @@ const CommentSection = ({ postId, onClose }) => {
       {/* Comment List */}
       <div className="flex-1 overflow-y-auto pr-1 space-y-4 mb-4 custom-scrollbar">
         {comments.length === 0 ? (
-          <p className="text-sm text-gray-500 text-center">No comments yet. Be the first to comment.</p>
+          <p className="text-sm text-gray-500 text-center">
+            No comments yet. Be the first to comment.
+          </p>
         ) : (
-          comments.map((comment) => (
+          comments.reverse.map((comment) => (
             <div
               key={comment.id}
               className="bg-gray-100 dark:bg-gray-700 p-4 rounded-xl text-sm shadow-sm space-y-2"
@@ -145,7 +152,9 @@ const CommentSection = ({ postId, onClose }) => {
                 </span>
                 <span>{new Date(comment.createdAt).toLocaleString()}</span>
               </div>
-              <p className="text-gray-800 dark:text-gray-100">{comment.content}</p>
+              <p className="text-gray-800 dark:text-gray-100">
+                {comment.content}
+              </p>
               <div className="flex items-center gap-5 mt-1 text-xs text-gray-500 dark:text-gray-400">
                 <button
                   onClick={() => handleLikeToggle(comment.id)}
@@ -202,6 +211,8 @@ const CommentSection = ({ postId, onClose }) => {
 CommentSection.propTypes = {
   postId: PropTypes.number.isRequired,
   onClose: PropTypes.func.isRequired,
+  commentsCount: PropTypes.number,
+  setCommentsCount: PropTypes.number,
 };
 
 export default CommentSection;

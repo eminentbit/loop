@@ -48,6 +48,12 @@ const Feed = ({ userRole }) => {
     fetchPosts();
   }, []);
 
+  const [commentsCount, setCommentCount] = useState(0);
+
+  useEffect(() => {
+    console.log("Number of comments: ", commentsCount);
+  }, [commentsCount]);
+
   const handleToggleComments = (postId) => {
     setOpenedCommentPostId((prevId) => (prevId === postId ? null : postId));
   };
@@ -95,6 +101,7 @@ const Feed = ({ userRole }) => {
               ) : (
                 posts.map((post) => (
                   <PostCard
+                    commentsCount={commentsCount}
                     key={post.id}
                     post={post}
                     onToggleComments={() => handleToggleComments(post.id)}
@@ -108,6 +115,8 @@ const Feed = ({ userRole }) => {
           <aside className="hidden md:block md:col-span-1 space-y-6 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
             {openedCommentPostId && (
               <CommentSection
+                commentsCount={commentsCount}
+                setCommentCount={setCommentCount}
                 postId={openedCommentPostId}
                 onClose={handleCloseComments}
               />
