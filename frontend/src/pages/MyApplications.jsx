@@ -1,41 +1,36 @@
 import { useContext, useState, useEffect } from "react";
-import kApplications from "@/data/applications";
 import { FaSearch, FaEnvelope, FaTimesCircle } from "react-icons/fa";
 import { DarkModeContext } from "@/context/DarkModeContext";
-import PropTypes from "prop-types";
 import axios from "axios";
 import Navbar from "src/components/job.page.component/ui/Navbar";
 
 const MyApplications = () => {
   const [search, setSearch] = useState("");
-  // const [isOpen, setIsOpen] = useState(() => {
-  //   const storedValue = localStorage.getItem("sidebarOpen");
-  //   return storedValue ? JSON.parse(storedValue) : true;
-  // });
-
-  // useEffect(() => {
-  //   localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
-  // }, [isOpen]);
+  const [applications, setApplications] = useState([]);
+  const { isDarkMode } = useContext(DarkModeContext);
 
   useEffect(() => {
     const fetchApplications = async () => {
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/application`,
-          {
-            withCredentials: true,
-          }
+          { withCredentials: true }
         );
-        setApplications(response.data);
+        setApplications(response.data || []);
       } catch (error) {
         console.error("Error fetching applications:", error);
       }
     };
-    fetchApplications();
-  });
-  const { isDarkMode } = useContext(DarkModeContext);
 
-  const [applications, setApplications] = useState(kApplications);
+    fetchApplications();
+  }, []);
+
+  const filteredApplications = applications.filter((app) => {
+    const title = app.job?.title?.toLowerCase() || "";
+    const company = app.job?.company?.toLowerCase() || "";
+    const term = search.toLowerCase();
+    return title.includes(term) || company.includes(term);
+  });
 
   const getStatusStyle = (status) => {
     switch (status) {
@@ -52,29 +47,19 @@ const MyApplications = () => {
     }
   };
 
-  const filteredApplications = applications.filter(
-    (app) =>
-      app.title.toLowerCase().includes(search.toLowerCase()) ||
-      app.company.toLowerCase().includes(search.toLowerCase())
-  );
-
   return (
     <div className={`flex ${isDarkMode ? "dark" : ""}`}>
-      {/* <Sidebar userRole={userRole} isOpen={isOpen} setIsOpen={setIsOpen} /> */}
-      <div className={`w-full transition-all duration-300 `}>
+      <div className="w-full transition-all duration-300">
         <Navbar />
-
-        {/* Container Card */}
         <div
-          className={`rounded-lg shadow-lg p-6  ml-16 ${
+          className={`ml-16 rounded-lg shadow-lg p-6 ${
             isDarkMode ? "bg-gray-900 text-gray-100" : "bg-white text-gray-800"
           }`}
         >
           <h1 className="text-3xl font-bold mb-6">My Applications</h1>
-          <div className={`grid grid-cols-1 lg:grid-cols-2 `}>
-            {/* Left Column: Search & List */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Search & List */}
             <div>
-              {/* Search Bar */}
               <div className="relative mb-6">
                 <FaSearch className="absolute left-3 top-3 text-gray-500 dark:text-gray-400" />
                 <input
@@ -85,19 +70,20 @@ const MyApplications = () => {
                   className="w-full p-3 pl-10 border rounded-lg focus:ring-2 focus:ring-blue-400 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                 />
               </div>
-
-              {/* Applications List */}
               <div className="space-y-4 max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600">
-                {filteredApplications.length > 0 ? (
+                {filteredApplications.length ? (
                   filteredApplications.map((app) => (
                     <div
                       key={app.id}
                       className="p-4 rounded-lg shadow-md bg-gray-100 dark:bg-gray-800 flex justify-between items-center"
                     >
                       <div>
-                        <h3 className="text-lg font-semibold">{app.title}</h3>
+                        <h3 className="text-lg font-semibold">
+                          {app.job?.title || "Untitled"}
+                        </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {app.company} - Applied on {app.date}
+                          {app.job?.company || "Unknown Company"} - Applied on{" "}
+                          {app.date}
                         </p>
                         <span
                           className={`inline-block mt-1 px-3 py-1 rounded-full text-sm font-medium ${getStatusStyle(
@@ -124,43 +110,22 @@ const MyApplications = () => {
                 )}
               </div>
             </div>
-
-            {/* Right Column: Applications Summary */}
+            {/* Summary */}
             <div className="p-6 rounded-lg shadow-md bg-gray-50 dark:bg-gray-800">
               <h2 className="text-2xl font-bold mb-4">Applications Summary</h2>
               <ul className="space-y-3">
                 <li>
-                  <span className="font-semibold">Total Applications:</span>{" "}
+                  <span className="font-semibold">Total:</span>{" "}
                   {applications.length}
                 </li>
-                <li>
-                  <span className="font-semibold">Pending:</span>{" "}
-                  {
-                    applications.filter((app) => app.status === "Pending")
-                      .length
-                  }
-                </li>
-                <li>
-                  <span className="font-semibold">Interview:</span>{" "}
-                  {
-                    applications.filter((app) => app.status === "Interview")
-                      .length
-                  }
-                </li>
-                <li>
-                  <span className="font-semibold">Accepted:</span>{" "}
-                  {
-                    applications.filter((app) => app.status === "Accepted")
-                      .length
-                  }
-                </li>
-                <li>
-                  <span className="font-semibold">Rejected:</span>{" "}
-                  {
-                    applications.filter((app) => app.status === "Rejected")
-                      .length
-                  }
-                </li>
+                {["Pending", "Interview", "Accepted", "Rejected"].map(
+                  (status) => (
+                    <li key={status}>
+                      <span className="font-semibold">{status}:</span>{" "}
+                      {applications.filter((a) => a.status === status).length}
+                    </li>
+                  )
+                )}
               </ul>
             </div>
           </div>
@@ -168,10 +133,6 @@ const MyApplications = () => {
       </div>
     </div>
   );
-};
-
-MyApplications.propTypes = {
-  userRole: PropTypes.string.isRequired,
 };
 
 export default MyApplications;

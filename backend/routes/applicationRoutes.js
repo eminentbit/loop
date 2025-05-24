@@ -8,7 +8,11 @@ import {
   submitApplication,
 } from "../controllers/applicationController.js";
 import verifyToken from "../middlewares/verifyToken.js";
-import { applicationFields } from "../middlewares/upload.js";
+import {
+  applicationFields,
+  postFields,
+  validateFile,
+} from "../middlewares/upload.js";
 
 const router = Router();
 

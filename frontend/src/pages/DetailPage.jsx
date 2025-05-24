@@ -71,6 +71,8 @@ const JobDetails = () => {
     setSubmitting(true);
     const formData = new FormData(formRef.current);
 
+    console.log(formData);
+
     try {
       console.log(formData);
       const response = await axios.post(

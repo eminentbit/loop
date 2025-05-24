@@ -94,6 +94,7 @@ export const getJobById = async (req, res) => {
   try {
     const job = await prisma.job.findUnique({
       where: { id: req.params.id },
+      include: { JobApplication: true },
     });
     if (job) {
       res.status(200).json(job);

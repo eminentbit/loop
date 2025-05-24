@@ -322,7 +322,7 @@ const AppRoutes = () => {
           </ProtectiveWrapper>
         }
       />
-      <Route path="/connections/:id" element={<ConnectionsPage />} />
+      {/* <Route path="/connections/:id" element={<ConnectionsPage />} /> */}
       <Route path="/public-profile/:id" element={<PublicProfile />} />
       <Route path="/loading" element={<LoadingScreen />} />
     </Routes>

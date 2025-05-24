@@ -205,7 +205,7 @@ const Navbar = () => {
             {user ? (
               <>
                 <Link
-                  to={`/profile/${user.id}`}
+                  to={`/profile/`}
                   className={`block px-3 py-2 rounded-md text-base font-medium ${
                     isActive(`/profile/${user.id}`)
                       ? "text-blue-600 bg-blue-50"

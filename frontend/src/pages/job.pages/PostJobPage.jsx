@@ -188,7 +188,9 @@ const PostJobPage = () => {
             </p>
             <Button
               size="sm"
-              onClick={() => setShowUpgradeForm(true)}
+              onClick={() => {
+                setShowUpgradeForm(true);
+              }}
               className="mt-2"
             >
               Convert to Recruiter

@@ -208,7 +208,6 @@ export const applyForJob = async (req, res) => {
     // 1) Check job exists
     const job = await prisma.job.findUnique({ where: { id: jobId } });
     if (!job) return res.status(404).json({ error: "Job not found." });
-
     // 2) Prevent duplicate applications
     const existing = await prisma.jobApplication.findFirst({
       where: { jobId, userId },

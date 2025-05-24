@@ -25,7 +25,10 @@ export const uploadFileToS3 = async (buffer, fileName, mimetype, folder) => {
 const storage = multer.memoryStorage(); // No files saved to disk
 export const upload = multer({ storage });
 
-export const applicationFields = upload.single("attachments");
+export const applicationFields = upload.fields([
+  { name: "cv", maxCount: 1 },
+  { name: "cover_letter", maxCount: 1 },
+]);
 
 export const postFields = upload.fields([{ name: "attachments", maxCount: 5 }]);
 

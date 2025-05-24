@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   MapPin,
   Calendar,
-  BriefcaseIcon,
+  Briefcase,
   ArrowLeft,
   Sun,
   Moon,
@@ -31,6 +31,7 @@ const JobDetailsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
+  const [isApplied, setIsApplied] = useState(false);
 
   // Theme state: 'light' or 'dark'
   const [theme, setTheme] = useState("light");
@@ -45,15 +46,20 @@ const JobDetailsPage = () => {
 
   // Load user from session
   useEffect(() => {
-    setUser(JSON.parse(sessionStorage.getItem("user") || "null"));
+    const stored = sessionStorage.getItem("user");
+    if (stored) {
+      try {
+        setUser(JSON.parse(stored));
+      } catch {
+        setUser(null);
+      }
+    }
   }, []);
 
   // Load theme from localStorage
   useEffect(() => {
     const saved = localStorage.getItem("theme");
-    if (saved === "dark" || saved === "light") {
-      setTheme(saved);
-    }
+    if (saved === "dark" || saved === "light") setTheme(saved);
   }, []);
 
   // Apply theme class and persist
@@ -67,25 +73,46 @@ const JobDetailsPage = () => {
 
   // Fetch job details
   useEffect(() => {
+    let isMounted = true;
     setIsLoading(true);
     axios
       .get(`${import.meta.env.VITE_API_URL}/jobs/${jobId}/`, {
         withCredentials: true,
       })
-      .then((response) => setJob(response.data))
-      .catch((err) => {
-        console.log(err);
-        setError("Unable to load job details. Please try again later.");
+      .then((response) => {
+        if (isMounted) setJob(response.data);
       })
-      .finally(() => setIsLoading(false));
+      .catch(() => {
+        if (isMounted)
+          setError("Unable to load job details. Please try again later.");
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false);
+      });
+    return () => {
+      isMounted = false;
+    };
   }, [jobId]);
+
+  // Check if user has already applied
+  useEffect(() => {
+    if (!job || !user) {
+      setIsApplied(false);
+      return;
+    }
+    const applications = job.JobApplication || [];
+    const applied = applications.some(
+      (app) => String(app.userId) === String(user.id)
+    );
+    setIsApplied(applied);
+  }, [job, user]);
 
   const openModal = () => setShowModal(true);
   const closeModal = () => {
     setShowModal(false);
     setSubmitted(false);
     setFileErrors({ cv: "", cover_letter: "" });
-    formRef.current?.reset();
+    if (formRef.current) formRef.current.reset();
   };
 
   const handleFileChange = (e) => {
@@ -103,12 +130,11 @@ const JobDetailsPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (fileErrors.cv || fileErrors.cover_letter)
+    if (fileErrors.cv || fileErrors.cover_letter) {
       return alert("Fix file errors before submitting.");
-
+    }
     setSubmitting(true);
     const formData = new FormData(formRef.current);
-
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/application/jobs/${jobId}/`,
@@ -128,7 +154,7 @@ const JobDetailsPage = () => {
     }
   };
 
-  if (isLoading)
+  if (isLoading) {
     return (
       <>
         <Navbar />
@@ -139,8 +165,9 @@ const JobDetailsPage = () => {
         </PageContainer>
       </>
     );
+  }
 
-  if (error || !job)
+  if (error || !job) {
     return (
       <PageContainer>
         <div className="text-center py-12">
@@ -159,6 +186,7 @@ const JobDetailsPage = () => {
         </div>
       </PageContainer>
     );
+  }
 
   return (
     <>
@@ -201,15 +229,22 @@ const JobDetailsPage = () => {
                 </Link>
               </div>
               {user?.role === "jobseeker" ? (
-                <Button size="lg" onClick={openModal}>
-                  Apply Now
+                <Button
+                  size="lg"
+                  onClick={() => {
+                    if (!isApplied) {
+                      openModal();
+                      return;
+                    }
+                    navigate("/applications");
+                  }}
+                >
+                  {!isApplied ? "Apply Now" : "View Applications"}
                 </Button>
               ) : (
                 <Button
                   size="lg"
-                  onClick={() => {
-                    navigate(`/job/${jobId}/applicants`);
-                  }}
+                  onClick={() => navigate(`/job/${jobId}/applicants`)}
                 >
                   See applicants
                 </Button>
@@ -229,7 +264,7 @@ const JobDetailsPage = () => {
               </div>
               {job.jobType && (
                 <div className="flex items-center">
-                  <BriefcaseIcon className="h-5 w-5 mr-1 text-gray-400 dark:text-gray-500" />
+                  <Briefcase className="h-5 w-5 mr-1 text-gray-400 dark:text-gray-500" />
                   <span className="capitalize">
                     {enumToString(job.jobType)}
                   </span>
@@ -310,8 +345,8 @@ const JobDetailsPage = () => {
                   >
                     <div>
                       <label
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
                         htmlFor="fullName"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
                       >
                         Full Name
                       </label>
@@ -324,8 +359,8 @@ const JobDetailsPage = () => {
                     </div>
                     <div>
                       <label
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
                         htmlFor="email"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
                       >
                         Email
                       </label>
@@ -333,8 +368,8 @@ const JobDetailsPage = () => {
                     </div>
                     <div>
                       <label
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
                         htmlFor="cv"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
                       >
                         CV (PDF, max 10MB)
                       </label>
@@ -354,8 +389,8 @@ const JobDetailsPage = () => {
                     </div>
                     <div>
                       <label
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
                         htmlFor="cover_letter"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
                       >
                         Cover Letter (PDF, max 10MB)
                       </label>
@@ -375,8 +410,8 @@ const JobDetailsPage = () => {
                     </div>
                     <div>
                       <label
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
                         htmlFor="message"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
                       >
                         Message (optional)
                       </label>
